@@ -1,0 +1,60 @@
+@page
+@{
+    ViewData["Title"] = "Formulir Pertanyaan";
+}
+
+@section Styles {
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
+}
+
+<div class="form-page">
+    <div class="form-page-overlay"></div>
+
+    <div class="form-layout">
+        <a asp-page="/Pertanyaan" class="form-logo-link" aria-label="Kembali ke halaman pertanyaan">
+            <img src="~/images/logo.png" alt="Logo Tanya Subbag Keuangan" class="form-logo">
+        </a>
+
+        <section class="form-card" aria-label="Formulir pertanyaan">
+            <h1>Formulir Pertanyaan</h1>
+
+            <form class="professional-form" method="get" asp-page="/DetailPertanyaan">
+                <div class="form-group">
+                    <label for="pertanyaanInput">Pertanyaan</label>
+                    <textarea id="pertanyaanInput" rows="3" placeholder="Tuliskan pertanyaan Anda..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Kategori</label>
+                    <div class="kategori-list">
+                        <button type="button" class="kategori-item active">Belanja Pegawai</button>
+                        <button type="button" class="kategori-item">Belanja Barang</button>
+                        <button type="button" class="kategori-item">Belanja Perjalanan Dinas</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="nipInput">NIP</label>
+                    <input id="nipInput" type="text" placeholder="Masukkan NIP">
+                </div>
+
+                <div class="form-group">
+                    <label for="namaInput">Nama</label>
+                    <input id="namaInput" type="text" placeholder="Masukkan nama lengkap">
+                </div>
+
+                <button type="submit" class="form-submit-btn">Submit</button>
+                <p class="form-footnote">Data akan diproses secara aman. Hindari mengisi informasi sensitif seperti password.</p>
+            </form>
+        </section>
+
+        <aside class="form-note-bubble">
+            <p>Form pertanyaan disesuaikan untuk pengalaman web yang lebih rapi, modern, dan profesional.</p>
+        </aside>
+    </div>
+
+
+    <a asp-page="/Index" class="badge-hexagon">FORM-Q PAGE<br>(USER POV)</a>
+</div>

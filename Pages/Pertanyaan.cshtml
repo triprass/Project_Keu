@@ -1,0 +1,80 @@
+@page
+
+@{
+    ViewData["Title"] = "Daftar Pertanyaan";
+}
+
+@section Styles {
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
+}
+
+<div class="question-page">
+    <div class="question-overlay"></div>
+
+    <header class="question-header">
+        <a asp-page="/Index" class="question-logo-link" aria-label="Kembali ke halaman utama">
+            <img src="~/images/logo.png" alt="Logo Tanya Subbag Keuangan" class="question-logo">
+        </a>
+
+        <a asp-page="/FormPertanyaan" class="btn-buat-pertanyaan">Buat Pertanyaan</a>
+    </header>
+
+    <section class="question-search-wrap" aria-label="Pencarian pertanyaan">
+        <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" placeholder="Cari pertanyaan..." aria-label="Cari pertanyaan">
+            <button type="button" class="search-close" aria-label="Bersihkan pencarian">✕</button>
+        </div>
+    </section>
+
+    <section class="akun-grid" aria-label="Daftar kategori akun">
+        <article class="akun-card">
+            <h2>Akun A</h2>
+            <ul>
+                <li>Pertanyaan Akun A1</li>
+                <li>Pertanyaan Akun A2</li>
+                <li>Pertanyaan Akun A3</li>
+            </ul>
+        </article>
+
+        <article class="akun-card">
+            <h2>Akun B</h2>
+            <ul>
+                <li>Pertanyaan Akun B1</li>
+                <li>Pertanyaan Akun B2</li>
+                <li>Pertanyaan Akun B3</li>
+            </ul>
+        </article>
+
+        <article class="akun-card">
+            <h2>Akun C</h2>
+            <ul>
+                <li>Pertanyaan Akun C1</li>
+                <li>Pertanyaan Akun C2</li>
+                <li>Pertanyaan Akun C3</li>
+            </ul>
+        </article>
+
+        <article class="akun-card">
+            <h2>Akun D</h2>
+            <ul>
+                <li>Pertanyaan Akun D1</li>
+                <li>Pertanyaan Akun D2</li>
+                <li>Pertanyaan Akun D3</li>
+            </ul>
+        </article>
+
+        <article class="akun-card">
+            <h2>Akun E</h2>
+            <ul>
+                <li>Pertanyaan Akun E1</li>
+                <li>Pertanyaan Akun E2</li>
+                <li>Pertanyaan Akun E3</li>
+            </ul>
+        </article>
+    </section>
+ 
+    <a asp-page="/Index" class="badge-hexagon">Main Page</a>
+</div>

@@ -1,0 +1,47 @@
+@page
+@{
+    ViewData["Title"] = "Detail Jawaban";
+}
+
+@section Styles {
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+}
+
+<div class="detail-page detail-page-closed">
+    <div class="detail-page-overlay"></div>
+
+    <header class="detail-header">
+        <a asp-page="/Index" class="detail-logo-link" aria-label="Kembali ke halaman utama">
+            <img src="~/images/logo.png" alt="Logo Tanya Subbag Keuangan" class="detail-logo">
+        </a>
+
+        <h1 class="detail-title">Q&amp;A</h1>
+
+        <div class="topic-status-wrap">
+            <span class="topic-status-label">Status Topik:</span>
+            <span class="topic-status-closed">CLOSED</span>
+        </div>
+    </header>
+
+    <main class="detail-content detail-content-answered">
+        <div class="q-icon" aria-hidden="true">Q</div>
+
+        <section class="detail-question-card" aria-label="Pertanyaan">
+            <p>Mengapa Surat Perintah Perjalanan Dinas (SPPD) sangat penting dan dianggap ilegal jika tidak ada?</p>
+        </section>
+
+        <div class="a-icon" aria-hidden="true">A</div>
+
+        <section class="detail-answer-card" aria-label="Jawaban">
+            <p>
+                Menghindarkan perjalanan dinas dari indikasi penyalahgunaan wewenang atau tindakan ilegal seperti perjalanan
+                dinas fiktif yang dapat merugikan keuangan negara atau lembaga. Pengeluaran dana untuk perjalanan tanpa dasar
+                SPPD adalah pelanggaran hukum.
+            </p>
+        </section>
+    </main>
+
+    <a asp-page="/DetailPertanyaan" class="badge-hexagon">Q-DETAIL<br>WITH<br>CLOSED<br>STATUS PAGE</a>
+</div>

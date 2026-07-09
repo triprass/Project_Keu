@@ -1,0 +1,40 @@
+@page
+@{
+    ViewData["Title"] = "Detail Pertanyaan";
+}
+
+@section Styles {
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+}
+
+<div class="detail-page">
+    <div class="detail-page-overlay"></div>
+
+    <header class="detail-header">
+        <a asp-page="/Index" class="detail-logo-link" aria-label="Kembali ke halaman utama">
+            <img src="~/images/logo.png" alt="Logo Tanya Subbag Keuangan" class="detail-logo">
+        </a>
+
+        <h1 class="detail-title">Q&amp;A</h1>
+
+        <div class="topic-status-wrap">
+            <span class="topic-status-label">Status Topik:</span>
+            <span class="topic-status-open">OPEN</span>
+        </div>
+    </header>
+
+    <main class="detail-content">
+        <div class="q-icon" aria-hidden="true">Q</div>
+
+        <section class="detail-question-card" aria-label="Pertanyaan">
+            <p>Apa saja Komponen penghasilan Pegawai Negeri Sipil (PNS)?</p>
+        </section>
+
+        <div class="detail-answer-placeholder" aria-hidden="true">?</div>
+    </main>
+
+    <a asp-page="/DetailJawaban" class="badge-hexagon">Q-DETAIL<br>WITH OPEN<br>STATUS PAGE<br>(USER POV)</a>
+
+</div>

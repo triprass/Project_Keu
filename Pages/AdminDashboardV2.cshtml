@@ -1,0 +1,67 @@
+@page
+@{
+    ViewData["Title"] = "Admin Dashboard V2";
+}
+
+@section Styles {
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
+}
+
+<div class="admin-page admin-page-v2">
+    <div class="admin-page-overlay"></div>
+
+    <header class="admin-header">
+        <a asp-page="/Index" class="admin-logo-link" aria-label="Kembali ke halaman utama">
+            <img src="~/images/logo.png" alt="Logo Tanya Subbag Keuangan" class="admin-logo">
+        </a>
+    </header>
+
+    <section class="admin-table-wrap">
+        <div class="admin-table-title">Daftar Pertanyaan</div>
+
+        <table class="admin-table" aria-label="Daftar Pertanyaan Admin Dashboard V2">
+            <thead>
+                <tr>
+                    <th>Tanggal</th>
+                    <th>Pertanyaan</th>
+                    <th>Kategori</th>
+                    <th>Jawab Pertanyaan</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span class="admin-date-pill">Jul 5, 2026</span></td>
+                    <td>Mengapa Surat Perintah Perjalanan Dinas (SPPD)...</td>
+                    <td>Belanja Perjalanan Dinas</td>
+                    <td>
+                        <a asp-page="/DetailJawaban" class="admin-action-pill admin-action-fix">Perbaiki</a>
+                    </td>
+                    <td><span class="admin-status-pill admin-status-close">Close</span></td>
+                </tr>
+                <tr>
+                    <td><span class="admin-date-pill">Jul 6, 2026</span></td>
+                    <td>Apakah pembelian barang di atas Rp 1 juta...</td>
+                    <td>Belanja Barang</td>
+                    <td>
+                        <a asp-page="/DetailJawaban" class="admin-action-pill admin-action-fix">Perbaiki</a>
+                    </td>
+                    <td><span class="admin-status-pill admin-status-close">Close</span></td>
+                </tr>
+                <tr>
+                    <td><span class="admin-date-pill">Jul 7, 2026</span></td>
+                    <td>Apa saja komponen penghasilan Pegawai Negeri...</td>
+                    <td>Belanja Pegawai</td>
+                    <td>
+                        <a asp-page="/DetailPertanyaan" class="admin-action-pill admin-action-answer">Jawab</a>
+                    </td>
+                    <td><span class="admin-status-pill admin-status-open">Open</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <a asp-page="/AdminDashboard" class="badge-hexagon">ADMIN<br>DASHBORD<br>PAGE</a>
+</div>

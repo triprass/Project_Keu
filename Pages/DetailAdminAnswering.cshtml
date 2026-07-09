@@ -1,0 +1,48 @@
+@page
+@{
+    ViewData["Title"] = "Detail Admin Answering";
+}
+
+@section Styles {
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+}
+
+<div class="detail-page detail-page-admin-answering">
+    <div class="detail-page-overlay"></div>
+
+    <header class="detail-header">
+        <a asp-page="/Index" class="detail-logo-link" aria-label="Kembali ke halaman utama">
+            <img src="~/images/logo.png" alt="Logo Tanya Subbag Keuangan" class="detail-logo">
+        </a>
+
+        <h1 class="detail-title">Q&amp;A</h1>
+
+        <div class="topic-status-wrap">
+            <span class="topic-status-label">Status Topik:</span>
+            <span class="topic-status-open">OPEN</span>
+        </div>
+    </header>
+
+    <main class="detail-content detail-content-admin-answering">
+        <div class="q-icon" aria-hidden="true">Q</div>
+
+        <section class="detail-question-card" aria-label="Pertanyaan">
+            <p>Apakah pembelian barang di atas Rp 1 juta tidak otomatis menjadi belanja modal?</p>
+        </section>
+
+        <div class="a-icon" aria-hidden="true">A</div>
+
+        <section class="detail-answer-card" aria-label="Jawaban">
+            <p>
+                Pembelian barang di atas Rp1 juta tidak selalu menjadi belanja modal. Kategori belanja ditentukan oleh masa
+                manfaat dan kegunaannya, serta batas nilai kapitalisasi yang berlaku.
+            </p>
+        </section>
+
+        <a asp-page="/DetailJawaban" class="admin-answer-submit-btn">Jawab</a>
+    </main>
+
+    <a asp-page="/AdminDashboard" class="badge-hexagon">Q-DETAIL<br>WHILE<br>ADMIN<br>ANSWERING<br>USER Q PAGE</a>
+</div>
