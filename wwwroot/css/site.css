@@ -28,11 +28,12 @@ html, body {
 }
 
 body {
-  font-family: 'Montserrat', sans-serif;
-  color: #12284C;
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+    font-family: 'Montserrat', sans-serif;
+    color: #12284C;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    background-color: #042e6e;
 }
 
 *, *::before, *::after {
@@ -93,20 +94,20 @@ main[role="main"] {
 }
 
 .btn-mulai {
-  background: linear-gradient(135deg, #f0d48f, #e8c678) !important;
-  color: #12284C !important;
-  border: 1px solid rgba(18, 40, 76, 0.08) !important;
-  outline: none !important;
-  padding: 16px 55px;
-  font-size: 1.1rem;
-  font-weight: 700;
-  border-radius: 12px;
-  cursor: pointer;
-  box-shadow: 0 10px 24px rgba(18, 40, 76, 0.18);
-  transition: all 0.25s ease-in-out;
-  font-family: 'Montserrat', sans-serif;
-  text-decoration: none;
-  display: inline-block;
+    background: linear-gradient(135deg, #0dcaf0, #e8c678) !important;
+    color: #12284C !important;
+    border: 1px solid rgba(18, 40, 76, 0.08) !important;
+    outline: none !important;
+    padding: 16px 55px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 0 10px 24px rgba(18, 40, 76, 0.18);
+    transition: all 0.25s ease-in-out;
+    font-family: 'Montserrat', sans-serif;
+    text-decoration: none;
+    display: inline-block;
 }
 
 .btn-mulai:hover {
@@ -180,26 +181,26 @@ main[role="main"] {
 }
 
 .question-logo {
-  width: 88px;
+  width: 20%;
   height: auto;
   filter: drop-shadow(0 8px 12px rgba(18, 40, 76, 0.18));
 }
 
 .btn-buat-pertanyaan {
-  border: 2px solid #4f3bf5;
-  color: #ffffff;
-  background: linear-gradient(135deg, #2f54eb, #4f3bf5);
-  border-radius: 14px;
-  padding: 12px 20px;
-  font-size: 1rem;
-  font-weight: 700;
-  box-shadow: 0 10px 24px rgba(79, 59, 245, 0.3);
-  cursor: pointer;
-  transition: all 0.2s ease;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+    border: 1px solid rgba(18, 40, 76, 0.08) !important;
+    color: #ffffff;
+    background: linear-gradient(135deg, #0dcaf0, #ffc1078c);
+    border-radius: 14px;
+    padding: 12px 20px;
+    font-size: 1rem;
+    font-weight: 700;
+    box-shadow: 0 10px 24px rgba(79, 59, 245, 0.3);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .btn-buat-pertanyaan:hover {
@@ -291,6 +292,53 @@ main[role="main"] {
   color: #1d355c;
 }
 
+.akun-card-perjalanan {
+  max-width: 760px;
+  margin: 0 auto;
+  background: #ffffff;
+  border: 1px solid #dadada;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 18px 24px 14px;
+}
+
+.akun-card-perjalanan h2 {
+  text-align: center;
+  font-size: 3rem;
+  line-height: 1.05;
+  margin-bottom: 16px;
+  color: #000000;
+}
+
+.akun-card-perjalanan ol {
+  margin: 0 0 12px;
+  padding-left: 22px;
+}
+
+.akun-card-perjalanan li {
+  color: #000000;
+  font-size: 2rem;
+  line-height: 1.15;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.btn-lebih-banyak {
+  display: block;
+  width: fit-content;
+  margin: 8px auto 0;
+  text-decoration: none;
+  color: #0088ff;
+  font-size: 2.9rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.btn-lebih-banyak:hover {
+  color: #0077e2;
+  text-decoration: underline;
+}
+
 .main-page-badge {
   position: absolute;
   left: 26px;
@@ -358,7 +406,7 @@ main[role="main"] {
 }
 
 .form-logo {
-  width: 88px;
+  width: 20%;
   filter: drop-shadow(0 8px 12px rgba(18, 40, 76, 0.2));
 }
 
@@ -555,7 +603,7 @@ main[role="main"] {
 }
 
 .detail-logo {
-  width: 92px;
+  width: 20%;
   filter: drop-shadow(0 10px 14px rgba(18, 40, 76, 0.18));
 }
 
@@ -732,7 +780,7 @@ main[role="main"] {
   }
 
   .question-logo {
-    width: 72px;
+    width: 20%;
   }
 
   .btn-buat-pertanyaan {
@@ -781,7 +829,7 @@ main[role="main"] {
   }
 
   .form-logo {
-    width: 78px;
+    width: 20%;
   }
 
   .form-card {
@@ -829,7 +877,7 @@ main[role="main"] {
   }
 
   .detail-logo {
-    width: 72px;
+    width: 20%;
   }
 
   .detail-title {
@@ -912,7 +960,7 @@ main[role="main"] {
 }
 
 .admin-logo {
-  width: 92px;
+  width: 20%;
   filter: drop-shadow(0 10px 14px rgba(18, 40, 76, 0.18));
 }
 
@@ -1016,6 +1064,156 @@ main[role="main"] {
   color: #ffffff;
 }
 
+/* Halaman Admin Dashboard V2 */
+.admin-page-v2 .admin-page-overlay {
+  background: linear-gradient(130deg, rgba(245, 250, 255, 0.76), rgba(230, 240, 250, 0.66));
+}
+
+.admin-header-v2 {
+  max-width: 1060px;
+  margin-bottom: 8px;
+}
+
+.admin-table-wrap-v2 {
+  max-width: 1060px;
+  margin-top: 6px;
+}
+
+.admin-table-title-v2 {
+  background: #008dff;
+  color: #ffffff;
+  font-size: 2.5rem;
+  font-weight: 800;
+  line-height: 1.2;
+  padding: 18px 20px;
+  text-align: center;
+}
+
+.admin-table-v2 {
+  table-layout: fixed;
+}
+
+.admin-table-v2 thead th {
+  background: #008dff;
+  color: #ffffff;
+  border-color: #0075d6;
+  font-size: 2rem;
+  font-weight: 800;
+  padding: 16px 8px;
+}
+
+.admin-table-v2 .col-no {
+  width: 6%;
+  text-align: center;
+}
+
+.admin-table-v2 .col-date {
+  width: 16%;
+  text-align: left;
+  padding-left: 18px;
+}
+
+.admin-table-v2 .col-question {
+  width: 54%;
+  text-align: center;
+}
+
+.admin-table-v2 .col-status {
+  width: 24%;
+  text-align: center;
+}
+
+.admin-table-v2 td {
+  background: #ffffff;
+  font-size: 2rem;
+  font-weight: 600;
+  color: #000000;
+  border-color: #c4ccd3;
+  padding: 12px 10px;
+}
+
+.admin-table-v2 .cell-no {
+  text-align: center;
+  font-weight: 700;
+}
+
+.admin-table-v2 .cell-date {
+  text-align: center;
+}
+
+.admin-table-v2 .cell-question {
+  line-height: 1.22;
+}
+
+.admin-table-v2 .cell-status {
+  text-align: center;
+  font-weight: 700;
+}
+
+.admin-table-v2 .status-dijawab {
+  background: #00c853;
+  color: #000000;
+}
+
+.admin-table-v2 .status-belum {
+  background: #b7bec6;
+  color: #000000;
+}
+
+.admin-page-v2 .admin-date-pill {
+  background: #efefef;
+  border: 1px solid #d5d5d5;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #132b4c;
+  padding: 4px 14px;
+}
+
+.admin-badge-v2 {
+  font-size: 2rem;
+  line-height: 1.05;
+  width: 160px;
+  height: 178px;
+  left: 32px;
+  bottom: 22px;
+  background: #eacb73;
+  color: #000000;
+}
+
+@media (max-width: 768px) {
+  .admin-table-title-v2 {
+    font-size: 1.15rem;
+    padding: 12px 10px;
+  }
+
+  .admin-table-v2 {
+    min-width: 980px;
+  }
+
+  .admin-table-v2 thead th {
+    font-size: 1.05rem;
+    padding: 10px 8px;
+  }
+
+  .admin-table-v2 td {
+    font-size: 0.95rem;
+    padding: 10px 8px;
+  }
+
+  .admin-page-v2 .admin-date-pill {
+    font-size: 0.86rem;
+    padding: 4px 10px;
+  }
+
+  .admin-badge-v2 {
+    width: 100px;
+    height: 110px;
+    font-size: 0.72rem;
+    left: 10px;
+    bottom: 10px;
+  }
+}
+
 /* Halaman Detail Admin Answering */
 .detail-page-admin-answering .topic-status-open {
   transform: rotate(-5deg);
@@ -1058,7 +1256,7 @@ main[role="main"] {
   }
 
   .admin-logo {
-    width: 72px;
+    width: 20%;
   }
 
   .admin-table-wrap {
@@ -1098,5 +1296,163 @@ main[role="main"] {
     font-size: 1rem;
     padding: 8px 26px;
     border-radius: 10px;
+  }
+}
+
+/* Global footer */
+.site-footer {
+  width: 100%;
+  margin-top: 0;
+  padding: 28px 20px 16px;
+  color: #f4f8ff;
+  background: linear-gradient(155deg, #04366b 0%, #022650 58%, #011b3d 100%);
+  border-top-left-radius: 24px;
+  border-top-right-radius: 24px;
+  box-shadow: 0 -10px 28px rgba(4, 23, 48, 0.28);
+}
+
+.site-footer-top {
+  max-width: 1240px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.3fr 1.3fr 1fr 1.2fr;
+  gap: 16px;
+}
+
+.site-footer-column {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 14px;
+  padding: 14px 14px 12px;
+}
+
+.site-footer-column h4 {
+  margin: 0 0 10px;
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: rgba(226, 240, 255, 0.95);
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+.site-footer-column p {
+  margin: 0 0 6px;
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: rgba(245, 249, 255, 0.94);
+  font-weight: 500;
+}
+
+.site-footer-column a {
+  color: #8ad0ff;
+  text-decoration: none;
+  font-weight: 700;
+  transition: color 0.2s ease, text-shadow 0.2s ease;
+}
+
+.site-footer-column a:hover {
+  color: #b8e4ff;
+  text-shadow: 0 0 10px rgba(120, 205, 255, 0.45);
+}
+
+.site-footer-bottom {
+  max-width: 1240px;
+  margin: 14px auto 0;
+  padding-top: 12px;
+  border-top: 1px solid rgba(186, 220, 255, 0.28);
+  text-align: center;
+}
+
+.site-footer-bottom p {
+  margin: 0;
+  color: rgba(225, 238, 252, 0.86);
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+@media (max-width: 1024px) {
+  .site-footer {
+    padding: 22px 16px 14px;
+  }
+
+  .site-footer-top {
+    grid-template-columns: repeat(2, minmax(240px, 1fr));
+    gap: 14px;
+  }
+
+  .site-footer-column {
+    padding: 12px 12px 10px;
+  }
+
+  .site-footer-column h4 {
+    font-size: 0.9rem;
+  }
+
+  .site-footer-column p {
+    font-size: 0.84rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .site-footer {
+    border-top-left-radius: 24px;
+    border-top-right-radius: 24px;
+    padding: 18px 12px 12px;
+    background: linear-gradient(155deg, #063a73 0%, #022650 58%, #011a39 100%);
+    box-shadow: 0 -8px 24px rgba(1, 23, 50, 0.35);
+  }
+
+  .site-footer-top {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .site-footer-column {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 12px;
+    padding: 10px 10px 8px;
+    backdrop-filter: blur(2px);
+  }
+
+  .site-footer-column h4 {
+    font-size: 11px;
+    margin-bottom: 6px;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: rgba(210, 230, 255, 0.95);
+    text-shadow: 0 0 8px rgba(80, 168, 255, 0.35);
+  }
+
+  .site-footer-column p {
+    font-size: 10px;
+    margin-bottom: 4px;
+    line-height: 1.55;
+    color: rgba(243, 248, 255, 0.94);
+    font-weight: 500;
+  }
+
+  .site-footer-column a {
+    color: #73c2ff;
+    text-shadow: 0 0 8px rgba(45, 170, 255, 0.35);
+    transition: color 0.2s ease, text-shadow 0.2s ease;
+  }
+
+  .site-footer-column a:hover {
+    color: #a5dbff;
+    text-shadow: 0 0 10px rgba(90, 190, 255, 0.45);
+  }
+
+  .site-footer-bottom {
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(158, 206, 255, 0.32);
+  }
+
+  .site-footer-bottom p {
+    font-size: 0.76rem;
+    line-height: 1.45;
+    letter-spacing: 0.2px;
+    color: rgba(214, 230, 250, 0.9);
   }
 }

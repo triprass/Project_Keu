@@ -12,56 +12,58 @@
 <div class="admin-page admin-page-v2">
     <div class="admin-page-overlay"></div>
 
-    <header class="admin-header">
+    <header class="admin-header admin-header-v2">
         <a asp-page="/Index" class="admin-logo-link" aria-label="Kembali ke halaman utama">
             <img src="~/images/logo.png" alt="Logo Tanya Subbag Keuangan" class="admin-logo">
         </a>
     </header>
 
-    <section class="admin-table-wrap">
-        <div class="admin-table-title">Daftar Pertanyaan</div>
+    <section class="admin-table-wrap admin-table-wrap-v2">
+        <div class="admin-table-title admin-table-title-v2">Daftar Pertanyaan Kategori Akun Belanja Perjalanan Dinas</div>
 
-        <table class="admin-table" aria-label="Daftar Pertanyaan Admin Dashboard V2">
+        <table class="admin-table admin-table-v2" aria-label="Daftar Pertanyaan Kategori Akun Belanja Perjalanan Dinas">
             <thead>
                 <tr>
-                    <th>Tanggal</th>
-                    <th>Pertanyaan</th>
-                    <th>Kategori</th>
-                    <th>Jawab Pertanyaan</th>
-                    <th>Status</th>
+                    <th class="col-no">No</th>
+                    <th class="col-date">Tanggal</th>
+                    <th class="col-question">Pertanyaan</th>
+                    <th class="col-status">Status</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td><span class="admin-date-pill">Jul 5, 2026</span></td>
-                    <td>Mengapa Surat Perintah Perjalanan Dinas (SPPD)...</td>
-                    <td>Belanja Perjalanan Dinas</td>
-                    <td>
-                        <a asp-page="/DetailJawaban" class="admin-action-pill admin-action-fix">Perbaiki</a>
-                    </td>
-                    <td><span class="admin-status-pill admin-status-close">Close</span></td>
+                    <td class="cell-no">1</td>
+                    <td class="cell-date"><span class="admin-date-pill">Jul 9, 2026</span></td>
+                    <td class="cell-question">Mengapa Surat Perintah Perjalanan Dinas (SPPD) sangat penting dan dianggap legal jika tidak ada?</td>
+                    <td class="cell-status status-dijawab">Telah Dijawab</td>
                 </tr>
                 <tr>
-                    <td><span class="admin-date-pill">Jul 6, 2026</span></td>
-                    <td>Apakah pembelian barang di atas Rp 1 juta...</td>
-                    <td>Belanja Barang</td>
-                    <td>
-                        <a asp-page="/DetailJawaban" class="admin-action-pill admin-action-fix">Perbaiki</a>
-                    </td>
-                    <td><span class="admin-status-pill admin-status-close">Close</span></td>
+                    <td class="cell-no">2</td>
+                    <td class="cell-date"><span class="admin-date-pill">Jul 8, 2026</span></td>
+                    <td class="cell-question">Bandingkan perbedaan antara komponen biaya yang dibayarkan secara Lumpsum dengan biaya yang dibayar secara At Cost (biaya riil). Mengapa pemerintah menerapkan kedua metode yang berbeda ini dalam satu surat perintah tugas?</td>
+                    <td class="cell-status status-belum">Belum Dijawab</td>
                 </tr>
                 <tr>
-                    <td><span class="admin-date-pill">Jul 7, 2026</span></td>
-                    <td>Apa saja komponen penghasilan Pegawai Negeri...</td>
-                    <td>Belanja Pegawai</td>
-                    <td>
-                        <a asp-page="/DetailPertanyaan" class="admin-action-pill admin-action-answer">Jawab</a>
-                    </td>
-                    <td><span class="admin-status-pill admin-status-open">Open</span></td>
+                    <td class="cell-no">3</td>
+                    <td class="cell-date"><span class="admin-date-pill">Jul 7, 2026</span></td>
+                    <td class="cell-question">Jika seorang pegawai melaksanakan perjalanan dinas namun kehilangan kuitansi hotel/penginapan yang asli, langkah-langkah apa yang harus dilakukan agar biaya penginapan tersebut tetap dapat dipertanggungjawabkan sesuai aturan yang berlaku?</td>
+                    <td class="cell-status status-belum">Belum Dijawab</td>
+                </tr>
+                <tr>
+                    <td class="cell-no">4</td>
+                    <td class="cell-date"><span class="admin-date-pill">Jul 6, 2026</span></td>
+                    <td class="cell-question">Dalam hal pelaksana perjalanan dinas menginap di rumah saudara atau tempat tinggal pribadi (tidak menggunakan hotel), regulasi memperbolehkan pemberian biaya penginapan sebesar 30%. Jelaskan dasar pertimbangan aturan tersebut?</td>
+                    <td class="cell-status status-belum">Belum Dijawab</td>
+                </tr>
+                <tr>
+                    <td class="cell-no">5</td>
+                    <td class="cell-date"><span class="admin-date-pill">Jul 5, 2026</span></td>
+                    <td class="cell-question">Apabila sebuah perjalanan dinas dibatalkan oleh pejabat yang berwenang karena alasan kepentingan kedinasan yang sangat mendesak, sedangkan tiket pesawat dan hotel sudah dibayarkan, bagaimana ketentuan mengenai penggantian biaya yang telah dikeluarkan?</td>
+                    <td class="cell-status status-belum">Belum Dijawab</td>
                 </tr>
             </tbody>
         </table>
     </section>
 
-    <a asp-page="/AdminDashboard" class="badge-hexagon">ADMIN<br>DASHBORD<br>PAGE</a>
+    <a asp-page="/AdminDashboard" class="badge-hexagon admin-badge-v2">QUESTIONS<br>SORTED BY<br>CATEGORY</a>
 </div>
