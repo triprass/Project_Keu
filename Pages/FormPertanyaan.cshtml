@@ -1,4 +1,5 @@
 @page
+@model Project_Keu.Pages.FormPertanyaanModel
 @{
     ViewData["Title"] = "Formulir Pertanyaan";
 }
@@ -20,29 +21,35 @@
         <section class="form-card" aria-label="Formulir pertanyaan">
             <h1>Formulir Pertanyaan</h1>
 
-            <form class="professional-form" method="get" asp-page="/DetailPertanyaan">
+            <form class="professional-form" method="post">
+                <div asp-validation-summary="ModelOnly" class="form-warning"></div>
+
                 <div class="form-group">
                     <label for="pertanyaanInput">Pertanyaan</label>
-                    <textarea id="pertanyaanInput" rows="3" placeholder="Tuliskan pertanyaan Anda..."></textarea>
+                    <textarea id="pertanyaanInput" name="Pertanyaan" rows="3" placeholder="Tuliskan pertanyaan Anda..." required>@Model.Pertanyaan</textarea>
                 </div>
 
                 <div class="form-group">
-                    <label>Kategori</label>
-                    <div class="kategori-list">
-                        <button type="button" class="kategori-item active">Belanja Pegawai</button>
-                        <button type="button" class="kategori-item">Belanja Barang</button>
-                        <button type="button" class="kategori-item">Belanja Perjalanan Dinas</button>
-                    </div>
+                    <label for="categoryInput">Kategori</label>
+                    <select id="categoryInput" name="CategoryId" required>
+                        <option value="">-- Pilih kategori --</option>
+                        @foreach (var category in Model.Categories)
+                        {
+                            <option value="@category.Id">@category.Name</option>
+                        }
+                    </select>
                 </div>
 
                 <div class="form-group">
                     <label for="nipInput">NIP</label>
-                    <input id="nipInput" type="text" placeholder="Masukkan NIP">
+                    <input id="nipInput" name="Nip" type="text" placeholder="Masukkan NIP" autocomplete="off" value="@Model.Nip" required>
                 </div>
 
                 <div class="form-group">
                     <label for="namaInput">Nama</label>
-                    <input id="namaInput" type="text" placeholder="Masukkan nama lengkap">
+                    <input id="namaInput" name="Nama" type="text" placeholder="Nama akan terisi otomatis dari NIP" value="@Model.Nama" disabled>
+                    <input id="employeeIdInput" name="EmployeeId" type="hidden" value="@Model.EmployeeId">
+                    <small id="nipWarning" class="form-warning" style="display:none;">NIP tidak ditemukan. Silakan cek kembali NIP yang dimasukkan.</small>
                 </div>
 
                 <button type="submit" class="form-submit-btn">Submit</button>
@@ -58,3 +65,58 @@
 
     <a asp-page="/Index" class="badge-hexagon">FORM-Q PAGE<br>(USER POV)</a>
 </div>
+
+@section Scripts {
+<script>
+(function () {
+    const nipInput = document.getElementById('nipInput');
+    const namaInput = document.getElementById('namaInput');
+    const employeeIdInput = document.getElementById('employeeIdInput');
+    let debounceTimer = null;
+
+    const nipWarning = document.getElementById('nipWarning');
+
+    function resetEmployeeFields(showWarning = false) {
+        namaInput.value = '';
+        namaInput.disabled = true;
+        employeeIdInput.value = '';
+        nipWarning.style.display = showWarning ? 'block' : 'none';
+    }
+
+    async function lookupByNip(nip) {
+        const response = await fetch(`/api/employees/by-nip/${encodeURIComponent(nip)}`);
+        if (!response.ok) {
+            resetEmployeeFields(true);
+            return;
+        }
+
+        const data = await response.json();
+        namaInput.value = data.fullName ?? data.FullName ?? '';
+        employeeIdInput.value = data.id ?? data.Id ?? '';
+        namaInput.disabled = false;
+        nipWarning.style.display = 'none';
+    }
+
+    nipInput.addEventListener('input', function () {
+        const nip = (nipInput.value || '').trim();
+
+        clearTimeout(debounceTimer);
+
+        if (!nip) {
+            resetEmployeeFields();
+            return;
+        }
+
+        debounceTimer = setTimeout(async () => {
+            try {
+                await lookupByNip(nip);
+            } catch {
+                resetEmployeeFields();
+            }
+        }, 350);
+    });
+
+    resetEmployeeFields();
+})();
+</script>
+}

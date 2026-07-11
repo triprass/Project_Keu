@@ -40,4 +40,31 @@ public class EmployeesController : ControllerBase
 
         return Ok(employee);
     }
+
+    [HttpGet("by-nip/{nip}")]
+    public async Task<IActionResult> GetEmployeeByNip(string nip)
+    {
+        if (string.IsNullOrWhiteSpace(nip))
+        {
+            return BadRequest(new { message = "NIP is required" });
+        }
+
+        var employee = await _context.Employees
+            .AsNoTracking()
+            .Where(e => e.Nip != null && e.Nip == nip)
+            .Select(e => new
+            {
+                e.Id,
+                e.Nip,
+                FullName = e.FullName
+            })
+            .FirstOrDefaultAsync();
+
+        if (employee is null)
+        {
+            return NotFound(new { message = "Employee not found" });
+        }
+
+        return Ok(employee);
+    }
 }
