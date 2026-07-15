@@ -33,3 +33,25 @@ jobs:
     - name: Push Image
       run: |
         docker push ghcr.io/${{ github.repository_owner }}/project_keu:latest
+
+    - name: Deploy to VPS
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.VPS_HOST }}
+        username: ${{ secrets.VPS_USER }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        script: |
+          docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GHCR_PAT }}
+
+          docker pull ghcr.io/${{ github.repository_owner }}/project_keu:latest
+
+          docker stop project_keu || true
+          docker rm project_keu || true
+
+          docker run -d \
+            --name project_keu \
+            --restart unless-stopped \
+            -p 8080:8080 \
+            -e ASPNETCORE_ENVIRONMENT=Production \
+            -e ConnectionStrings__DefaultConnection="Host=148.230.102.186;Port=32770;Database=KEU_JayaPura;Username=sa;Password=Pilarkeuangan12345" \
+            ghcr.io/${{ github.repository_owner }}/project_keu:latest
