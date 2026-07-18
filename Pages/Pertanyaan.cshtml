@@ -1,4 +1,5 @@
 @page
+@model Project_Keu.Pages.PertanyaanModel
 
 @{
     ViewData["Title"] = "Daftar Pertanyaan";
@@ -30,55 +31,31 @@
     </section>
 
     <section class="akun-grid" aria-label="Daftar kategori akun">
-        <article class="akun-card">
-            <h2>Akun A</h2>
-            <ul>
-                <li>Pertanyaan Akun A1</li>
-                <li>Pertanyaan Akun A2</li>
-                <li>Pertanyaan Akun A3</li>
-            </ul>
-            <a asp-page="/AdminDashboardV2" class="">Tampilkan lebih banyak</a>
-        </article>
-
-        <article class="akun-card">
-            <h2>Akun B</h2>
-            <ul>
-                <li>Pertanyaan Akun B1</li>
-                <li>Pertanyaan Akun B2</li>
-                <li>Pertanyaan Akun B3</li>
-            </ul>
-            <a asp-page="/AdminDashboardV2" class="">Tampilkan lebih banyak</a>
-        </article>
-
-        <article class="akun-card">
-            <h2>Akun C</h2>
-            <ul>
-                <li>Pertanyaan Akun C1</li>
-                <li>Pertanyaan Akun C2</li>
-                <li>Pertanyaan Akun C3</li>
-            </ul>
-            <a asp-page="/AdminDashboardV2" class="">Tampilkan lebih banyak</a>
-        </article>
-
-        <article class="akun-card">
-            <h2>Akun D</h2>
-            <ul>
-                <li>Pertanyaan Akun D1</li>
-                <li>Pertanyaan Akun D2</li>
-                <li>Pertanyaan Akun D3</li>
-            </ul>
-            <a asp-page="/AdminDashboardV2" class="">Tampilkan lebih banyak</a>
-        </article>
-
-        <article class="akun-card">
-            <h2>Akun E</h2>
-            <ul>
-                <li>Pertanyaan Akun E1</li>
-                <li>Pertanyaan Akun E2</li>
-                <li>Pertanyaan Akun E3</li>
-            </ul>
-            <a asp-page="/AdminDashboardV2" class="">Tampilkan lebih banyak</a>
-        </article>
+        @if (Model.QuestionGroups.Any())
+        {
+            foreach (var group in Model.QuestionGroups)
+            {
+                <article class="akun-card">
+                    <h2>@group.CategoryName</h2>
+                    <ul>
+                        @foreach (var question in group.Questions)
+                        {
+                            <li>@question.QuestionText</li>
+                        }
+                    </ul>
+                    <a asp-page="/AdminDashboardV2" asp-route-CategoryId="@group.CategoryId" asp-route-PageSize="10" asp-route-Page="1" class="">Tampilkan lebih banyak</a>
+                </article>
+            }
+        }
+        else
+        {
+            <article class="akun-card">
+                <h2>Belum ada data</h2>
+                <ul>
+                    <li>Belum ada pertanyaan yang tersedia.</li>
+                </ul>
+            </article>
+        }
     </section>
  
     <a asp-page="/Index" class="badge-hexagon">Main Page</a>

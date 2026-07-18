@@ -16,7 +16,15 @@ public class FormPertanyaanModel : PageModel
         _context = context;
     }
 
+    public sealed class QuestionGroupViewModel
+    {
+        public Guid CategoryId { get; set; }
+        public string CategoryName { get; set; } = string.Empty;
+        public List<Question> Questions { get; set; } = new();
+    }
+
     public List<Category> Categories { get; private set; } = new();
+    public List<QuestionGroupViewModel> QuestionGroups { get; private set; } = new();
 
     [BindProperty]
     public string? Pertanyaan { get; set; }
@@ -36,11 +44,13 @@ public class FormPertanyaanModel : PageModel
     public async Task OnGetAsync()
     {
         await LoadCategoriesAsync();
+        await LoadQuestionGroupsAsync();
     }
 
     public async Task<IActionResult> OnPostAsync()
     {
         await LoadCategoriesAsync();
+        await LoadQuestionGroupsAsync();
 
         if (string.IsNullOrWhiteSpace(Pertanyaan) || CategoryId is null || EmployeeId is null)
         {
@@ -95,6 +105,24 @@ public class FormPertanyaanModel : PageModel
             .Where(x => x.IsActive && x.DeletedAt == null)
             .OrderBy(x => x.Name)
             .ToListAsync();
+    }
+
+    private async Task LoadQuestionGroupsAsync()
+    {
+        var grouped = await _context.Questions
+            .AsNoTracking()
+            .Include(q => q.Category)
+            .OrderByDescending(q => q.CreatedAt)
+            .GroupBy(q => new { q.CategoryId, CategoryName = q.Category != null ? q.Category.Name : "-" })
+            .Select(g => new QuestionGroupViewModel
+            {
+                CategoryId = g.Key.CategoryId,
+                CategoryName = g.Key.CategoryName,
+                Questions = g.Take(5).ToList()
+            })
+            .ToListAsync();
+
+        QuestionGroups = grouped;
     }
 
     private async Task<string> GenerateQuestionNoAsync()

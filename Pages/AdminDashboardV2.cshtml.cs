@@ -4,16 +4,19 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Project_Keu.Data;
 using Project_Keu.Models;
+using Project_Keu.Services.AdminDashboardV2;
 
 namespace Project_Keu.Pages;
 
 public class AdminDashboardV2Model : PageModel
 {
     private readonly AppDbContext _context;
+    private readonly AdminDashboardV2QueryService _queryService;
 
-    public AdminDashboardV2Model(AppDbContext context)
+    public AdminDashboardV2Model(AppDbContext context, AdminDashboardV2QueryService queryService)
     {
         _context = context;
+        _queryService = queryService;
     }
 
     public List<Question> Questions { get; private set; } = new();
@@ -68,99 +71,37 @@ public class AdminDashboardV2Model : PageModel
     {
         await LoadFilterOptionsAsync();
 
-        if (Page < 1) Page = 1;
-        if (PageSize <= 0) PageSize = 10;
-        if (PageSize > 100) PageSize = 100;
-
-        var query = _context.Questions
-            .AsNoTracking()
-            .Include(x => x.Category)
-            .Include(x => x.Status)
-            .Include(x => x.CreatedByEmployeeNavigation)
-            .AsQueryable();
-
-        if (!string.IsNullOrWhiteSpace(Q))
+        var result = await _queryService.GetQuestionsAsync(new AdminDashboardV2QueryService.QueryRequest
         {
-            var search = Q.Trim();
-            query = query.Where(x =>
-                (x.QuestionNo != null && x.QuestionNo.Contains(search)) ||
-                x.Title.Contains(search) ||
-                x.QuestionText.Contains(search));
-        }
+            Q = Q,
+            EmployeeKeyword = EmployeeKeyword,
+            CategoryKeyword = CategoryKeyword,
+            StatusKeyword = StatusKeyword,
+            QuestionKeyword = QuestionKeyword,
+            CreatedDate = CreatedDate,
+            CategoryId = CategoryId,
+            StatusId = StatusId,
+            CreatedByEmployee = CreatedByEmployee,
+            DateFrom = DateFrom,
+            DateTo = DateTo,
+            Page = Page,
+            PageSize = PageSize
+        });
 
-        if (!string.IsNullOrWhiteSpace(EmployeeKeyword))
-        {
-            var keyword = EmployeeKeyword.Trim();
-            query = query.Where(x =>
-                (x.CreatedByEmployeeNavigation != null && x.CreatedByEmployeeNavigation.FullName.Contains(keyword)) ||
-                (x.CreatedByEmployeeNavigation != null && x.CreatedByEmployeeNavigation.Nip != null && x.CreatedByEmployeeNavigation.Nip.Contains(keyword)));
-        }
+        Questions = result.Questions;
+        TotalItems = result.TotalItems;
+        TotalPages = result.TotalPages;
+        Page = result.Page;
+        PageSize = result.PageSize;
+    }
 
-        if (!string.IsNullOrWhiteSpace(CategoryKeyword))
-        {
-            var keyword = CategoryKeyword.Trim();
-            query = query.Where(x => x.Category != null && x.Category.Name.Contains(keyword));
-        }
-
-        if (!string.IsNullOrWhiteSpace(StatusKeyword))
-        {
-            var keyword = StatusKeyword.Trim();
-            query = query.Where(x => x.Status != null && x.Status.Name.Contains(keyword));
-        }
-
-        if (!string.IsNullOrWhiteSpace(QuestionKeyword))
-        {
-            var keyword = QuestionKeyword.Trim();
-            query = query.Where(x =>
-                x.QuestionText.Contains(keyword) ||
-                x.Title.Contains(keyword) ||
-                (x.QuestionNo != null && x.QuestionNo.Contains(keyword)));
-        }
-
-        if (CategoryId.HasValue)
-        {
-            query = query.Where(x => x.CategoryId == CategoryId.Value);
-        }
-
-        if (StatusId.HasValue)
-        {
-            query = query.Where(x => x.StatusId == StatusId.Value);
-        }
-
-        if (CreatedByEmployee.HasValue)
-        {
-            query = query.Where(x => x.CreatedByEmployee == CreatedByEmployee.Value);
-        }
-
-        if (CreatedDate.HasValue)
-        {
-            var date = CreatedDate.Value.Date;
-            var next = date.AddDays(1);
-            query = query.Where(x => x.CreatedAt >= date && x.CreatedAt < next);
-        }
-
-        if (DateFrom.HasValue)
-        {
-            var fromDate = DateFrom.Value.Date;
-            query = query.Where(x => x.CreatedAt >= fromDate);
-        }
-
-        if (DateTo.HasValue)
-        {
-            var toDateExclusive = DateTo.Value.Date.AddDays(1);
-            query = query.Where(x => x.CreatedAt < toDateExclusive);
-        }
-
-        TotalItems = await query.CountAsync();
-        TotalPages = Math.Max(1, (int)Math.Ceiling(TotalItems / (double)PageSize));
-
-        if (Page > TotalPages) Page = TotalPages;
-
-        Questions = await query
-            .OrderByDescending(x => x.CreatedAt)
-            .Skip((Page - 1) * PageSize)
-            .Take(PageSize)
-            .ToListAsync();
+    public sealed class AdminDashboardV2ApiResult
+    {
+        public List<Question>? Questions { get; set; }
+        public int TotalItems { get; set; }
+        public int TotalPages { get; set; }
+        public int Page { get; set; }
+        public int PageSize { get; set; }
     }
 
     private async Task LoadFilterOptionsAsync()

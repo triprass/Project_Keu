@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Project_Keu.Data;
 using Project_Keu.Models;
+using Project_Keu.Services.QuestionStatuses;
 
 namespace Project_Keu.Controllers;
 
@@ -9,20 +8,17 @@ namespace Project_Keu.Controllers;
 [Route("api/question-statuses")]
 public class QuestionStatusesController : ControllerBase
 {
-    private readonly AppDbContext _context;
+    private readonly QuestionStatusService _service;
 
-    public QuestionStatusesController(AppDbContext context)
+    public QuestionStatusesController(QuestionStatusService service)
     {
-        _context = context;
+        _service = service;
     }
 
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var items = await _context.QuestionStatuses
-            .AsNoTracking()
-            .OrderBy(x => x.Name)
-            .ToListAsync();
+        var items = await _service.GetAllAsync();
 
         return Ok(items);
     }
@@ -30,9 +26,7 @@ public class QuestionStatusesController : ControllerBase
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetById(Guid id)
     {
-        var item = await _context.QuestionStatuses
-            .AsNoTracking()
-            .FirstOrDefaultAsync(x => x.Id == id);
+        var item = await _service.GetByIdAsync(id);
 
         if (item is null)
             return NotFound(new { message = "Question status not found" });
@@ -43,39 +37,27 @@ public class QuestionStatusesController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] QuestionStatus request)
     {
-        request.Id = request.Id == Guid.Empty ? Guid.NewGuid() : request.Id;
+        var item = await _service.CreateAsync(request);
 
-        _context.QuestionStatuses.Add(request);
-        await _context.SaveChangesAsync();
-
-        return CreatedAtAction(nameof(GetById), new { id = request.Id }, request);
+        return CreatedAtAction(nameof(GetById), new { id = item.Id }, item);
     }
 
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> Update(Guid id, [FromBody] QuestionStatus request)
     {
-        var item = await _context.QuestionStatuses.FirstOrDefaultAsync(x => x.Id == id);
+        var item = await _service.UpdateAsync(id, request);
         if (item is null)
             return NotFound(new { message = "Question status not found" });
 
-        item.Code = request.Code;
-        item.Name = request.Name;
-        item.Color = request.Color;
-        item.IsActive = request.IsActive;
-
-        await _context.SaveChangesAsync();
         return Ok(item);
     }
 
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id)
     {
-        var item = await _context.QuestionStatuses.FirstOrDefaultAsync(x => x.Id == id);
-        if (item is null)
+        var deleted = await _service.DeleteAsync(id);
+        if (!deleted)
             return NotFound(new { message = "Question status not found" });
-
-        _context.QuestionStatuses.Remove(item);
-        await _context.SaveChangesAsync();
 
         return NoContent();
     }

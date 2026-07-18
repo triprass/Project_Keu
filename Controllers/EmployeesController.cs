@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Project_Keu.Data;
+using Project_Keu.Services.Employees;
 
 namespace Project_Keu.Controllers;
 
@@ -8,20 +7,17 @@ namespace Project_Keu.Controllers;
 [Route("api/[controller]")]
 public class EmployeesController : ControllerBase
 {
-    private readonly AppDbContext _context;
+    private readonly EmployeeService _service;
 
-    public EmployeesController(AppDbContext context)
+    public EmployeesController(EmployeeService service)
     {
-        _context = context;
+        _service = service;
     }
 
     [HttpGet]
     public async Task<IActionResult> GetEmployees()
     {
-        var employees = await _context.Employees
-            .AsNoTracking()
-            .OrderBy(e => e.FullName)
-            .ToListAsync();
+        var employees = await _service.GetAllAsync();
 
         return Ok(employees);
     }
@@ -29,9 +25,7 @@ public class EmployeesController : ControllerBase
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetEmployeeById(Guid id)
     {
-        var employee = await _context.Employees
-            .AsNoTracking()
-            .FirstOrDefaultAsync(e => e.Id == id);
+        var employee = await _service.GetByIdAsync(id);
 
         if (employee is null)
         {
@@ -49,16 +43,7 @@ public class EmployeesController : ControllerBase
             return BadRequest(new { message = "NIP is required" });
         }
 
-        var employee = await _context.Employees
-            .AsNoTracking()
-            .Where(e => e.Nip != null && e.Nip == nip)
-            .Select(e => new
-            {
-                e.Id,
-                e.Nip,
-                FullName = e.FullName
-            })
-            .FirstOrDefaultAsync();
+        var employee = await _service.GetByNipSummaryAsync(nip);
 
         if (employee is null)
         {

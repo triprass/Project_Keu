@@ -2,9 +2,8 @@
 @model Project_Keu.Pages.AdminDashboardV2Model
 @{
     ViewData["Title"] = "Admin Dashboard V2";
-    var startItem = Model.TotalItems == 0 ? 0 : ((Model.Page - 1) * Model.PageSize) + 1;
-    var endItem = Model.TotalItems == 0 ? 0 : Math.Min(Model.Page * Model.PageSize, Model.TotalItems);
 }
+
 @section Styles {
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -26,7 +25,7 @@
         <div class="inv2-page">
             <div class="inv2-shell">
                 <div class="inv2-toolbar">
-                    <form method="get" class="inv2-toolbar-left">
+                    <form method="get" class="inv2-toolbar-left" id="toolbarForm">
                         <div class="inv2-search-wrap">
                             <input type="text" name="Q" value="@Model.Q" placeholder="Cari question no, title, atau pertanyaan" />
                             <button type="submit" aria-label="Cari">⌕</button>
@@ -37,12 +36,13 @@
                         <input type="hidden" name="DateFrom" value="@Model.DateFrom?.ToString("yyyy-MM-dd")" />
                         <input type="hidden" name="DateTo" value="@Model.DateTo?.ToString("yyyy-MM-dd")" />
                         <input type="hidden" name="PageSize" value="@Model.PageSize" />
+                        <input type="hidden" name="Page" value="1" />
                     </form>
                     <a asp-page="/Index" class="inv2-link-action">↧ Unduh</a>
                 </div>
 
                 <div class="inv2-table-card">
-                    <form method="get">
+                    <form method="get" id="filterForm">
                         <div class="inv2-table-wrap">
                             <table class="inv2-table">
                                 <thead>
@@ -87,122 +87,33 @@
                                     </tr>
                                 </thead>
 
-                                <tbody>
-                                    @if (Model.Questions.Count == 0)
-                                    {
-                                        <tr>
-                                            <td colspan="8" class="inv2-empty">Data tidak ditemukan</td>
-                                        </tr>
-                                    }
-                                    else
-                                    {
-                                        @for (int i = 0; i < Model.Questions.Count; i++)
-                                        {
-                                            var q = Model.Questions[i];
-                                            var status = q.Status?.Name ?? "-";
-                                            var statusClass = status.ToLower().Contains("jawab") ? "inv2-badge-success" : "inv2-badge-warn";
-
-                                            <tr>
-                                                <td><input type="checkbox" /></td>
-                                                <td>
-                                                    <div class="inv2-primary">@((q.QuestionNo ?? "-"))</div>
-                                                    <div class="inv2-sub">#@q.Id.ToString()[..8]</div>
-                                                </td>
-                                                <td>@(q.CreatedByEmployeeNavigation?.FullName ?? "-")</td>
-                                                <td>@(q.Category?.Name ?? q.Title)</td>
-                                                <td><span class="inv2-badge @statusClass">@status</span></td>
-                                                <td class="inv2-question">@q.QuestionText</td>
-                                                <td>@q.CreatedAt.ToLocalTime().ToString("dd-MM-yyyy")</td>
-                                                <td class="inv2-kebab">⋮</td>
-                                            </tr>
-                                        }
-                                    }
+                                <tbody id="questionsTbody">
+                                    <tr>
+                                        <td colspan="8" class="inv2-empty">Memuat data...</td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
 
-                        <input type="hidden" name="PageSize" value="@Model.PageSize" />
+                        <input type="hidden" name="Page" id="pageInput" value="1" />
 
                         <div class="inv2-footer">
                             <div class="inv2-left">
                                 Jumlah Baris:
-                                <select name="PageSize" onchange="this.form.submit()">
-                                    @if (Model.PageSize == 10)
-                                    {
-                                        <option value="10" selected>10</option>
-                                    }
-                                    else
-                                    {
-                                        <option value="10">10</option>
-                                    }
-                                    @if (Model.PageSize == 20)
-                                    {
-                                        <option value="20" selected>20</option>
-                                    }
-                                    else
-                                    {
-                                        <option value="20">20</option>
-                                    }
-                                    @if (Model.PageSize == 50)
-                                    {
-                                        <option value="50" selected>50</option>
-                                    }
-                                    else
-                                    {
-                                        <option value="50">50</option>
-                                    }
+                                <select name="PageSize" id="pageSizeSelect" onchange="document.getElementById('pageInput').value = '1'; document.getElementById('filterForm').requestSubmit();">
+                                    @if (Model.PageSize == 10) { <option value="10" selected>10</option> } else { <option value="10">10</option> }
+                                    @if (Model.PageSize == 20) { <option value="20" selected>20</option> } else { <option value="20">20</option> }
+                                    @if (Model.PageSize == 50) { <option value="50" selected>50</option> } else { <option value="50">50</option> }
+                                    @if (Model.PageSize == 100) { <option value="100" selected>100</option> } else { <option value="100">100</option> }
                                 </select>
                             </div>
 
-                            <div class="inv2-pages">
-                                @{
-                                    var prevPage = Math.Max(1, Model.Page - 1);
-                                    var nextPage = Math.Min(Model.TotalPages, Model.Page + 1);
-                                }
-
-                                <a asp-page="/AdminDashboardV2"
-                                   asp-route-Q="@Model.Q"
-                                   asp-route-EmployeeKeyword="@Model.EmployeeKeyword"
-                                   asp-route-CategoryKeyword="@Model.CategoryKeyword"
-                                   asp-route-StatusKeyword="@Model.StatusKeyword"
-                                   asp-route-QuestionKeyword="@Model.QuestionKeyword"
-                                   asp-route-CreatedDate="@Model.CreatedDate?.ToString("yyyy-MM-dd")"
-                                   asp-route-PageSize="@Model.PageSize"
-                                   asp-route-Page="@prevPage">‹</a>
-
-                                @for (int p = 1; p <= Model.TotalPages; p++)
-                                {
-                                    if (p == Model.Page)
-                                    {
-                                        <span class="active">@p</span>
-                                    }
-                                    else if (p <= 3 || p > Model.TotalPages - 2 || Math.Abs(p - Model.Page) <= 1)
-                                    {
-                                        <a asp-page="/AdminDashboardV2"
-                                           asp-route-Q="@Model.Q"
-                                           asp-route-EmployeeKeyword="@Model.EmployeeKeyword"
-                                           asp-route-CategoryKeyword="@Model.CategoryKeyword"
-                                           asp-route-StatusKeyword="@Model.StatusKeyword"
-                                           asp-route-QuestionKeyword="@Model.QuestionKeyword"
-                                           asp-route-CreatedDate="@Model.CreatedDate?.ToString("yyyy-MM-dd")"
-                                           asp-route-PageSize="@Model.PageSize"
-                                           asp-route-Page="@p">@p</a>
-                                    }
-                                }
-
-                                <a asp-page="/AdminDashboardV2"
-                                   asp-route-Q="@Model.Q"
-                                   asp-route-EmployeeKeyword="@Model.EmployeeKeyword"
-                                   asp-route-CategoryKeyword="@Model.CategoryKeyword"
-                                   asp-route-StatusKeyword="@Model.StatusKeyword"
-                                   asp-route-QuestionKeyword="@Model.QuestionKeyword"
-                                   asp-route-CreatedDate="@Model.CreatedDate?.ToString("yyyy-MM-dd")"
-                                   asp-route-PageSize="@Model.PageSize"
-                                   asp-route-Page="@nextPage">›</a>
+                            <div class="inv2-pages" id="pagination">
+                                <!-- Render oleh JS -->
                             </div>
 
-                            <div class="inv2-right">
-                                Menampilkan @startItem hingga @endItem dari @Model.TotalItems entri
+                            <div class="inv2-right" id="tableRange">
+                                Menampilkan 0 hingga 0 dari 0 entri
                             </div>
                         </div>
                     </form>
@@ -210,6 +121,196 @@
             </div>
         </div>
     </section>
-@* 
-    <a asp-page="/AdminDashboard" class="badge-hexagon admin-badge-v2">QUESTIONS<br>SORTED BY<br>CATEGORY</a> *@
+
+    <script>
+        (function () {
+            const tbody = document.getElementById('questionsTbody');
+            const paginationEl = document.getElementById('pagination');
+            const tableRangeEl = document.getElementById('tableRange');
+
+            const filterForm = document.getElementById('filterForm');
+            const toolbarForm = document.getElementById('toolbarForm');
+            const pageInput = document.getElementById('pageInput');
+
+            function toQuery(params) {
+                const usp = new URLSearchParams();
+                for (const [k, v] of params.entries()) {
+                    if (v === null || v === undefined) continue;
+                    const s = String(v).trim();
+                    if (!s) continue;
+                    usp.set(k, s);
+                }
+                return usp.toString();
+            }
+
+            function formatDateToDDMMYYYY(dateStr) {
+                if (!dateStr) return '-';
+                const d = new Date(dateStr);
+                if (Number.isNaN(d.getTime())) return '-';
+                const dd = String(d.getDate()).padStart(2, '0');
+                const mm = String(d.getMonth() + 1).padStart(2, '0');
+                const yyyy = d.getFullYear();
+                return `${dd}-${mm}-${yyyy}`;
+            }
+
+            function renderRows(result) {
+                const questions = result?.questions ?? [];
+                if (!questions.length) {
+                    tbody.innerHTML = `<tr><td colspan="8" class="inv2-empty">Data tidak ditemukan</td></tr>`;
+                    return;
+                }
+
+                tbody.innerHTML = questions.map(q => {
+                    const status = (q?.status?.name ?? '-');
+                    const statusLower = String(status).toLowerCase();
+                    const statusClass = statusLower.includes('jawab') ? 'inv2-badge-success' : 'inv2-badge-warn';
+                    const questionNo = q?.questionNo ?? '-';
+                    const idShort = (q?.id && String(q.id).length >= 8) ? String(q.id).substring(0, 8) : '';
+                    const pegawai = q?.createdByEmployeeNavigation?.fullName ?? '-';
+                    const kategori = q?.category?.name ?? q?.title ?? '-';
+                    const pertanyaan = q?.questionText ?? '-';
+                    const tglDibuat = formatDateToDDMMYYYY(q?.createdAt);
+
+                    return `
+                        <tr>
+                            <td><input type="checkbox" /></td>
+                            <td>
+                                <div class="inv2-primary">${questionNo ?? '-'}</div>
+                                <div class="inv2-sub">${idShort ? '#' + idShort : ''}</div>
+                            </td>
+                            <td>${pegawai}</td>
+                            <td>${kategori}</td>
+                            <td><span class="inv2-badge ${statusClass}">${status}</span></td>
+                            <td class="inv2-question">${pertanyaan}</td>
+                            <td>${tglDibuat}</td>
+                            <td class="inv2-kebab">⋮</td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+
+            function renderPagination(result) {
+                const totalPages = result?.totalPages ?? 1;
+                const page = result?.page ?? 1;
+
+                const maxLinks = 2; // tampilkan +/- 2 sekitar halaman aktif
+                const start = Math.max(1, page - maxLinks);
+                const end = Math.min(totalPages, page + maxLinks);
+
+                let html = '';
+
+                function pageLink(label, targetPage, disabled) {
+                    if (disabled) return `<span class="active" style="opacity:.6; pointer-events:none;">${label}</span>`;
+                    return `<a href="#" data-page="${targetPage}">${label}</a>`;
+                }
+
+                html += pageLink('‹', Math.max(1, page - 1), page <= 1);
+
+                for (let p = start; p <= end; p++) {
+                    if (p === page) html += `<span class="active">${p}</span>`;
+                    else html += `<a href="#" data-page="${p}">${p}</a>`;
+                }
+
+                html += pageLink('›', Math.min(totalPages, page + 1), page >= totalPages);
+
+                paginationEl.innerHTML = html;
+            }
+
+            function renderRange(result) {
+                const totalItems = result?.totalItems ?? 0;
+                const page = result?.page ?? 1;
+                const pageSize = result?.pageSize ?? 10;
+
+                const startItem = totalItems === 0 ? 0 : ((page - 1) * pageSize) + 1;
+                const endItem = totalItems === 0 ? 0 : Math.min(page * pageSize, totalItems);
+
+                tableRangeEl.textContent = `Menampilkan ${startItem} hingga ${endItem} dari ${totalItems} entri`;
+            }
+
+            async function loadQuestions() {
+                const formData = new FormData(filterForm);
+
+                // Page & PageSize
+                formData.set('Page', pageInput.value || '1');
+
+                // Pass-through hidden values from toolbar (CategoryId/StatusId/CreatedByEmployee/DateFrom/DateTo/PageSize)
+                // We keep them present in filterForm only by reading from toolbarForm once.
+                // (Simpler: copy any fields that exist on toolbarForm but not filterForm)
+                const toolbarData = new FormData(toolbarForm);
+                for (const [k, v] of toolbarData.entries()) {
+                    if (!formData.has(k)) formData.set(k, v);
+                }
+
+                const query = toQuery(formData);
+                const url = `/api/admin-dashboard-v2/questions?${query}`;
+
+                tbody.innerHTML = `<tr><td colspan="8" class="inv2-empty">Memuat data...</td></tr>`;
+
+                try {
+                    const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
+                    if (!res.ok) throw new Error('HTTP ' + res.status);
+                    const result = await res.json();
+
+                    // API returns {questions,totalItems,totalPages,page,pageSize}
+                    renderRows({
+                        questions: result?.questions ?? [],
+                        totalItems: result?.totalItems ?? 0,
+                        totalPages: result?.totalPages ?? 1,
+                        page: result?.page ?? 1,
+                        pageSize: result?.pageSize ?? 10
+                    });
+
+                    renderPagination({
+                        totalPages: result?.totalPages ?? 1,
+                        page: result?.page ?? 1
+                    });
+
+                    renderRange({
+                        totalItems: result?.totalItems ?? 0,
+                        page: result?.page ?? 1,
+                        pageSize: result?.pageSize ?? 10
+                    });
+                } catch (e) {
+                    tbody.innerHTML = `<tr><td colspan="8" class="inv2-empty">Gagal memuat data</td></tr>`;
+                    paginationEl.innerHTML = '';
+                    tableRangeEl.textContent = 'Menampilkan 0 hingga 0 dari 0 entri';
+                    console.error(e);
+                }
+            }
+
+            // Intercept filter submit
+            filterForm.addEventListener('submit', function (ev) {
+                ev.preventDefault();
+                pageInput.value = '1';
+                loadQuestions();
+            });
+
+            // Intercept toolbar search submit
+            toolbarForm.addEventListener('submit', function (ev) {
+                ev.preventDefault();
+                // Sync Q from toolbar into filter input name="Q"
+                const qInput = filterForm.querySelector('input[name="Q"]');
+                const toolbarQ = toolbarForm.querySelector('input[name="Q"]');
+                if (qInput && toolbarQ) qInput.value = toolbarQ.value;
+
+                pageInput.value = '1';
+                loadQuestions();
+            });
+
+            // Pagination click
+            paginationEl.addEventListener('click', function (ev) {
+                const a = ev.target.closest('a[data-page]');
+                if (!a) return;
+                ev.preventDefault();
+                const p = a.getAttribute('data-page');
+                if (p) {
+                    pageInput.value = String(p);
+                    loadQuestions();
+                }
+            });
+
+            // Initial load
+            loadQuestions();
+        })();
+    </script>
 </div>

@@ -60,6 +60,24 @@
         <aside class="form-note-bubble">
             <p>Form pertanyaan disesuaikan untuk pengalaman web yang lebih rapi, modern, dan profesional.</p>
         </aside>
+
+        <section class="akun-card" aria-label="Ringkasan pertanyaan terbaru per kategori">
+            @if (Model.QuestionGroups.Any())
+            {
+                foreach (var group in Model.QuestionGroups)
+                {
+                    <div class="akun-card-group">
+                        <h3>@group.CategoryName</h3>
+                        <ul>
+                            @foreach (var question in group.Questions)
+                            {
+                                <li>@question.QuestionText</li>
+                            }
+                        </ul>
+                    </div>
+                }
+            }
+        </section>
     </div>
 
 

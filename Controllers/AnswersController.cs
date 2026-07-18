@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Project_Keu.Data;
 using Project_Keu.Models;
+using Project_Keu.Services.Answers;
 
 namespace Project_Keu.Controllers;
 
@@ -9,30 +8,17 @@ namespace Project_Keu.Controllers;
 [Route("api/answers")]
 public class AnswersController : ControllerBase
 {
-    private readonly AppDbContext _context;
+    private readonly AnswerService _service;
 
-    public AnswersController(AppDbContext context)
+    public AnswersController(AnswerService service)
     {
-        _context = context;
+        _service = service;
     }
 
     [HttpGet]
     public async Task<IActionResult> GetAll([FromQuery(Name = "question_id")] Guid? questionId = null)
     {
-        var query = _context.Answers
-            .AsNoTracking()
-            .Include(x => x.Question)
-            .Include(x => x.AnsweredByEmployee)
-            .AsQueryable();
-
-        if (questionId.HasValue)
-        {
-            query = query.Where(x => x.QuestionId == questionId.Value);
-        }
-
-        var items = await query
-            .OrderByDescending(x => x.AnsweredAt)
-            .ToListAsync();
+        var items = await _service.GetAllAsync(questionId);
 
         return Ok(items);
     }
@@ -40,11 +26,7 @@ public class AnswersController : ControllerBase
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetById(Guid id)
     {
-        var item = await _context.Answers
-            .AsNoTracking()
-            .Include(x => x.Question)
-            .Include(x => x.AnsweredByEmployee)
-            .FirstOrDefaultAsync(x => x.Id == id);
+        var item = await _service.GetByIdAsync(id);
 
         if (item is null)
             return NotFound(new { message = "Answer not found" });
@@ -55,52 +37,33 @@ public class AnswersController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] Answer request)
     {
-        var questionExists = await _context.Questions.AnyAsync(x => x.Id == request.QuestionId);
-        if (!questionExists) return BadRequest(new { message = "Invalid question_id" });
+        var result = await _service.CreateAsync(request);
+        if (!result.Success)
+            return BadRequest(new { message = result.ErrorMessage });
 
-        var employeeExists = await _context.Employees.AnyAsync(x => x.Id == request.AnsweredBy);
-        if (!employeeExists) return BadRequest(new { message = "Invalid answered_by" });
-
-        request.Id = request.Id == Guid.Empty ? Guid.NewGuid() : request.Id;
-        request.AnsweredAt ??= DateTime.UtcNow;
-
-        _context.Answers.Add(request);
-        await _context.SaveChangesAsync();
-
-        return CreatedAtAction(nameof(GetById), new { id = request.Id }, request);
+        return CreatedAtAction(nameof(GetById), new { id = result.Data!.Id }, result.Data);
     }
 
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> Update(Guid id, [FromBody] Answer request)
     {
-        var item = await _context.Answers.FirstOrDefaultAsync(x => x.Id == id);
-        if (item is null)
+        var result = await _service.UpdateAsync(id, request);
+
+        if (!result.Success && result.ErrorMessage == "Answer not found")
             return NotFound(new { message = "Answer not found" });
 
-        var questionExists = await _context.Questions.AnyAsync(x => x.Id == request.QuestionId);
-        if (!questionExists) return BadRequest(new { message = "Invalid question_id" });
+        if (!result.Success)
+            return BadRequest(new { message = result.ErrorMessage });
 
-        var employeeExists = await _context.Employees.AnyAsync(x => x.Id == request.AnsweredBy);
-        if (!employeeExists) return BadRequest(new { message = "Invalid answered_by" });
-
-        item.QuestionId = request.QuestionId;
-        item.AnswerText = request.AnswerText;
-        item.AnsweredBy = request.AnsweredBy;
-        item.AnsweredAt = request.AnsweredAt ?? item.AnsweredAt ?? DateTime.UtcNow;
-
-        await _context.SaveChangesAsync();
-        return Ok(item);
+        return Ok(result.Data);
     }
 
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id)
     {
-        var item = await _context.Answers.FirstOrDefaultAsync(x => x.Id == id);
-        if (item is null)
+        var deleted = await _service.DeleteAsync(id);
+        if (!deleted)
             return NotFound(new { message = "Answer not found" });
-
-        _context.Answers.Remove(item);
-        await _context.SaveChangesAsync();
 
         return NoContent();
     }
