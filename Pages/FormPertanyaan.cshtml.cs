@@ -23,7 +23,7 @@ public class FormPertanyaanModel : PageModel
         public List<Question> Questions { get; set; } = new();
     }
 
-    public List<Category> Categories { get; private set; } = new();
+    public List<QuestionCategory> Categories { get; private set; } = new();
     public List<QuestionGroupViewModel> QuestionGroups { get; private set; } = new();
 
     [BindProperty]
@@ -58,9 +58,9 @@ public class FormPertanyaanModel : PageModel
             return Page();
         }
 
-        var category = await _context.Categories
+        var category = await _context.QuestionCategories
             .AsNoTracking()
-            .FirstOrDefaultAsync(c => c.Id == CategoryId.Value && c.IsActive && c.DeletedAt == null);
+            .FirstOrDefaultAsync(c => c.Id == CategoryId.Value && c.IsActive);
 
         if (category is null)
         {
@@ -95,14 +95,14 @@ public class FormPertanyaanModel : PageModel
         _context.Questions.Add(question);
         await _context.SaveChangesAsync();
 
-        return RedirectToPage("/DetailPertanyaan");
+        return RedirectToPage("/Pertanyaan");
     }
 
     private async Task LoadCategoriesAsync()
     {
-        Categories = await _context.Categories
+        Categories = await _context.QuestionCategories
             .AsNoTracking()
-            .Where(x => x.IsActive && x.DeletedAt == null)
+            .Where(x => x.IsActive)
             .OrderBy(x => x.Name)
             .ToListAsync();
     }

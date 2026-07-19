@@ -13,12 +13,17 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddHttpClient();
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
+    });
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddScoped<AdminDashboardV2QueryService>();
+builder.Services.AddScoped<AdminDashboardV2ExportService>();
 builder.Services.AddScoped<CategoryService>();
 builder.Services.AddScoped<QuestionCategoryService>();
 builder.Services.AddScoped<QuestionStatusService>();

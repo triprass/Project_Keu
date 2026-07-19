@@ -1,4 +1,4 @@
-﻿@page
+@page
 @model Project_Keu.Pages.AdminDashboardV2Model
 @{
     ViewData["Title"] = "Admin Dashboard V2";
@@ -18,6 +18,15 @@
             <img src="~/images/logo.png" alt="Logo Tanya Subbag Keuangan" class="admin-logo">
         </a>
     </header>
+
+    <nav class="admin-navbar" aria-label="Menu Admin Dashboard V2">
+        <ul class="admin-navbar-menu">
+            <li class="admin-navbar-item active">
+                <a asp-page="/Pertanyaan" class="admin-navbar-link">Questions</a>
+            </li>
+        </ul>
+        <a asp-page="/Index" class="admin-navbar-back-button" aria-label="Kembali ke halaman utama">Back</a>
+    </nav>
 
     <section class="admin-table-wrap admin-table-wrap-v2">
         <div class="admin-table-title admin-table-title-v2">Daftar Pertanyaan Kategori Akun Belanja Perjalanan Dinas</div>
@@ -48,40 +57,46 @@
                                 <thead>
                                     <tr class="inv2-head-label">
                                         <th style="width:38px;"></th>
-                                        <th style="width:200px;">No. Question</th>
-                                        <th style="width:220px;">Pegawai</th>
-                                        <th style="width:140px;">Kategori</th>
-                                        <th style="width:140px;">Status</th>
-                                        <th style="width:520px;">Pertanyaan</th>
+                                        <th style="width:80px;">No</th>
                                         <th style="width:130px;">Tgl Dibuat</th>
+                                        <th style="width:560px;">Pertanyaan</th>
+                                        <th style="width:220px;">Pegawai</th>
+                                        <th style="width:140px;">Status</th>
                                         <th style="width:46px;"></th>
                                     </tr>
                                     <tr class="inv2-head-filter">
                                         <th><input type="checkbox" /></th>
-                                        <th>
-                                            <input type="text" name="Q" value="@Model.Q" placeholder="Cari no / judul / pertanyaan" />
-                                        </th>
-                                        <th>
-                                            <input type="text" name="EmployeeKeyword" value="@Model.EmployeeKeyword" placeholder="Cari pegawai / NIP" />
-                                        </th>
-                                        <th>
-                                            <input type="text" name="CategoryKeyword" value="@Model.CategoryKeyword" placeholder="Cari kategori" />
-                                        </th>
-                                        <th>
-                                            <input type="text" name="StatusKeyword" value="@Model.StatusKeyword" placeholder="Cari status" />
-                                        </th>
-                                        <th>
-                                            <input type="text" name="QuestionKeyword" value="@Model.QuestionKeyword" placeholder="Cari pertanyaan" />
-                                        </th>
+                                        <th></th>
                                         <th>
                                             <div class="inv2-date-grid">
                                                 <input type="date" name="CreatedDate" value="@Model.CreatedDate?.ToString("yyyy-MM-dd")" />
                                             </div>
                                         </th>
+                                        <th>
+                                            <input type="text" name="QuestionKeyword" value="@Model.QuestionKeyword" placeholder="Cari pertanyaan" />
+                                        </th>
+                                        <th>
+                                            <input type="text" name="EmployeeKeyword" value="@Model.EmployeeKeyword" placeholder="Cari pegawai / NIP" />
+                                        </th>
+                                        <th>
+                                            <select name="StatusId">
+                                                <option value="">Semua status</option>
+                                                @foreach (var status in Model.StatusOptions)
+                                                {
+                                                    if (Model.StatusId?.ToString() == status.Value)
+                                                    {
+                                                        <option value="@status.Value" selected>@status.Text</option>
+                                                    }
+                                                    else
+                                                    {
+                                                        <option value="@status.Value">@status.Text</option>
+                                                    }
+                                                }
+                                            </select>
+                                        </th>
                                         <th class="inv2-filter-actions">
                                             <div class="inv2-filter-btns">
                                                 <button type="submit" title="Terapkan filter">↻</button>
-                                                <a asp-page="/AdminDashboardV2" class="inv2-reset-btn" title="Reset filter">Reset</a>
                                             </div>
                                         </th>
                                     </tr>
@@ -156,33 +171,28 @@
             function renderRows(result) {
                 const questions = result?.questions ?? [];
                 if (!questions.length) {
-                    tbody.innerHTML = `<tr><td colspan="8" class="inv2-empty">Data tidak ditemukan</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="7" class="inv2-empty">Data tidak ditemukan</td></tr>`;
                     return;
                 }
 
-                tbody.innerHTML = questions.map(q => {
-                    const status = (q?.status?.name ?? '-');
+                tbody.innerHTML = questions.map((q, index) => {
+                    const status = (q?.statusName ?? '-');
                     const statusLower = String(status).toLowerCase();
                     const statusClass = statusLower.includes('jawab') ? 'inv2-badge-success' : 'inv2-badge-warn';
-                    const questionNo = q?.questionNo ?? '-';
-                    const idShort = (q?.id && String(q.id).length >= 8) ? String(q.id).substring(0, 8) : '';
-                    const pegawai = q?.createdByEmployeeNavigation?.fullName ?? '-';
-                    const kategori = q?.category?.name ?? q?.title ?? '-';
                     const pertanyaan = q?.questionText ?? '-';
                     const tglDibuat = formatDateToDDMMYYYY(q?.createdAt);
+                    const pegawai = q?.employeeName ?? '-';
 
                     return `
                         <tr>
                             <td><input type="checkbox" /></td>
-                            <td>
-                                <div class="inv2-primary">${questionNo ?? '-'}</div>
-                                <div class="inv2-sub">${idShort ? '#' + idShort : ''}</div>
+                            <td>${index + 1}</td>
+                            <td>${tglDibuat}</td>
+                            <td class="inv2-question">
+                                <a href="/DetailPertanyaan?id=${q?.id ?? ''}" class="inv2-question-link">${pertanyaan}</a>
                             </td>
                             <td>${pegawai}</td>
-                            <td>${kategori}</td>
                             <td><span class="inv2-badge ${statusClass}">${status}</span></td>
-                            <td class="inv2-question">${pertanyaan}</td>
-                            <td>${tglDibuat}</td>
                             <td class="inv2-kebab">⋮</td>
                         </tr>
                     `;
@@ -230,26 +240,50 @@
             async function loadQuestions() {
                 const formData = new FormData(filterForm);
 
+                // Keep static CategoryId from direct page query string (if provided)
+                const pageQuery = new URLSearchParams(window.location.search);
+                const staticCategoryId = pageQuery.get('CategoryId');
+                if (staticCategoryId) {
+                    formData.set('CategoryId', staticCategoryId);
+                }
+
                 // Page & PageSize
                 formData.set('Page', pageInput.value || '1');
 
-                // Pass-through hidden values from toolbar (CategoryId/StatusId/CreatedByEmployee/DateFrom/DateTo/PageSize)
-                // We keep them present in filterForm only by reading from toolbarForm once.
-                // (Simpler: copy any fields that exist on toolbarForm but not filterForm)
+                // Keep Q synced from toolbar search
+                const qInput = filterForm.querySelector('input[name="Q"]');
+                const toolbarQ = toolbarForm.querySelector('input[name="Q"]');
+                if (qInput && toolbarQ) {
+                    formData.set('Q', qInput.value || toolbarQ.value || '');
+                }
+
+                // Keep fixed hidden fields from toolbar (except CategoryId/StatusId so dropdown filter is not overwritten)
+                const hiddenKeys = ['CreatedByEmployee', 'DateFrom', 'DateTo', 'PageSize'];
                 const toolbarData = new FormData(toolbarForm);
                 for (const [k, v] of toolbarData.entries()) {
-                    if (!formData.has(k)) formData.set(k, v);
+                    if (hiddenKeys.includes(k)) {
+                        formData.set(k, v);
+                    }
                 }
 
                 const query = toQuery(formData);
                 const url = `/api/admin-dashboard-v2/questions?${query}`;
+                console.debug('Load URL:', url);
 
-                tbody.innerHTML = `<tr><td colspan="8" class="inv2-empty">Memuat data...</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="7" class="inv2-empty">Memuat data...</td></tr>`;
 
                 try {
-                    const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
-                    if (!res.ok) throw new Error('HTTP ' + res.status);
-                    const result = await res.json();
+                    const response = await fetch(url, {
+                        method: 'GET',
+                        cache: 'no-cache'
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}`);
+                    }
+
+                    const result = await response.json();
+                    console.log(result?.questions ?? []);
 
                     // API returns {questions,totalItems,totalPages,page,pageSize}
                     renderRows({
@@ -270,12 +304,22 @@
                         page: result?.page ?? 1,
                         pageSize: result?.pageSize ?? 10
                     });
-                } catch (e) {
-                    tbody.innerHTML = `<tr><td colspan="8" class="inv2-empty">Gagal memuat data</td></tr>`;
+                } catch (error) {
+                    tbody.innerHTML = `<tr><td colspan="7" class="inv2-empty">Gagal memuat data</td></tr>`;
                     paginationEl.innerHTML = '';
                     tableRangeEl.textContent = 'Menampilkan 0 hingga 0 dari 0 entri';
-                    console.error(e);
+                    console.error('Fetch error:', error);
                 }
+            }
+
+            // Trigger filtering immediately when dropdown status changed
+            const statusSelect = filterForm.querySelector('select[name="StatusId"]');
+
+            if (statusSelect) {
+                statusSelect.addEventListener('change', function () {
+                    pageInput.value = '1';
+                    loadQuestions();
+                });
             }
 
             // Intercept filter submit

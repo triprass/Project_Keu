@@ -18,6 +18,15 @@
         </a>
     </header>
 
+    <nav class="admin-navbar" aria-label="Menu Admin Dashboard">
+        <ul class="admin-navbar-menu">
+            <li class="admin-navbar-item active">
+                <a asp-page="/Pertanyaan" class="admin-navbar-link">Questions</a>
+            </li>
+        </ul>
+        <a asp-page="/Index" class="admin-navbar-back-button" aria-label="Kembali ke halaman utama">Back</a>
+    </nav>
+
     <section class="admin-table-wrap" aria-label="Daftar Pertanyaan Admin">
         <div class="admin-table-title">Daftar Pertanyaan</div>
 

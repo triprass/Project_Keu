@@ -1,9 +1,5 @@
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Project_Keu.Data;
-using Project_Keu.Models;
 
 namespace Project_Keu.Services.AdminDashboardV2;
 
@@ -33,9 +29,21 @@ public sealed class AdminDashboardV2QueryService
         public int PageSize { get; set; } = 10;
     }
 
+    public sealed class QuestionResponse
+    {
+        public Guid Id { get; set; }
+        public string QuestionNo { get; set; } = string.Empty;
+        public string Title { get; set; } = string.Empty;
+        public string QuestionText { get; set; } = string.Empty;
+        public string CategoryName { get; set; } = string.Empty;
+        public string StatusName { get; set; } = string.Empty;
+        public string EmployeeName { get; set; } = string.Empty;
+        public DateTime CreatedAt { get; set; }
+    }
+
     public sealed class QueryResult
     {
-        public List<Question> Questions { get; set; } = new();
+        public List<QuestionResponse> Questions { get; set; } = new();
         public int TotalItems { get; set; }
         public int TotalPages { get; set; }
         public int Page { get; set; }
@@ -50,9 +58,6 @@ public sealed class AdminDashboardV2QueryService
 
         var query = _context.Questions
             .AsNoTracking()
-            .Include(x => x.Category)
-            .Include(x => x.Status)
-            .Include(x => x.CreatedByEmployeeNavigation)
             .AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(request.Q))
@@ -68,20 +73,31 @@ public sealed class AdminDashboardV2QueryService
         {
             var keyword = request.EmployeeKeyword.Trim();
             query = query.Where(x =>
-                (x.CreatedByEmployeeNavigation != null && x.CreatedByEmployeeNavigation.FullName.Contains(keyword)) ||
-                (x.CreatedByEmployeeNavigation != null && x.CreatedByEmployeeNavigation.Nip != null && x.CreatedByEmployeeNavigation.Nip.Contains(keyword)));
+                x.CreatedByEmployeeNavigation != null &&
+                (
+                    (x.CreatedByEmployeeNavigation.FullName != null &&
+                     EF.Functions.Like(x.CreatedByEmployeeNavigation.FullName, $"%{keyword}%")) ||
+                    (x.CreatedByEmployeeNavigation.Nip != null &&
+                     EF.Functions.Like(x.CreatedByEmployeeNavigation.Nip, $"%{keyword}%"))
+                ));
         }
 
         if (!string.IsNullOrWhiteSpace(request.CategoryKeyword))
         {
             var keyword = request.CategoryKeyword.Trim();
-            query = query.Where(x => x.Category != null && x.Category.Name.Contains(keyword));
+            query = query.Where(x =>
+                x.Category != null &&
+                x.Category.Name != null &&
+                x.Category.Name.Contains(keyword));
         }
 
         if (!string.IsNullOrWhiteSpace(request.StatusKeyword))
         {
             var keyword = request.StatusKeyword.Trim();
-            query = query.Where(x => x.Status != null && x.Status.Name.Contains(keyword));
+            query = query.Where(x =>
+                x.Status != null &&
+                x.Status.Name != null &&
+                x.Status.Name.Contains(keyword));
         }
 
         if (!string.IsNullOrWhiteSpace(request.QuestionKeyword))
@@ -134,8 +150,19 @@ public sealed class AdminDashboardV2QueryService
 
         var questions = await query
             .OrderByDescending(x => x.CreatedAt)
-            //.Skip((request.Page - 1) * request.PageSize)
+            .Skip((request.Page - 1) * request.PageSize)
             .Take(request.PageSize)
+            .Select(x => new QuestionResponse
+            {
+                Id = x.Id,
+                QuestionNo = x.QuestionNo ?? string.Empty,
+                Title = x.Title ?? string.Empty,
+                QuestionText = x.QuestionText ?? string.Empty,
+                CategoryName = x.Category != null ? (x.Category.Name ?? string.Empty) : string.Empty,
+                StatusName = x.Status != null ? (x.Status.Name ?? string.Empty) : string.Empty,
+                EmployeeName = x.CreatedByEmployeeNavigation != null ? (x.CreatedByEmployeeNavigation.FullName ?? string.Empty) : string.Empty,
+                CreatedAt = x.CreatedAt
+            })
             .ToListAsync();
 
         return new QueryResult
@@ -146,139 +173,5 @@ public sealed class AdminDashboardV2QueryService
             Page = request.Page,
             PageSize = request.PageSize
         };
-    }
-}
-
-
-public class AdminDashboardV2Model : PageModel
-{
-    private readonly AppDbContext _context;
-    private readonly AdminDashboardV2QueryService _queryService;
-
-    public AdminDashboardV2Model(AppDbContext context, AdminDashboardV2QueryService queryService)
-    {
-        _context = context;
-        _queryService = queryService;
-    }
-
-    public List<Question> Questions { get; private set; } = new();
-
-    public List<SelectListItem> CategoryOptions { get; private set; } = new();
-    public List<SelectListItem> StatusOptions { get; private set; } = new();
-    public List<SelectListItem> EmployeeOptions { get; private set; } = new();
-
-    [BindProperty(SupportsGet = true)]
-    public string? Q { get; set; }
-
-    [BindProperty(SupportsGet = true)]
-    public string? EmployeeKeyword { get; set; }
-
-    [BindProperty(SupportsGet = true)]
-    public string? CategoryKeyword { get; set; }
-
-    [BindProperty(SupportsGet = true)]
-    public string? StatusKeyword { get; set; }
-
-    [BindProperty(SupportsGet = true)]
-    public string? QuestionKeyword { get; set; }
-
-    [BindProperty(SupportsGet = true)]
-    public DateTime? CreatedDate { get; set; }
-
-    [BindProperty(SupportsGet = true)]
-    public Guid? CategoryId { get; set; }
-
-    [BindProperty(SupportsGet = true)]
-    public Guid? StatusId { get; set; }
-
-    [BindProperty(SupportsGet = true)]
-    public Guid? CreatedByEmployee { get; set; }
-
-    [BindProperty(SupportsGet = true)]
-    public DateTime? DateFrom { get; set; }
-
-    [BindProperty(SupportsGet = true)]
-    public DateTime? DateTo { get; set; }
-
-    [BindProperty(SupportsGet = true)]
-    public int Page { get; set; } = 1;
-
-    [BindProperty(SupportsGet = true)]
-    public int PageSize { get; set; } = 10;
-
-    public int TotalItems { get; private set; }
-    public int TotalPages { get; private set; }
-
-    public async Task OnGetAsync()
-    {
-        await LoadFilterOptionsAsync();
-
-        var result = await _queryService.GetQuestionsAsync(new AdminDashboardV2QueryService.QueryRequest
-        {
-            Q = Q,
-            EmployeeKeyword = EmployeeKeyword,
-            CategoryKeyword = CategoryKeyword,
-            StatusKeyword = StatusKeyword,
-            QuestionKeyword = QuestionKeyword,
-            CreatedDate = CreatedDate,
-            CategoryId = CategoryId,
-            StatusId = StatusId,
-            CreatedByEmployee = CreatedByEmployee,
-            DateFrom = DateFrom,
-            DateTo = DateTo,
-            Page = Page,
-            PageSize = PageSize
-        });
-
-        Questions = result.Questions;
-        TotalItems = result.TotalItems;
-        TotalPages = result.TotalPages;
-        Page = result.Page;
-        PageSize = result.PageSize;
-    }
-
-    public sealed class AdminDashboardV2ApiResult
-    {
-        public List<Question>? Questions { get; set; }
-        public int TotalItems { get; set; }
-        public int TotalPages { get; set; }
-        public int Page { get; set; }
-        public int PageSize { get; set; }
-    }
-
-    private async Task LoadFilterOptionsAsync()
-    {
-        CategoryOptions = await _context.QuestionCategories
-            .AsNoTracking()
-            .Where(x => x.IsActive)
-            .OrderBy(x => x.Name)
-            .Select(x => new SelectListItem
-            {
-                Value = x.Id.ToString(),
-                Text = x.Name
-            })
-            .ToListAsync();
-
-        StatusOptions = await _context.QuestionStatuses
-            .AsNoTracking()
-            .Where(x => x.IsActive)
-            .OrderBy(x => x.Name)
-            .Select(x => new SelectListItem
-            {
-                Value = x.Id.ToString(),
-                Text = x.Name
-            })
-            .ToListAsync();
-
-        EmployeeOptions = await _context.Employees
-            .AsNoTracking()
-            .Where(x => x.IsActive)
-            .OrderBy(x => x.FullName)
-            .Select(x => new SelectListItem
-            {
-                Value = x.Id.ToString(),
-                Text = $"{x.FullName} ({x.Nip ?? "-"})"
-            })
-            .ToListAsync();
     }
 }

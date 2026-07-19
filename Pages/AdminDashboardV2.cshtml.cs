@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Project_Keu.Data;
-using Project_Keu.Models;
 using Project_Keu.Services.AdminDashboardV2;
 
 namespace Project_Keu.Pages;
@@ -19,7 +18,7 @@ public class AdminDashboardV2Model : PageModel
         _queryService = queryService;
     }
 
-    public List<Question> Questions { get; private set; } = new();
+    public List<AdminDashboardV2QueryService.QuestionResponse> Questions { get; private set; } = new();
 
     public List<SelectListItem> CategoryOptions { get; private set; } = new();
     public List<SelectListItem> StatusOptions { get; private set; } = new();
@@ -93,15 +92,6 @@ public class AdminDashboardV2Model : PageModel
         TotalPages = result.TotalPages;
         Page = result.Page;
         PageSize = result.PageSize;
-    }
-
-    public sealed class AdminDashboardV2ApiResult
-    {
-        public List<Question>? Questions { get; set; }
-        public int TotalItems { get; set; }
-        public int TotalPages { get; set; }
-        public int Page { get; set; }
-        public int PageSize { get; set; }
     }
 
     private async Task LoadFilterOptionsAsync()
