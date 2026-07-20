@@ -1,11 +1,13 @@
-# TODO - DetailPertanyaan dynamic question and answer from AdminDashboardV2 selection
+# TODO - Debug Reverse Proxy /Pertanyaan Error
 
-- [ ] Update `Pages/DetailPertanyaan.cshtml.cs`
-  - [ ] Load answer from `tb_t_answer` by `questionId`
-  - [ ] Set default answer text when null: "Belum ada respon dari PIC Keuangan"
-  - [ ] Set close/open status flag based on answer availability
-- [ ] Update `Pages/DetailPertanyaan.cshtml`
-  - [ ] Bind `.detail-answer-card` to dynamic answer text
-  - [ ] Change `topic-status-open` text to `CLOSE` when answer exists
-- [ ] Run build test (`dotnet build`)
-- [ ] Report final summary and verification status
+- [x] Read remaining relevant files:
+  - [x] Pages/FormPertanyaan.cshtml
+  - [x] Pages/FormPertanyaan.cshtml.cs
+  - [x] Controllers/StartController.cs
+  - [x] Pages/_ViewStart.cshtml
+  - [x] Pages/_ViewImports.cshtml
+- [ ] Patch Program.cs for forwarded headers and middleware order
+- [ ] Add proxy-related config in appsettings.json
+- [x] Update TODO progress after each completed step
+- [ ] Produce root-cause analysis with before/after code
+- [ ] Provide Traefik + Docker best-practice recommendations

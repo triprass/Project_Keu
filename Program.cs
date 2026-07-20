@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Project_Keu.Data;
 using Project_Keu.Services.AdminDashboardV2;
@@ -31,17 +32,48 @@ builder.Services.AddScoped<EmployeeService>();
 builder.Services.AddScoped<QuestionService>();
 builder.Services.AddScoped<AnswerService>();
 
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders =
+        ForwardedHeaders.XForwardedFor |
+        ForwardedHeaders.XForwardedProto |
+        ForwardedHeaders.XForwardedHost;
+
+    // Behind Docker + Traefik, proxy IP can be dynamic.
+    // Clear defaults so forwarded headers from trusted ingress are processed.
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
+
+    // Trust single reverse proxy hop by default (Traefik -> app).
+    options.ForwardLimit = 1;
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
+// IMPORTANT: apply forwarded headers before other middleware that reads scheme/host.
+app.UseForwardedHeaders();
+
+// Only redirect to HTTPS when request is not already HTTPS after forwarded headers.
+app.Use(async (context, next) =>
+{
+    if (!context.Request.IsHttps &&
+        !string.Equals(context.Request.Headers["X-Forwarded-Proto"], "https", StringComparison.OrdinalIgnoreCase))
+    {
+        var httpsUrl = $"https://{context.Request.Host}{context.Request.PathBase}{context.Request.Path}{context.Request.QueryString}";
+        context.Response.Redirect(httpsUrl, permanent: true);
+        return;
+    }
+
+    await next();
+});
+
 app.UseStaticFiles();
 
 app.UseRouting();
