@@ -39,12 +39,12 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
         ForwardedHeaders.XForwardedProto |
         ForwardedHeaders.XForwardedHost;
 
-    // Behind Docker + Traefik, proxy IP can be dynamic.
-    // Clear defaults so forwarded headers from trusted ingress are processed.
+    // In production behind Traefik (TLS terminated at Traefik), proxy IP may vary.
+    // Clear defaults so forwarded headers are processed from the trusted reverse proxy hop.
     options.KnownNetworks.Clear();
     options.KnownProxies.Clear();
 
-    // Trust single reverse proxy hop by default (Traefik -> app).
+    // Trust exactly 1 proxy hop (Traefik -> app).
     options.ForwardLimit = 1;
 });
 
@@ -57,23 +57,10 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-// IMPORTANT: apply forwarded headers before other middleware that reads scheme/host.
 app.UseForwardedHeaders();
 
-// Only redirect to HTTPS when request is not already HTTPS after forwarded headers.
-app.Use(async (context, next) =>
-{
-    if (!context.Request.IsHttps &&
-        !string.Equals(context.Request.Headers["X-Forwarded-Proto"], "https", StringComparison.OrdinalIgnoreCase))
-    {
-        var httpsUrl = $"https://{context.Request.Host}{context.Request.PathBase}{context.Request.Path}{context.Request.QueryString}";
-        context.Response.Redirect(httpsUrl, permanent: true);
-        return;
-    }
-
-    await next();
-});
-
+// Traefik already handles HTTPS termination at edge.
+// Avoid app-level HTTPS redirect in container behind reverse proxy to prevent route/scheme mismatch.
 app.UseStaticFiles();
 
 app.UseRouting();
