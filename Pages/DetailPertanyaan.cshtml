@@ -1,4 +1,5 @@
 @page
+@model Project_Keu.Pages.DetailPertanyaanModel
 @{
     ViewData["Title"] = "Detail Pertanyaan";
 }
@@ -9,32 +10,50 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap" rel="stylesheet">
 }
 
-<div class="detail-page">
+<div class="detail-page detail-question-v2">
     <div class="detail-page-overlay"></div>
 
-    <header class="detail-header">
-        <a asp-page="/Index" class="detail-logo-link" aria-label="Kembali ke halaman utama">
-            <img src="~/images/logo.png" alt="Logo Tanya Subbag Keuangan" class="detail-logo">
+    <header class="detail-header-v2">
+        <a asp-page="/Index" class="detail-logo-link detail-logo-link-v2" aria-label="Kembali ke halaman utama">
+            <img src="~/images/logo.png" alt="Logo Tanya Subbag Keuangan" class="detail-logo detail-logo-v2">
         </a>
 
-        <h1 class="detail-title">Q&amp;A</h1>
-
-        <div class="topic-status-wrap">
-            <span class="topic-status-label">Status Topik:</span>
-            <span class="topic-status-open">OPEN</span>
+        <div class="topic-status-wrap topic-status-wrap-v2">
+            <span class="topic-status-label topic-status-label-v2">Status Topik:</span>
+            <span class="topic-status-pill @(Model.IsClosed ? "topic-status-pill-close" : "topic-status-pill-open")">
+                @(Model.IsClosed ? "Close" : "Open")
+            </span>
         </div>
+
+        <a asp-page="/DetailJawaban" class="detail-back-button-v2">Kembali</a>
     </header>
 
-    <main class="detail-content">
-        <div class="q-icon" aria-hidden="true">Q</div>
+    <section class="detail-hero-v2" aria-label="QnA hero">
+        <img src="~/images/logoQA.png" alt="Q&A Session" class="detail-hero-logo-v2">
+        <h1 class="detail-title-v2">Q&amp;A Session</h1>
+        <p class="detail-subtitle-v2">Pusat Konsultasi Interaktif</p>
+    </section>
 
-        <section class="detail-question-card" aria-label="Pertanyaan">
-            <p>Apa saja Komponen penghasilan Pegawai Negeri Sipil (PNS)?</p>
+    <main class="detail-content-v2">
+        <aside class="detail-side-labels-v2" aria-hidden="true">
+            <div class="side-label-item-v2 side-label-q-v2">
+                <span class="side-label-badge-v2">Q</span>
+                <span class="side-label-text-v2">Tanya (Q)</span>
+            </div>
+            <div class="side-label-item-v2 side-label-a-v2">
+                <span class="side-label-badge-v2">A</span>
+                <span class="side-label-text-v2">Jawab (A)</span>
+            </div>
+        </aside>
+
+        <section class="detail-cards-v2">
+            <section class="detail-question-card-v2" aria-label="Pertanyaan">
+                <p>@(Model.SelectedQuestion?.QuestionText ?? "Pertanyaan tidak ditemukan.")</p>
+            </section>
+
+            <section class="detail-answer-card-v2" aria-label="Jawaban">
+                <p>@Model.AnswerTextDisplay</p>
+            </section>
         </section>
-
-        <div class="detail-answer-placeholder" aria-hidden="true">?</div>
     </main>
-
-    <a asp-page="/DetailJawaban" class="badge-hexagon">Q-DETAIL<br>WITH OPEN<br>STATUS PAGE<br>(USER POV)</a>
-
 </div>
