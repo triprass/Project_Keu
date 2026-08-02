@@ -42,7 +42,7 @@ jobs:
             set -e
 
             echo "Login GHCR..."
-            echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+            echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u "${{ secrets.GHCR_USERNAME }}" --password-stdin
 
             echo "Go to compose directory..."
             cd /docker/project_keu
