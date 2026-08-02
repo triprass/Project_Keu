@@ -3,74 +3,80 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Project_Keu.Data;
-using Project_Keu.Services.AdminDashboardV2;
+using Project_Keu.Services.PageQuestion;
 
 namespace Project_Keu.Pages;
 
-public class AdminDashboardV2Model : PageModel
+public class PageQuestionModel : PageModel
 {
     private readonly AppDbContext _context;
-    private readonly AdminDashboardV2QueryService _queryService;
+    private readonly PageQuestionQueryService _queryService;
 
-    public AdminDashboardV2Model(AppDbContext context, AdminDashboardV2QueryService queryService)
+    public PageQuestionModel(AppDbContext context, PageQuestionQueryService queryService)
     {
         _context = context;
         _queryService = queryService;
     }
 
-    public List<AdminDashboardV2QueryService.QuestionResponse> Questions { get; private set; } = new();
+    public List<PageQuestionQueryService.QuestionResponse> Questions { get; private set; } = new();
 
-    public List<SelectListItem> CategoryOptions { get; private set; } = new();
     public List<SelectListItem> StatusOptions { get; private set; } = new();
-    public List<SelectListItem> EmployeeOptions { get; private set; } = new();
 
-    [BindProperty(SupportsGet = true)]
+    // Semua filter di-bind dari form body (POST), bukan query string,
+    // supaya CategoryId dan parameter lain tidak terlihat di URL.
+    [BindProperty]
     public string? Q { get; set; }
 
-    [BindProperty(SupportsGet = true)]
+    [BindProperty]
     public string? EmployeeKeyword { get; set; }
 
-    [BindProperty(SupportsGet = true)]
+    [BindProperty]
     public string? CategoryKeyword { get; set; }
 
-    [BindProperty(SupportsGet = true)]
+    [BindProperty]
     public string? StatusKeyword { get; set; }
 
-    [BindProperty(SupportsGet = true)]
+    [BindProperty]
     public string? QuestionKeyword { get; set; }
 
-    [BindProperty(SupportsGet = true)]
+    [BindProperty]
     public DateTime? CreatedDate { get; set; }
 
-    [BindProperty(SupportsGet = true)]
+    [BindProperty]
     public Guid? CategoryId { get; set; }
 
-    [BindProperty(SupportsGet = true)]
+    [BindProperty]
     public Guid? StatusId { get; set; }
 
-    [BindProperty(SupportsGet = true)]
+    [BindProperty]
     public Guid? CreatedByEmployee { get; set; }
 
-    [BindProperty(SupportsGet = true)]
+    [BindProperty]
     public DateTime? DateFrom { get; set; }
 
-    [BindProperty(SupportsGet = true)]
+    [BindProperty]
     public DateTime? DateTo { get; set; }
 
-    [BindProperty(SupportsGet = true)]
-    public int Page { get; set; } = 1;
+    // Dinamai PageNumber agar tidak menutupi method PageModel.Page();
+    // nama field pada form tetap "Page".
+    [BindProperty(Name = "Page")]
+    public int PageNumber { get; set; } = 1;
 
-    [BindProperty(SupportsGet = true)]
+    [BindProperty]
     public int PageSize { get; set; } = 10;
 
     public int TotalItems { get; private set; }
     public int TotalPages { get; private set; }
 
-    public async Task OnGetAsync()
-    {
-        await LoadFilterOptionsAsync();
+    public Task OnGetAsync(CancellationToken cancellationToken) => LoadAsync(cancellationToken);
 
-        var result = await _queryService.GetQuestionsAsync(new AdminDashboardV2QueryService.QueryRequest
+    public Task OnPostAsync(CancellationToken cancellationToken) => LoadAsync(cancellationToken);
+
+    private async Task LoadAsync(CancellationToken cancellationToken)
+    {
+        await LoadFilterOptionsAsync(cancellationToken);
+
+        var result = await _queryService.GetQuestionsAsync(new PageQuestionQueryService.QueryRequest
         {
             Q = Q,
             EmployeeKeyword = EmployeeKeyword,
@@ -83,30 +89,21 @@ public class AdminDashboardV2Model : PageModel
             CreatedByEmployee = CreatedByEmployee,
             DateFrom = DateFrom,
             DateTo = DateTo,
-            Page = Page,
+            Page = PageNumber,
             PageSize = PageSize
-        });
+        }, cancellationToken);
 
         Questions = result.Questions;
         TotalItems = result.TotalItems;
         TotalPages = result.TotalPages;
-        Page = result.Page;
+        PageNumber = result.Page;
         PageSize = result.PageSize;
     }
 
-    private async Task LoadFilterOptionsAsync()
+    private async Task LoadFilterOptionsAsync(CancellationToken cancellationToken)
     {
-        CategoryOptions = await _context.QuestionCategories
-            .AsNoTracking()
-            .Where(x => x.IsActive)
-            .OrderBy(x => x.Name)
-            .Select(x => new SelectListItem
-            {
-                Value = x.Id.ToString(),
-                Text = x.Name
-            })
-            .ToListAsync();
-
+        // Hanya daftar status yang benar-benar dirender pada halaman. Query kategori
+        // dan seluruh tabel pegawai sebelumnya dijalankan setiap request tanpa dipakai.
         StatusOptions = await _context.QuestionStatuses
             .AsNoTracking()
             .Where(x => x.IsActive)
@@ -116,17 +113,6 @@ public class AdminDashboardV2Model : PageModel
                 Value = x.Id.ToString(),
                 Text = x.Name
             })
-            .ToListAsync();
-
-        EmployeeOptions = await _context.Employees
-            .AsNoTracking()
-            .Where(x => x.IsActive)
-            .OrderBy(x => x.FullName)
-            .Select(x => new SelectListItem
-            {
-                Value = x.Id.ToString(),
-                Text = $"{x.FullName} ({x.Nip ?? "-"})"
-            })
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
     }
 }

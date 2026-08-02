@@ -18,42 +18,121 @@
             <img src="~/images/logo.png" alt="Logo Tanya Subbag Keuangan" class="detail-logo detail-logo-v2">
         </a>
 
-        <div class="topic-status-wrap topic-status-wrap-v2">
-            <span class="topic-status-label topic-status-label-v2">Status Topik:</span>
-            <span class="topic-status-pill @(Model.IsClosed ? "topic-status-pill-close" : "topic-status-pill-open")">
-                @(Model.IsClosed ? "Close" : "Open")
-            </span>
-        </div>
+        <div class="detail-header-actions-v2">
+            <div class="topic-status-wrap topic-status-wrap-v2">
+                <span class="topic-status-label topic-status-label-v2">Status Topik</span>
+                <span class="topic-status-pill @(Model.IsClosed ? "topic-status-pill-close" : "topic-status-pill-open")">
+                    <span class="topic-status-dot" aria-hidden="true"></span>
+                    @(Model.IsClosed ? "Close" : "Open")
+                </span>
+            </div>
 
-        <a asp-page="/DetailJawaban" class="detail-back-button-v2">Kembali</a>
+            @* Kembali ke daftar pertanyaan (PageQuestion) lewat POST, membawa kategori
+               pertanyaan ini supaya mendarat di daftar yang sama dan id tidak tampil di URL. *@
+            <form method="post" asp-page="/PageQuestion" class="detail-back-form-v2">
+                @if (Model.CategoryId.HasValue)
+                {
+                    <input type="hidden" name="CategoryId" value="@Model.CategoryId" />
+                }
+                <input type="hidden" name="PageSize" value="10" />
+                <input type="hidden" name="Page" value="1" />
+
+                <button type="submit" class="app-btn app-btn-sm">
+                    <svg class="app-btn-icon" viewBox="0 0 24 24" width="16" height="16"
+                         fill="none" stroke="currentColor" stroke-width="2"
+                         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                        <line x1="19" y1="12" x2="5" y2="12" />
+                        <polyline points="12 19 5 12 12 5" />
+                    </svg>
+                    <span>Kembali</span>
+                </button>
+            </form>
+        </div>
     </header>
 
     <section class="detail-hero-v2" aria-label="QnA hero">
-        <img src="~/images/logoQA.png" alt="Q&A Session" class="detail-hero-logo-v2">
+        <img src="~/images/logoQA.png" alt="" class="detail-hero-logo-v2" aria-hidden="true">
         <h1 class="detail-title-v2">Q&amp;A Session</h1>
         <p class="detail-subtitle-v2">Pusat Konsultasi Interaktif</p>
     </section>
 
     <main class="detail-content-v2">
-        <aside class="detail-side-labels-v2" aria-hidden="true">
-            <div class="side-label-item-v2 side-label-q-v2">
-                <span class="side-label-badge-v2">Q</span>
-                <span class="side-label-text-v2">Tanya (Q)</span>
-            </div>
-            <div class="side-label-item-v2 side-label-a-v2">
-                <span class="side-label-badge-v2">A</span>
-                <span class="side-label-text-v2">Jawab (A)</span>
-            </div>
-        </aside>
+        @if (Model.SelectedQuestion is null)
+        {
+            <div class="qa-empty-v2">
+                <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor"
+                     stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="12" cy="12" r="9" />
+                    <path d="M9.5 9a2.5 2.5 0 1 1 3.4 2.3c-.6.25-.9.8-.9 1.45v.25" />
+                    <line x1="12" y1="16.5" x2="12" y2="16.5" />
+                </svg>
+                <h2>Pertanyaan tidak ditemukan</h2>
+                <p>Pertanyaan mungkin sudah dihapus, atau halaman ini dibuka tanpa melalui daftar pertanyaan.</p>
 
-        <section class="detail-cards-v2">
-            <section class="detail-question-card-v2" aria-label="Pertanyaan">
-                <p>@(Model.SelectedQuestion?.QuestionText ?? "Pertanyaan tidak ditemukan.")</p>
-            </section>
+                <form method="post" asp-page="/PageQuestion">
+                    <button type="submit" class="app-btn">Lihat daftar pertanyaan</button>
+                </form>
+            </div>
+        }
+        else
+        {
+            <article class="qa-card-v2 qa-card-question-v2" aria-label="Pertanyaan">
+                <header class="qa-card-head-v2">
+                    <img src="~/images/question.png" alt="Question"
+                         style="border-radius: 50%; width: 44px; height: 44px; object-fit: cover;">
+                    <div class="qa-card-heading-v2">
+                        <h2>Pertanyaan</h2>
+                        <p>Diajukan oleh @Model.EmployeeNameDisplay</p>
+                    </div>
 
-            <section class="detail-answer-card-v2" aria-label="Jawaban">
-                <p>@Model.AnswerTextDisplay</p>
-            </section>
-        </section>
+                    <time class="qa-card-date-v2">@Model.CreatedAtDisplay</time>
+                </header>
+
+                <div class="qa-meta-v2">
+                    <span class="qa-chip-v2">
+                        <span class="qa-chip-label-v2">No.</span>@Model.QuestionNoDisplay
+                    </span>
+                    <span class="qa-chip-v2">
+                        <span class="qa-chip-label-v2">Kategori</span>@Model.CategoryNameDisplay
+                    </span>
+                </div>
+
+                <div class="qa-card-body-v2">
+                    <p>@Model.SelectedQuestion.QuestionText</p>
+                </div>
+            </article>
+
+            <article class="qa-card-v2 qa-card-answer-v2 @(Model.IsClosed ? "" : "is-waiting")" aria-label="Jawaban">
+                <header class="qa-card-head-v2">
+                    <img src="~/images/answer.png"
+                         alt="Answer"
+                         style="border-radius: 50%; width: 44px; height: 44px; object-fit: cover;">
+                    <span class="qa-badge-v2 qa-badge-a-v2" aria-hidden="true">A</span>
+
+                    <div class="qa-card-heading-v2">
+                        <h2>Jawaban</h2>
+                        <p>
+                            @if (Model.IsClosed)
+                            {
+                                @($"Dijawab oleh {Model.AnsweredByDisplay}")
+                            }
+                            else
+                            {
+                                @:Menunggu tanggapan PIC Keuangan
+                            }
+                        </p>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.AnsweredAtDisplay))
+                    {
+                        <time class="qa-card-date-v2">@Model.AnsweredAtDisplay</time>
+                    }
+                </header>
+
+                <div class="qa-card-body-v2">
+                    <p>@Model.AnswerTextDisplay</p>
+                </div>
+            </article>
+        }
     </main>
 </div>

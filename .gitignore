@@ -361,3 +361,9 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+# Secrets / konfigurasi lokal - jangan pernah di-commit
+.env
+.env.*
+appsettings.*.Local.json
+appsettings.Local.json
+secrets.json

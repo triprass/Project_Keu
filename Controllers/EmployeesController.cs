@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
+using Project_Keu.Infrastructure;
 using Project_Keu.Services.Employees;
 
 namespace Project_Keu.Controllers;
@@ -14,7 +16,10 @@ public class EmployeesController : ControllerBase
         _service = service;
     }
 
+    // Mengembalikan seluruh kolom data pegawai (email, telepon, tanggal lahir),
+    // jadi tidak boleh terbuka untuk publik.
     [HttpGet]
+    [RequireApiKey]
     public async Task<IActionResult> GetEmployees()
     {
         var employees = await _service.GetAllAsync();
@@ -23,6 +28,7 @@ public class EmployeesController : ControllerBase
     }
 
     [HttpGet("{id:guid}")]
+    [RequireApiKey]
     public async Task<IActionResult> GetEmployeeById(Guid id)
     {
         var employee = await _service.GetByIdAsync(id);
@@ -35,7 +41,10 @@ public class EmployeesController : ControllerBase
         return Ok(employee);
     }
 
+    // Dipakai form pertanyaan untuk mengisi nama dari NIP, jadi tetap anonim,
+    // tetapi dibatasi rate limit agar tidak bisa dipakai menyapu data pegawai.
     [HttpGet("by-nip/{nip}")]
+    [EnableRateLimiting("employee-lookup")]
     public async Task<IActionResult> GetEmployeeByNip(string nip)
     {
         if (string.IsNullOrWhiteSpace(nip))

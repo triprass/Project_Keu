@@ -1,11 +1,15 @@
 using Microsoft.AspNetCore.Mvc;
+using Project_Keu.Infrastructure;
 using Project_Keu.Models;
 using Project_Keu.Services.Questions;
 
 namespace Project_Keu.Controllers;
 
+// Endpoint administratif: mengembalikan data pegawai lengkap dan mengizinkan
+// perubahan/penghapusan data, sehingga seluruhnya butuh kunci API.
 [ApiController]
 [Route("api/questions")]
+[RequireApiKey]
 public class QuestionsController : ControllerBase
 {
     private readonly QuestionService _service;

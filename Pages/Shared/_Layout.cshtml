@@ -14,11 +14,21 @@
         @RenderBody()
     </main>
 
+    @if (!(ViewData["HideFooter"] is true))
+    {
     <footer class="site-footer">
         <div class="site-footer-top">
             <div class="site-footer-column">
                 <h4>TENTANG PILAR KEUANGAN</h4>
                 <p>Pusat Informasi, Layanan Konsultasi, Asistensi, dan Referensi Keuangan</p>
+                <a asp-page="/Login" class="site-footer-admin-link">
+                    <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor"
+                         stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <rect x="3" y="11" width="18" height="11" rx="2" />
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                    </svg>
+                    Administration
+                </a>
             </div>
             <div class="site-footer-column">
                 <h4>KONTAK/ALAMAT</h4>
@@ -43,6 +53,7 @@
             <p>Badan Pemeriksa Keuangan Republik Indonesia</p>
         </div>
     </footer>
+    }
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

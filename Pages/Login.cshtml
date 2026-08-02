@@ -1,0 +1,197 @@
+@page
+@model Project_Keu.Pages.LoginModel
+@{
+    ViewData["Title"] = "Masuk Administrator";
+    // Footer disembunyikan: tautan menuju halaman ini justru ada di footer,
+    // dan halaman masuk sebaiknya bebas dari elemen navigasi lain.
+    ViewData["HideFooter"] = true;
+}
+
+@section Styles {
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+}
+
+<div class="login-page">
+    <div class="login-shell">
+
+        @* ---------- Panel identitas ---------- *@
+        <aside class="login-brand">
+            <div class="login-brand-glow" aria-hidden="true"></div>
+
+            @* Motif pilar: representasi visual "Pilar Keuangan", murni CSS. *@
+            <div class="login-pillars" aria-hidden="true">
+                <span></span><span></span><span></span><span></span><span></span><span></span>
+            </div>
+
+            <div class="login-brand-content">
+                <img src="~/images/logo.png" alt="Logo Pilar Keuangan" class="login-brand-logo">
+
+                <h1 class="login-brand-title">Pilar Keuangan</h1>
+                <p class="login-brand-tagline">
+                    Pusat Informasi, Layanan Konsultasi, Asistensi, dan Referensi Keuangan
+                </p>
+
+                <ul class="login-brand-points">
+                    <li>
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                             stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                        Kelola dan tanggapi pertanyaan pegawai
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                             stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                        Pantau status setiap topik konsultasi
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                             stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                        Unduh rekap pertanyaan dalam format Excel
+                    </li>
+                </ul>
+            </div>
+
+            <p class="login-brand-footnote">BPK Perwakilan Provinsi Papua</p>
+        </aside>
+
+        @* ---------- Panel formulir ---------- *@
+        <main class="login-panel">
+            <div class="login-panel-inner">
+                <span class="login-eyebrow">
+                    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor"
+                         stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <rect x="3" y="11" width="18" height="11" rx="2" />
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                    </svg>
+                    Area Administrator
+                </span>
+
+                <h2 class="login-title">Masuk ke akun Anda</h2>
+                <p class="login-subtitle">Halaman ini khusus untuk pengelola layanan Pilar Keuangan.</p>
+
+                @if (Model.IsSetupRequired)
+                {
+                    <div class="login-alert login-alert-info" role="status">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
+                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <circle cx="12" cy="12" r="9" />
+                            <line x1="12" y1="11" x2="12" y2="16" />
+                            <line x1="12" y1="7.5" x2="12" y2="7.5" />
+                        </svg>
+                        <div>
+                            <strong>Kredensial administrator belum disiapkan.</strong>
+                            Hubungi pengelola server untuk mengisi <code>Admin__Username</code> dan
+                            <code>Admin__PasswordHash</code>.
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <form method="post" class="login-form" novalidate>
+                        @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+                        {
+                            <div class="login-alert login-alert-error" role="alert">
+                                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
+                                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <circle cx="12" cy="12" r="9" />
+                                    <line x1="12" y1="7.5" x2="12" y2="12.5" />
+                                    <line x1="12" y1="16.5" x2="12" y2="16.5" />
+                                </svg>
+                                <div>@Model.ErrorMessage</div>
+                            </div>
+                        }
+
+                        <div class="login-field-group">
+                            <label for="usernameInput">Nama Pengguna</label>
+                            <div class="login-field">
+                                <svg class="login-field-icon" viewBox="0 0 24 24" width="17" height="17" fill="none"
+                                     stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                     stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                    <circle cx="12" cy="7" r="4" />
+                                </svg>
+                                <input id="usernameInput" asp-for="Username" type="text"
+                                       placeholder="Masukkan nama pengguna" autocomplete="username"
+                                       spellcheck="false" autofocus />
+                            </div>
+                            <span asp-validation-for="Username" class="login-field-error"></span>
+                        </div>
+
+                        <div class="login-field-group">
+                            <label for="passwordInput">Kata Sandi</label>
+                            <div class="login-field">
+                                <svg class="login-field-icon" viewBox="0 0 24 24" width="17" height="17" fill="none"
+                                     stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                     stroke-linejoin="round" aria-hidden="true">
+                                    <rect x="3" y="11" width="18" height="11" rx="2" />
+                                    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                                </svg>
+                                <input id="passwordInput" asp-for="Password" type="password"
+                                       placeholder="Masukkan kata sandi" autocomplete="current-password" />
+                                <button type="button" id="togglePassword" class="login-field-toggle"
+                                        aria-label="Tampilkan kata sandi" aria-pressed="false">
+                                    <svg class="login-eye-open" viewBox="0 0 24 24" width="17" height="17" fill="none"
+                                         stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                         stroke-linejoin="round" aria-hidden="true">
+                                        <path d="M1.8 12S5.4 5.5 12 5.5 22.2 12 22.2 12 18.6 18.5 12 18.5 1.8 12 1.8 12z" />
+                                        <circle cx="12" cy="12" r="3" />
+                                    </svg>
+                                    <svg class="login-eye-closed" viewBox="0 0 24 24" width="17" height="17" fill="none"
+                                         stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                         stroke-linejoin="round" aria-hidden="true">
+                                        <path d="M9.9 5.7A9.6 9.6 0 0 1 12 5.5c6.6 0 10.2 6.5 10.2 6.5a17 17 0 0 1-3.4 4.2" />
+                                        <path d="M6.3 6.7A17 17 0 0 0 1.8 12S5.4 18.5 12 18.5a9.8 9.8 0 0 0 4.3-.95" />
+                                        <line x1="3" y1="3" x2="21" y2="21" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <span asp-validation-for="Password" class="login-field-error"></span>
+                        </div>
+
+                        <label class="login-remember">
+                            <input asp-for="RememberMe" type="checkbox" />
+                            <span>Ingat saya di perangkat ini</span>
+                        </label>
+
+                        <button type="submit" class="app-btn login-submit">Masuk</button>
+                    </form>
+                }
+
+                <a asp-page="/Index" class="login-back-link">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor"
+                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <line x1="19" y1="12" x2="5" y2="12" />
+                        <polyline points="12 19 5 12 12 5" />
+                    </svg>
+                    Kembali ke halaman utama
+                </a>
+            </div>
+        </main>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (function () {
+            const toggle = document.getElementById('togglePassword');
+            const input = document.getElementById('passwordInput');
+            if (!toggle || !input) return;
+
+            toggle.addEventListener('click', function () {
+                const willShow = input.type === 'password';
+                input.type = willShow ? 'text' : 'password';
+                toggle.classList.toggle('is-visible', willShow);
+                toggle.setAttribute('aria-pressed', String(willShow));
+                toggle.setAttribute('aria-label', willShow ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi');
+                input.focus();
+            });
+        })();
+    </script>
+}

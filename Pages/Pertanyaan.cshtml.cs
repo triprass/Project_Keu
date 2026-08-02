@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Project_Keu.Data;
-using Project_Keu.Models;
 
 namespace Project_Keu.Pages;
 
@@ -30,17 +29,20 @@ public class PertanyaanModel : PageModel
 
     public List<QuestionGroupViewModel> QuestionGroups { get; private set; } = new();
 
-    public async Task OnGetAsync()
+    /// <summary>Jumlah pertanyaan yang ditampilkan per kartu kategori sebelum "Tampilkan lebih banyak".</summary>
+    private const int PreviewPerCategory = 5;
+
+    public Task OnGetAsync(CancellationToken cancellationToken)
     {
-        await LoadQuestionGroupsAsync();
+        return LoadQuestionGroupsAsync(cancellationToken);
     }
 
-    private async Task LoadQuestionGroupsAsync()
+    private async Task LoadQuestionGroupsAsync(CancellationToken cancellationToken)
     {
-        var groups = await _context.Questions
+        // Hanya beberapa pertanyaan terbaru per kategori yang dirender di kartu;
+        // sebelumnya seluruh isi tabel ditarik ke memori setiap halaman dibuka.
+        QuestionGroups = await _context.Questions
             .AsNoTracking()
-            .Include(q => q.Category)
-            .OrderByDescending(q => q.CreatedAt)
             .GroupBy(q => new
             {
                 q.CategoryId,
@@ -52,6 +54,7 @@ public class PertanyaanModel : PageModel
                 CategoryName = g.Key.CategoryName,
                 Questions = g
                     .OrderByDescending(x => x.CreatedAt)
+                    .Take(PreviewPerCategory)
                     .Select(x => new QuestionItemViewModel
                     {
                         Id = x.Id,
@@ -60,8 +63,6 @@ public class PertanyaanModel : PageModel
                     })
                     .ToList()
             })
-            .ToListAsync();
-
-        QuestionGroups = groups;
+            .ToListAsync(cancellationToken);
     }
 }

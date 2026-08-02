@@ -43,7 +43,12 @@
                             <li>@question.QuestionText</li>
                         }
                     </ul>
-                    <a asp-page="/AdminDashboardV2" asp-route-CategoryId="@group.CategoryId" asp-route-PageSize="10" asp-route-Page="1" class="">Tampilkan lebih banyak</a>
+                    <form method="post" asp-page="/PageQuestion" class="akun-card-more-form">
+                        <input type="hidden" name="CategoryId" value="@group.CategoryId" />
+                        <input type="hidden" name="PageSize" value="10" />
+                        <input type="hidden" name="Page" value="1" />
+                        <button type="submit" class="btn-lebih-banyak">Tampilkan lebih banyak</button>
+                    </form>
                 </article>
             }
         }
@@ -58,5 +63,5 @@
         }
     </section>
  
-    <a asp-page="/Index" class="badge-hexagon">Main Page</a>
+@*     <a asp-page="/Index" class="badge-hexagon">Main Page</a> *@
 </div>

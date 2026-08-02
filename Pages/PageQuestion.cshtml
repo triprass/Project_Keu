@@ -1,5 +1,5 @@
 @page
-@model Project_Keu.Pages.AdminDashboardV2Model
+@model Project_Keu.Pages.PageQuestionModel
 @{
     ViewData["Title"] = "Admin Dashboard V2";
 }
@@ -19,13 +19,18 @@
         </a>
     </header>
 
-    <nav class="admin-navbar" aria-label="Menu Admin Dashboard V2">
-        <ul class="admin-navbar-menu">
-            <li class="admin-navbar-item active">
-                <a asp-page="/Pertanyaan" class="admin-navbar-link">Questions</a>
-            </li>
-        </ul>
-        <a asp-page="/Index" class="admin-navbar-back-button" aria-label="Kembali ke halaman utama">Back</a>
+    @* Tautan "Questions" dihapus karena tujuannya sama dengan tombol Kembali.
+       Tombol memakai .app-btn agar seragam dengan tombol di halaman lain. *@
+    <nav class="admin-navbar" aria-label="Navigasi halaman daftar pertanyaan">
+        <a asp-page="/Pertanyaan" class="app-btn app-btn-sm" aria-label="Kembali ke daftar pertanyaan">
+            <svg class="app-btn-icon" viewBox="0 0 24 24" width="16" height="16"
+                 fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                <line x1="19" y1="12" x2="5" y2="12" />
+                <polyline points="12 19 5 12 12 5" />
+            </svg>
+            <span>Kembali</span>
+        </a>
     </nav>
 
     <section class="admin-table-wrap admin-table-wrap-v2">
@@ -34,24 +39,52 @@
         <div class="inv2-page">
             <div class="inv2-shell">
                 <div class="inv2-toolbar">
-                    <form method="get" class="inv2-toolbar-left" id="toolbarForm">
+                    @* Hanya kotak pencarian global. Nilai filter lain tidak lagi
+                       diduplikasi di sini; sumber tunggalnya adalah #filterForm. *@
+                    <form method="post" class="inv2-toolbar-left" id="toolbarForm">
                         <div class="inv2-search-wrap">
-                            <input type="text" name="Q" value="@Model.Q" placeholder="Cari question no, title, atau pertanyaan" />
+                            <input type="text" id="globalSearchInput" name="Q" value="@Model.Q"
+                                   placeholder="Cari question no, title, atau pertanyaan"
+                                   maxlength="200" autocomplete="off" aria-label="Pencarian global" />
                             <button type="submit" aria-label="Cari">⌕</button>
                         </div>
                         <input type="hidden" name="CategoryId" value="@Model.CategoryId" />
-                        <input type="hidden" name="StatusId" value="@Model.StatusId" />
-                        <input type="hidden" name="CreatedByEmployee" value="@Model.CreatedByEmployee" />
-                        <input type="hidden" name="DateFrom" value="@Model.DateFrom?.ToString("yyyy-MM-dd")" />
-                        <input type="hidden" name="DateTo" value="@Model.DateTo?.ToString("yyyy-MM-dd")" />
                         <input type="hidden" name="PageSize" value="@Model.PageSize" />
                         <input type="hidden" name="Page" value="1" />
                     </form>
-                    <a asp-page="/Index" class="inv2-link-action">↧ Unduh</a>
+                    @* Ikon SVG inline: tajam di layar beresolusi tinggi, mewarisi warna
+                       tombol, dan tidak melanggar CSP seperti icon font dari CDN. *@
+                    <button type="button" id="exportButton" class="inv2-export-btn"
+                            title="Unduh daftar pertanyaan sesuai filter (Excel)">
+                        <svg class="inv2-export-icon" viewBox="0 0 24 24" width="15" height="15"
+                             fill="none" stroke="currentColor" stroke-width="2"
+                             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                            <polyline points="7 10 12 15 17 10" />
+                            <line x1="12" y1="15" x2="12" y2="3" />
+                        </svg>
+                        <svg class="inv2-export-spinner" viewBox="0 0 24 24" width="15" height="15"
+                             fill="none" stroke="currentColor" stroke-width="2"
+                             stroke-linecap="round" aria-hidden="true" focusable="false">
+                            <circle cx="12" cy="12" r="9" opacity="0.25" />
+                            <path d="M21 12a9 9 0 0 0-9-9" />
+                        </svg>
+                        <span class="inv2-export-label">Unduh</span>
+                    </button>
                 </div>
 
+                @* Form terpisah untuk navigasi ke detail. Tombol pada setiap baris
+                   memakai atribut form="detailForm" karena form tidak boleh bersarang. *@
+                <form method="post" asp-page="/DetailPertanyaan" id="detailForm"></form>
+
                 <div class="inv2-table-card">
-                    <form method="get" id="filterForm">
+                    <form method="post" id="filterForm">
+                        @* CategoryId adalah konteks halaman (dari kartu kategori), bukan
+                           filter yang bisa diubah pengguna, jadi tidak ikut dibersihkan
+                           oleh tombol reset. *@
+                        <input type="hidden" name="CategoryId" value="@Model.CategoryId" />
+                        <input type="hidden" name="CreatedByEmployee" data-filter="hidden" value="@Model.CreatedByEmployee" />
+
                         <div class="inv2-table-wrap">
                             <table class="inv2-table">
                                 <thead>
@@ -65,21 +98,32 @@
                                         <th style="width:46px;"></th>
                                     </tr>
                                     <tr class="inv2-head-filter">
-                                        <th><input type="checkbox" /></th>
+                                        <th><input type="checkbox" aria-label="Pilih semua baris" /></th>
                                         <th></th>
                                         <th>
+                                            @* Rentang tanggal: DateFrom/DateTo sudah didukung server tetapi
+                                               sebelumnya hanya ada sebagai hidden field tanpa kontrol. *@
                                             <div class="inv2-date-grid">
-                                                <input type="date" name="CreatedDate" value="@Model.CreatedDate?.ToString("yyyy-MM-dd")" />
+                                                <input type="date" name="DateFrom" data-filter="instant"
+                                                       value="@Model.DateFrom?.ToString("yyyy-MM-dd")"
+                                                       aria-label="Tanggal dibuat dari" title="Dari tanggal" />
+                                                <input type="date" name="DateTo" data-filter="instant"
+                                                       value="@Model.DateTo?.ToString("yyyy-MM-dd")"
+                                                       aria-label="Tanggal dibuat sampai" title="Sampai tanggal" />
                                             </div>
                                         </th>
                                         <th>
-                                            <input type="text" name="QuestionKeyword" value="@Model.QuestionKeyword" placeholder="Cari pertanyaan" />
+                                            <input type="text" name="QuestionKeyword" data-filter="text"
+                                                   value="@Model.QuestionKeyword" placeholder="Cari pertanyaan"
+                                                   maxlength="200" autocomplete="off" aria-label="Filter pertanyaan" />
                                         </th>
                                         <th>
-                                            <input type="text" name="EmployeeKeyword" value="@Model.EmployeeKeyword" placeholder="Cari pegawai / NIP" />
+                                            <input type="text" name="EmployeeKeyword" data-filter="text"
+                                                   value="@Model.EmployeeKeyword" placeholder="Cari pegawai / NIP"
+                                                   maxlength="200" autocomplete="off" aria-label="Filter pegawai atau NIP" />
                                         </th>
                                         <th>
-                                            <select name="StatusId">
+                                            <select name="StatusId" data-filter="instant" aria-label="Filter status">
                                                 <option value="">Semua status</option>
                                                 @foreach (var status in Model.StatusOptions)
                                                 {
@@ -96,15 +140,15 @@
                                         </th>
                                         <th class="inv2-filter-actions">
                                             <div class="inv2-filter-btns">
-                                                <button type="submit" title="Terapkan filter">↻</button>
+                                                <button type="button" id="resetFilterButton" title="Bersihkan semua filter" aria-label="Bersihkan semua filter" disabled>✕</button>
                                             </div>
                                         </th>
                                     </tr>
                                 </thead>
 
-                                <tbody id="questionsTbody">
+                                <tbody id="questionsTbody" aria-busy="true" aria-live="polite">
                                     <tr>
-                                        <td colspan="8" class="inv2-empty">Memuat data...</td>
+                                        <td colspan="7" class="inv2-empty">Memuat data...</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -115,7 +159,7 @@
                         <div class="inv2-footer">
                             <div class="inv2-left">
                                 Jumlah Baris:
-                                <select name="PageSize" id="pageSizeSelect" onchange="document.getElementById('pageInput').value = '1'; document.getElementById('filterForm').requestSubmit();">
+                                <select name="PageSize" id="pageSizeSelect" aria-label="Jumlah baris per halaman">
                                     @if (Model.PageSize == 10) { <option value="10" selected>10</option> } else { <option value="10">10</option> }
                                     @if (Model.PageSize == 20) { <option value="20" selected>20</option> } else { <option value="20">20</option> }
                                     @if (Model.PageSize == 50) { <option value="50" selected>50</option> } else { <option value="50">50</option> }
@@ -146,53 +190,130 @@
             const filterForm = document.getElementById('filterForm');
             const toolbarForm = document.getElementById('toolbarForm');
             const pageInput = document.getElementById('pageInput');
+            const exportButton = document.getElementById('exportButton');
 
-            function toQuery(params) {
-                const usp = new URLSearchParams();
+            const globalSearchInput = document.getElementById('globalSearchInput');
+            const resetFilterButton = document.getElementById('resetFilterButton');
+            const pageSizeSelect = document.getElementById('pageSizeSelect');
+
+            const COLUMN_COUNT = 7;
+            const DEBOUNCE_MS = 400;
+
+            const numberFields = ['Page', 'PageSize'];
+            const dateFields = ['CreatedDate', 'DateFrom', 'DateTo'];
+
+            // Kontrol yang dianggap "filter" - dibersihkan tombol reset dan
+            // dipakai untuk menentukan apakah ada filter yang sedang aktif.
+            // CategoryId sengaja tidak diberi data-filter karena itu konteks halaman.
+            const filterControls = [
+                ...filterForm.querySelectorAll('[data-filter]'),
+                globalSearchInput
+            ].filter(Boolean);
+
+            let requestSequence = 0;
+            let inFlightController = null;
+            let debounceTimer = null;
+
+            // FormData -> object JSON (camelCase) untuk dikirim di request body,
+            // bukan sebagai query string.
+            function toPayload(params) {
+                const payload = {};
                 for (const [k, v] of params.entries()) {
+                    if (k === '__RequestVerificationToken') continue;
                     if (v === null || v === undefined) continue;
                     const s = String(v).trim();
                     if (!s) continue;
-                    usp.set(k, s);
+
+                    const key = k.charAt(0).toLowerCase() + k.slice(1);
+
+                    if (numberFields.includes(k)) {
+                        const n = Number(s);
+                        if (Number.isFinite(n)) payload[key] = n;
+                        continue;
+                    }
+
+                    if (dateFields.includes(k)) {
+                        // Input type=date memberi "yyyy-MM-dd"; server memperlakukannya
+                        // sebagai tanggal lokal, jadi tidak boleh diberi penanda UTC.
+                        if (!/^\d{4}-\d{2}-\d{2}$/.test(s)) continue;
+                        payload[key] = `${s}T00:00:00`;
+                        continue;
+                    }
+
+                    payload[key] = s;
                 }
-                return usp.toString();
+                return payload;
             }
 
-            function formatDateToDDMMYYYY(dateStr) {
-                if (!dateStr) return '-';
-                const d = new Date(dateStr);
-                if (Number.isNaN(d.getTime())) return '-';
-                const dd = String(d.getDate()).padStart(2, '0');
-                const mm = String(d.getMonth() + 1).padStart(2, '0');
-                const yyyy = d.getFullYear();
-                return `${dd}-${mm}-${yyyy}`;
+            // Isi pertanyaan & nama pegawai berasal dari input pengguna, jadi harus
+            // di-escape sebelum masuk innerHTML agar tidak bisa menyisipkan markup.
+            function escapeHtml(value) {
+                return String(value ?? '')
+                    .replaceAll('&', '&amp;')
+                    .replaceAll('<', '&lt;')
+                    .replaceAll('>', '&gt;')
+                    .replaceAll('"', '&quot;')
+                    .replaceAll("'", '&#39;');
+            }
+
+            function hasActiveFilter() {
+                return filterControls.some(el => String(el.value ?? '').trim() !== '');
+            }
+
+            function updateResetButton() {
+                const active = hasActiveFilter();
+                resetFilterButton.disabled = !active;
+                resetFilterButton.classList.toggle('is-active', active);
+            }
+
+            function showTableMessage(message, actionLabel) {
+                const action = actionLabel
+                    ? `<div class="inv2-empty-action"><button type="button" data-empty-action="1">${escapeHtml(actionLabel)}</button></div>`
+                    : '';
+
+                tbody.innerHTML =
+                    `<tr><td colspan="${COLUMN_COUNT}" class="inv2-empty">${escapeHtml(message)}${action}</td></tr>`;
             }
 
             function renderRows(result) {
                 const questions = result?.questions ?? [];
+
                 if (!questions.length) {
-                    tbody.innerHTML = `<tr><td colspan="7" class="inv2-empty">Data tidak ditemukan</td></tr>`;
+                    // Bedakan "memang belum ada isinya" dari "filter tidak menemukan apa pun",
+                    // supaya pengguna tahu apakah perlu mengubah filter.
+                    if ((result?.totalUnfiltered ?? 0) === 0) {
+                        showTableMessage('Belum ada pertanyaan pada daftar ini.');
+                    } else {
+                        showTableMessage('Tidak ada data yang cocok dengan filter.', 'Bersihkan filter');
+                    }
                     return;
                 }
 
-                tbody.innerHTML = questions.map((q, index) => {
-                    const status = (q?.statusName ?? '-');
-                    const statusLower = String(status).toLowerCase();
-                    const statusClass = statusLower.includes('jawab') ? 'inv2-badge-success' : 'inv2-badge-warn';
-                    const pertanyaan = q?.questionText ?? '-';
-                    const tglDibuat = formatDateToDDMMYYYY(q?.createdAt);
-                    const pegawai = q?.employeeName ?? '-';
+                const offset = ((result?.page ?? 1) - 1) * (result?.pageSize ?? 10);
 
+                tbody.innerHTML = questions.map((q, index) => {
+                    const status = q?.statusName ?? '-';
+                    const statusClass = String(status).toLowerCase().includes('jawab')
+                        ? 'inv2-badge-success'
+                        : 'inv2-badge-warn';
+                    const pertanyaan = escapeHtml(q?.questionText ?? '-');
+                    // Tanggal diformat server pada zona waktu aplikasi, sehingga sama
+                    // dengan tanggal yang dipakai filter apa pun zona waktu browser.
+                    const tglDibuat = escapeHtml(q?.createdAtDisplay || '-');
+                    const pegawai = escapeHtml(q?.employeeName ?? '-');
+
+                    // Id dikirim sebagai value tombol submit ke #detailForm (POST),
+                    // bukan sebagai query string.
                     return `
                         <tr>
-                            <td><input type="checkbox" /></td>
-                            <td>${index + 1}</td>
+                            <td><input type="checkbox" aria-label="Pilih baris ${offset + index + 1}" /></td>
+                            <td>${offset + index + 1}</td>
                             <td>${tglDibuat}</td>
                             <td class="inv2-question">
-                                <a href="/DetailPertanyaan?id=${q?.id ?? ''}" class="inv2-question-link">${pertanyaan}</a>
+                                <button type="submit" form="detailForm" name="Id" value="${escapeHtml(q?.id ?? '')}" class="inv2-question-link" title="${pertanyaan}">${pertanyaan}</button>
                             </td>
                             <td>${pegawai}</td>
-                            <td><span class="inv2-badge ${statusClass}">${status}</span></td>
+                            <td><span class="inv2-badge ${statusClass}">${escapeHtml(status)}</span></td>
                             <td class="inv2-kebab">⋮</td>
                         </tr>
                     `;
@@ -237,111 +358,208 @@
                 tableRangeEl.textContent = `Menampilkan ${startItem} hingga ${endItem} dari ${totalItems} entri`;
             }
 
-            async function loadQuestions() {
+            // Kumpulkan filter yang sedang aktif menjadi satu payload JSON.
+            // #filterForm adalah satu-satunya sumber nilai; kotak pencarian global
+            // ditambahkan di sini, tidak lagi diduplikasi sebagai hidden field.
+            function currentPayload() {
                 const formData = new FormData(filterForm);
 
-                // Keep static CategoryId from direct page query string (if provided)
-                const pageQuery = new URLSearchParams(window.location.search);
-                const staticCategoryId = pageQuery.get('CategoryId');
-                if (staticCategoryId) {
-                    formData.set('CategoryId', staticCategoryId);
-                }
-
-                // Page & PageSize
                 formData.set('Page', pageInput.value || '1');
 
-                // Keep Q synced from toolbar search
-                const qInput = filterForm.querySelector('input[name="Q"]');
-                const toolbarQ = toolbarForm.querySelector('input[name="Q"]');
-                if (qInput && toolbarQ) {
-                    formData.set('Q', qInput.value || toolbarQ.value || '');
+                if (globalSearchInput) {
+                    formData.set('Q', globalSearchInput.value || '');
                 }
 
-                // Keep fixed hidden fields from toolbar (except CategoryId/StatusId so dropdown filter is not overwritten)
-                const hiddenKeys = ['CreatedByEmployee', 'DateFrom', 'DateTo', 'PageSize'];
-                const toolbarData = new FormData(toolbarForm);
-                for (const [k, v] of toolbarData.entries()) {
-                    if (hiddenKeys.includes(k)) {
-                        formData.set(k, v);
-                    }
+                return toPayload(formData);
+            }
+
+            async function loadQuestions() {
+                // Permintaan sebelumnya dibatalkan, dan hasil yang datang terlambat
+                // diabaikan lewat nomor urut. Tanpa ini, mengetik cepat pada filter
+                // bisa membuat respons lama menimpa hasil terbaru.
+                if (inFlightController) {
+                    inFlightController.abort();
                 }
 
-                const query = toQuery(formData);
-                const url = `/api/admin-dashboard-v2/questions?${query}`;
-                console.debug('Load URL:', url);
+                const controller = new AbortController();
+                inFlightController = controller;
 
-                tbody.innerHTML = `<tr><td colspan="7" class="inv2-empty">Memuat data...</td></tr>`;
+                const sequence = ++requestSequence;
+                const payload = currentPayload();
+
+                tbody.setAttribute('aria-busy', 'true');
+                showTableMessage('Memuat data...');
 
                 try {
-                    const response = await fetch(url, {
-                        method: 'GET',
-                        cache: 'no-cache'
+                    const response = await fetch('/api/page-question/questions', {
+                        method: 'POST',
+                        cache: 'no-cache',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload),
+                        signal: controller.signal
                     });
 
                     if (!response.ok) {
-                        throw new Error(`HTTP ${response.status}`);
+                        throw Object.assign(new Error(`HTTP ${response.status}`), { status: response.status });
                     }
 
                     const result = await response.json();
-                    console.log(result?.questions ?? []);
 
-                    // API returns {questions,totalItems,totalPages,page,pageSize}
-                    renderRows({
-                        questions: result?.questions ?? [],
-                        totalItems: result?.totalItems ?? 0,
-                        totalPages: result?.totalPages ?? 1,
-                        page: result?.page ?? 1,
-                        pageSize: result?.pageSize ?? 10
-                    });
+                    if (sequence !== requestSequence) return;
 
-                    renderPagination({
-                        totalPages: result?.totalPages ?? 1,
-                        page: result?.page ?? 1
-                    });
+                    // Server bisa menjepit nomor halaman (mis. filter mengurangi jumlah
+                    // halaman), jadi nilai balikannya yang dipakai, bukan nilai kiriman.
+                    pageInput.value = String(result?.page ?? 1);
 
-                    renderRange({
-                        totalItems: result?.totalItems ?? 0,
-                        page: result?.page ?? 1,
-                        pageSize: result?.pageSize ?? 10
-                    });
+                    renderRows(result);
+                    renderPagination(result);
+                    renderRange(result);
                 } catch (error) {
-                    tbody.innerHTML = `<tr><td colspan="7" class="inv2-empty">Gagal memuat data</td></tr>`;
+                    if (error.name === 'AbortError' || sequence !== requestSequence) return;
+
+                    const message = error.status === 429
+                        ? 'Terlalu banyak permintaan. Tunggu sebentar lalu coba lagi.'
+                        : 'Gagal memuat data.';
+
+                    showTableMessage(message, 'Coba lagi');
                     paginationEl.innerHTML = '';
                     tableRangeEl.textContent = 'Menampilkan 0 hingga 0 dari 0 entri';
                     console.error('Fetch error:', error);
+                } finally {
+                    if (sequence === requestSequence) {
+                        tbody.setAttribute('aria-busy', 'false');
+                        inFlightController = null;
+                    }
                 }
             }
 
-            // Trigger filtering immediately when dropdown status changed
-            const statusSelect = filterForm.querySelector('select[name="StatusId"]');
+            // Setiap perubahan filter selalu kembali ke halaman 1; kalau tidak,
+            // pengguna bisa terdampar di halaman kosong setelah hasil menyusut.
+            function applyFilters() {
+                clearTimeout(debounceTimer);
+                pageInput.value = '1';
+                updateResetButton();
+                loadQuestions();
+            }
 
-            if (statusSelect) {
-                statusSelect.addEventListener('change', function () {
-                    pageInput.value = '1';
+            function scheduleApplyFilters() {
+                clearTimeout(debounceTimer);
+                updateResetButton();
+                debounceTimer = setTimeout(applyFilters, DEBOUNCE_MS);
+            }
+
+            function resetFilters() {
+                filterControls.forEach(el => { el.value = ''; });
+                applyFilters();
+            }
+
+            // Filter teks: ditunda supaya tidak mengirim satu permintaan per ketikan.
+            // Dropdown dan tanggal: langsung diterapkan.
+            filterForm.querySelectorAll('[data-filter="text"]').forEach(el => {
+                el.addEventListener('input', scheduleApplyFilters);
+            });
+
+            filterForm.querySelectorAll('[data-filter="instant"]').forEach(el => {
+                el.addEventListener('change', applyFilters);
+            });
+
+            if (globalSearchInput) {
+                globalSearchInput.addEventListener('input', scheduleApplyFilters);
+            }
+
+            // Enter menerapkan segera (tidak menunggu jeda), Escape mengosongkan kolom itu.
+            [...filterForm.querySelectorAll('[data-filter]'), globalSearchInput]
+                .filter(Boolean)
+                .forEach(el => {
+                    el.addEventListener('keydown', function (ev) {
+                        if (ev.key === 'Enter') {
+                            ev.preventDefault();
+                            applyFilters();
+                        } else if (ev.key === 'Escape' && el.value) {
+                            ev.preventDefault();
+                            el.value = '';
+                            applyFilters();
+                        }
+                    });
+                });
+
+            resetFilterButton.addEventListener('click', resetFilters);
+
+            pageSizeSelect.addEventListener('change', applyFilters);
+
+            // Tombol di dalam pesan tabel kosong / gagal.
+            tbody.addEventListener('click', function (ev) {
+                const button = ev.target.closest('button[data-empty-action]');
+                if (!button) return;
+
+                if (button.textContent.trim() === 'Bersihkan filter') {
+                    resetFilters();
+                } else {
                     loadQuestions();
+                }
+            });
+
+            // Kedua form dirender oleh JS; submit biasa dicegah agar halaman tidak reload.
+            filterForm.addEventListener('submit', function (ev) {
+                ev.preventDefault();
+                applyFilters();
+            });
+
+            toolbarForm.addEventListener('submit', function (ev) {
+                ev.preventDefault();
+                applyFilters();
+            });
+
+            // Unduh CSV memakai filter yang sedang aktif. Tombol ini sebelumnya
+            // hanya menautkan ke halaman utama dan tidak mengunduh apa pun.
+            if (exportButton) {
+                // Hanya label teks yang diganti; isi tombol tidak ditimpa supaya
+                // ikon SVG dan spinner di dalamnya tetap utuh.
+                const exportLabel = exportButton.querySelector('.inv2-export-label');
+
+                function setExportLoading(isLoading) {
+                    exportButton.disabled = isLoading;
+                    exportButton.classList.toggle('is-loading', isLoading);
+                    if (exportLabel) {
+                        exportLabel.textContent = isLoading ? 'Menyiapkan...' : 'Unduh';
+                    }
+                }
+
+                exportButton.addEventListener('click', async function () {
+                    setExportLoading(true);
+
+                    try {
+                        const response = await fetch('/api/page-question/questions/export', {
+                            method: 'POST',
+                            cache: 'no-cache',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(currentPayload())
+                        });
+
+                        if (!response.ok) {
+                            throw new Error(`HTTP ${response.status}`);
+                        }
+
+                        const blob = await response.blob();
+                        const objectUrl = URL.createObjectURL(blob);
+                        const link = document.createElement('a');
+
+                        link.href = objectUrl;
+                        link.download = `daftar-pertanyaan-${new Date().toISOString().slice(0, 10)}.xlsx`;
+                        document.body.appendChild(link);
+                        link.click();
+                        link.remove();
+                        URL.revokeObjectURL(objectUrl);
+                    } catch (error) {
+                        console.error('Export error:', error);
+                        alert('Gagal mengunduh data. Silakan coba lagi.');
+                    } finally {
+                        setExportLoading(false);
+                    }
                 });
             }
 
-            // Intercept filter submit
-            filterForm.addEventListener('submit', function (ev) {
-                ev.preventDefault();
-                pageInput.value = '1';
-                loadQuestions();
-            });
-
-            // Intercept toolbar search submit
-            toolbarForm.addEventListener('submit', function (ev) {
-                ev.preventDefault();
-                // Sync Q from toolbar into filter input name="Q"
-                const qInput = filterForm.querySelector('input[name="Q"]');
-                const toolbarQ = toolbarForm.querySelector('input[name="Q"]');
-                if (qInput && toolbarQ) qInput.value = toolbarQ.value;
-
-                pageInput.value = '1';
-                loadQuestions();
-            });
-
-            // Pagination click
+            // Pagination click - satu-satunya jalur yang TIDAK mereset halaman.
             paginationEl.addEventListener('click', function (ev) {
                 const a = ev.target.closest('a[data-page]');
                 if (!a) return;
@@ -354,6 +572,7 @@
             });
 
             // Initial load
+            updateResetButton();
             loadQuestions();
         })();
     </script>

@@ -186,27 +186,75 @@ main[role="main"] {
     filter: drop-shadow(0 8px 12px rgba(18, 40, 76, 0.18));
 }
 
+/* ---------------------------------------------------------------------------
+   Tombol aksi utama aplikasi. Satu sumber gaya: dipakai "Buat Pertanyaan" dan
+   tombol lain seperti "Kembali" supaya tampilannya seragam di semua halaman.
+   --------------------------------------------------------------------------- */
+.app-btn,
 .btn-buat-pertanyaan {
-    border: 1px solid rgba(18, 40, 76, 0.08) !important;
-    color: #ffffff;
-    background: linear-gradient(135deg, #0dcaf0, #ffc1078c);
-    border-radius: 14px;
-    padding: 12px 20px;
-    font-size: 1rem;
-    font-weight: 700;
-    box-shadow: 0 10px 24px rgba(79, 59, 245, 0.3);
-    cursor: pointer;
-    transition: all 0.2s ease;
-    text-decoration: none;
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    gap: 8px;
+    border: 1px solid rgba(18, 40, 76, 0.08);
+    border-radius: 14px;
+    padding: 12px 20px;
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1;
+    white-space: nowrap;
+    color: #ffffff;
+    background: linear-gradient(135deg, #0dcaf0, #ffc1078c);
+    box-shadow: 0 10px 24px rgba(79, 59, 245, 0.3);
+    cursor: pointer;
+    text-decoration: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
 }
 
+    .app-btn:hover,
     .btn-buat-pertanyaan:hover {
         transform: translateY(-2px);
         box-shadow: 0 14px 28px rgba(79, 59, 245, 0.36);
+        filter: brightness(1.03);
+        color: #ffffff;
     }
+
+    .app-btn:active,
+    .btn-buat-pertanyaan:active {
+        transform: translateY(0);
+        box-shadow: 0 6px 14px rgba(79, 59, 245, 0.24);
+    }
+
+    /* Cincin fokus hanya untuk navigasi keyboard, tidak muncul saat diklik mouse. */
+    .app-btn:focus-visible,
+    .btn-buat-pertanyaan:focus-visible {
+        outline: 2px solid #0a69cf;
+        outline-offset: 3px;
+    }
+
+.app-btn-icon {
+    flex: none;
+    transition: transform 0.2s ease;
+}
+
+.app-btn:hover .app-btn-icon {
+    transform: translateX(-2px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .app-btn,
+    .btn-buat-pertanyaan,
+    .app-btn-icon {
+        transition: none;
+    }
+
+        .app-btn:hover,
+        .btn-buat-pertanyaan:hover,
+        .app-btn:hover .app-btn-icon {
+            transform: none;
+        }
+}
 
 .question-search-wrap {
     display: flex;
@@ -251,8 +299,6 @@ main[role="main"] {
 }
 
 .akun-grid {
-    max-width: 980px;
-    margin: 0 12%;
     display: grid;
     grid-template-columns: repeat(3, minmax(180px, 1fr));
     gap: 24px;
@@ -274,7 +320,7 @@ main[role="main"] {
 
     .akun-card h2 {
         margin: 0 0 14px;
-        font-size: 1.25rem;
+        font-size: 1rem;
         line-height: 1;
         font-weight: 800;
         color: #0f2444;
@@ -287,7 +333,7 @@ main[role="main"] {
 
     .akun-card li {
         margin-bottom: 6px;
-        font-size: 1rem;
+        font-size: 12px;
         font-weight: 500;
         color: #1d355c;
     }
@@ -327,9 +373,14 @@ main[role="main"] {
     display: block;
     width: fit-content;
     margin: 8px auto 0;
+    padding: 0;
+    background: none;
+    border: 0;
+    cursor: pointer;
+    font-family: inherit;
     text-decoration: none;
     color: #0088ff;
-    font-size: 2.9rem;
+    font-size: 12px;
     font-weight: 700;
     line-height: 1;
 }
@@ -988,12 +1039,22 @@ main[role="main"] {
 }
 
 .detail-header-v2 {
-    max-width: 1240px;
+    max-width: 1080px;
     margin: 0 auto;
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    align-items: start;
-    gap: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.detail-header-actions-v2 {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.detail-back-form-v2 {
+    margin: 0;
 }
 
 .detail-logo-link-v2 {
@@ -1007,309 +1068,337 @@ main[role="main"] {
 }
 
 .topic-status-wrap-v2 {
-    justify-self: start;
-    margin-top: 96px;
-    gap: 10px;
     display: inline-flex;
     align-items: center;
+    gap: 10px;
 }
 
 .topic-status-label-v2 {
-    font-size: 1.15rem;
-    font-weight: 800;
-    color: #091f43;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #5b7796;
 }
 
+/* Pil status: latar lembut + titik warna, bukan blok warna penuh, supaya
+   tidak bersaing dengan tombol aksi di sebelahnya. */
 .topic-status-pill {
     display: inline-flex;
     align-items: center;
-    justify-content: center;
-    min-width: 64px;
-    min-height: 34px;
+    gap: 7px;
+    min-height: 30px;
     border-radius: 999px;
-    padding: 6px 14px;
-    font-size: 1rem;
-    font-weight: 800;
-    letter-spacing: 0.2px;
-    color: #ffffff;
-    box-shadow: 0 8px 14px rgba(16, 57, 101, 0.2);
+    padding: 5px 14px;
+    font-size: 0.86rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    border: 1px solid transparent;
+}
+
+.topic-status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: currentColor;
+    flex: none;
 }
 
 .topic-status-pill-open {
-    background: #a7aeb7;
+    color: #b06a12;
+    background: #fff5e6;
+    border-color: #f0cf9d;
 }
 
 .topic-status-pill-close {
-    background: #0b9a5f;
+    color: #0b7a4c;
+    background: #e8f8f0;
+    border-color: #a6dcc2;
 }
 
-.detail-back-button-v2 {
-    margin-top: 16px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 130px;
-    min-height: 36px;
-    border-radius: 12px;
-    padding: 8px 14px;
-    text-decoration: none;
-    font-size: 1rem;
-    font-weight: 800;
-    color: #ffffff;
-    background: linear-gradient(135deg, #0652a7, #0a69cf);
-    border: 1px solid rgba(9, 67, 131, 0.55);
-    box-shadow: 0 10px 18px rgba(9, 63, 122, 0.25);
-    transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+/* Varian .app-btn yang sedikit dirapatkan, untuk tombol di dalam header/navbar.
+   Dipakai tombol "Kembali" pada halaman detail maupun daftar pertanyaan. */
+.app-btn-sm {
+    padding: 11px 20px;
+    font-size: 0.95rem;
 }
-
-    .detail-back-button-v2:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 12px 22px rgba(9, 63, 122, 0.3);
-        filter: brightness(1.05);
-    }
 
 .detail-hero-v2 {
-    max-width: 1240px;
-    margin: 8px auto 22px;
+    max-width: 1080px;
+    margin: 18px auto 26px;
     text-align: center;
 }
 
 .detail-hero-logo-v2 {
-    width: 10%;
-    border-radius:50%
-    max-width: 100%;
-    filter: drop-shadow(0 10px 14px rgba(13, 71, 135, 0.2));
+    width: 76px;
+    height: 76px;
+    object-fit: cover;
+    border-radius: 50%;
+    filter: drop-shadow(0 10px 18px rgba(13, 71, 135, 0.22));
 }
 
 .detail-title-v2 {
-    margin: 6px 0 2px;
-    font-size: 3rem;
-    font-weight: 900;
+    margin: 12px 0 4px;
+    font-size: 2rem;
+    font-weight: 800;
     color: #0a2f59;
-    letter-spacing: 0.2px;
-    line-height: 1.05;
+    letter-spacing: -0.01em;
+    line-height: 1.1;
 }
 
 .detail-subtitle-v2 {
     margin: 0;
-    font-size: 1.18rem;
-    color: #143f73;
+    font-size: 0.95rem;
+    color: #5b7796;
     font-weight: 600;
 }
 
 .detail-content-v2 {
-    max-width: 1240px;
+    max-width: 1080px;
     margin: 0 auto;
-    display: grid;
-    grid-template-columns: 170px 1fr;
-    gap: 24px;
-    align-items: start;
-}
-
-.detail-side-labels-v2 {
     display: flex;
     flex-direction: column;
-    gap: 26px;
-    padding-top: 32px;
+    gap: 18px;
 }
 
-.side-label-item-v2 {
+/* ---------------------------------------------------------------------------
+   Kartu Q&A. Latar putih dengan aksen warna di tepi kiri: teks panjang jauh
+   lebih terbaca dibanding blok warna pekat, dan strukturnya (kepala, metadata,
+   isi) membuat halaman terbaca seperti berkas resmi.
+   --------------------------------------------------------------------------- */
+.qa-card-v2 {
+    position: relative;
+    background: #ffffff;
+    border: 1px solid #dbe6f2;
+    border-radius: 16px;
+    padding: 22px 26px 24px 30px;
+    box-shadow: 0 12px 30px rgba(10, 54, 100, 0.09);
+    overflow: hidden;
+}
+
+    .qa-card-v2::before {
+        content: "";
+        position: absolute;
+        inset: 0 auto 0 0;
+        width: 4px;
+    }
+
+.qa-card-question-v2::before {
+    background: linear-gradient(180deg, #0c5b9d, #0b7ecf);
+}
+
+.qa-card-answer-v2::before {
+    background: linear-gradient(180deg, #0aa0f1, #23c4b8);
+}
+
+.qa-card-answer-v2.is-waiting::before {
+    background: linear-gradient(180deg, #d7e0ea, #c3cfdc);
+}
+
+.qa-card-head-v2 {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    gap: 10px;
+    gap: 14px;
 }
 
-.side-label-badge-v2 {
-    width: 72px;
-    height: 72px;
-    border-radius: 20px;
+.qa-badge-v2 {
+    flex: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-size: 2.6rem;
-    font-weight: 900;
-    color: #ffffff;
-    box-shadow: 0 14px 24px rgba(14, 57, 102, 0.24);
-}
-
-.side-label-q-v2 .side-label-badge-v2 {
-    background: linear-gradient(140deg, #0c5b9d, #0b7ecf);
-}
-
-.side-label-a-v2 .side-label-badge-v2 {
-    background: linear-gradient(140deg, #1064ad, #0aa0f1);
-}
-
-.side-label-text-v2 {
-    font-size: 18px;
+    font-size: 1.15rem;
     font-weight: 800;
-    color: #102f55;
-    line-height: 1;
+    color: #ffffff;
 }
 
-.detail-cards-v2 {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    padding-top: 18px;
+.qa-badge-q-v2 {
+    background: linear-gradient(140deg, #0c5b9d, #0b7ecf);
+    box-shadow: 0 6px 14px rgba(12, 91, 157, 0.28);
 }
 
-.detail-question-card-v2,
-.detail-answer-card-v2 {
-    border-radius: 0;
-    padding: 26px 30px;
-    box-shadow: 0 16px 30px rgba(10, 54, 100, 0.16);
+.qa-badge-a-v2 {
+    background: linear-gradient(140deg, #0aa0f1, #23c4b8);
+    box-shadow: 0 6px 14px rgba(10, 160, 241, 0.26);
 }
 
-.detail-question-card-v2 {
-    border-radius: 20px;
-    background: #075682;
-    min-height: 120px;
+.is-waiting .qa-badge-a-v2 {
+    background: linear-gradient(140deg, #b9c6d5, #9fb0c3);
+    box-shadow: none;
 }
 
-.detail-answer-card-v2 {
-    border-radius: 20px;
-    background: #0a79cf;
-    min-height: 120px;
+.qa-card-heading-v2 {
+    flex: 1;
+    min-width: 0;
 }
 
-    .detail-question-card-v2 p,
-    .detail-answer-card-v2 p {
+    .qa-card-heading-v2 h2 {
         margin: 0;
-        text-align: center;
-        color: #ffffff;
-        font-size: 14px;
-        font-weight: 700;
-        line-height: 1.24;
-        letter-spacing: 0.2px;
+        font-size: 1.05rem;
+        font-weight: 800;
+        color: #0f2a4d;
+        line-height: 1.2;
     }
 
-    .detail-answer-card-v2 p {
-        font-style: italic;
-        color: #e8f5ff;
+    .qa-card-heading-v2 p {
+        margin: 3px 0 0;
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: #6b849e;
     }
 
-@media (max-width: 1200px) {
-    .detail-title-v2 {
-        font-size: 2.4rem;
-    }
-
-    .detail-subtitle-v2 {
-        font-size: 1.02rem;
-    }
-
-    .detail-content-v2 {
-        grid-template-columns: 134px 1fr;
-        gap: 16px;
-    }
-
-    .side-label-badge-v2 {
-        width: 78px;
-        height: 78px;
-        font-size: 2.2rem;
-    }
-
-    .side-label-text-v2 {
-        font-size: 1.4rem;
-    }
-
-    .detail-question-card-v2 p,
-    .detail-answer-card-v2 p {
-        font-size: 2rem;
-    }
+.qa-card-date-v2 {
+    flex: none;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #7b93ab;
+    white-space: nowrap;
 }
+
+.qa-meta-v2 {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+.qa-chip-v2 {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #f1f6fc;
+    border: 1px solid #dde8f4;
+    border-radius: 8px;
+    padding: 5px 11px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #24507f;
+}
+
+.qa-chip-label-v2 {
+    font-weight: 600;
+    color: #8399b0;
+}
+
+.qa-card-body-v2 {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #edf2f8;
+}
+
+    .qa-card-body-v2 p {
+        margin: 0;
+        /* Teks panjang: rata kiri, ukuran nyaman, jarak baris lega. */
+        text-align: left;
+        font-size: 0.98rem;
+        font-weight: 500;
+        line-height: 1.65;
+        color: #22405f;
+        white-space: pre-line;
+        overflow-wrap: anywhere;
+    }
+
+.qa-card-answer-v2.is-waiting .qa-card-body-v2 p {
+    color: #8b9db0;
+    font-style: italic;
+}
+
+/* Keadaan kosong ketika pertanyaan tidak ditemukan. */
+.qa-empty-v2 {
+    background: #ffffff;
+    border: 1px solid #dbe6f2;
+    border-radius: 16px;
+    padding: 48px 28px;
+    text-align: center;
+    color: #7b93ab;
+    box-shadow: 0 12px 30px rgba(10, 54, 100, 0.09);
+}
+
+    .qa-empty-v2 h2 {
+        margin: 14px 0 6px;
+        font-size: 1.15rem;
+        font-weight: 800;
+        color: #0f2a4d;
+    }
+
+    .qa-empty-v2 p {
+        margin: 0 auto 22px;
+        max-width: 460px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        line-height: 1.6;
+    }
 
 @media (max-width: 860px) {
     .detail-question-v2 {
-        padding: 12px 12px 34px;
+        padding: 12px 14px 34px;
     }
 
     .detail-header-v2 {
-        grid-template-columns: 1fr auto;
-        grid-template-areas:
-            "logo back"
-            "status status";
-        align-items: center;
+        flex-wrap: wrap;
         row-gap: 12px;
     }
 
-    .detail-logo-link-v2 {
-        grid-area: logo;
+    .detail-header-actions-v2 {
+        width: 100%;
+        justify-content: space-between;
+        gap: 12px;
     }
 
-    .detail-back-button-v2 {
-        grid-area: back;
-        margin-top: 0;
-        min-width: 108px;
-        min-height: 34px;
-        font-size: 0.9rem;
+    .detail-logo-v2 {
+        width: 132px;
     }
 
-    .topic-status-wrap-v2 {
-        grid-area: status;
-        margin-top: 0;
+    .app-btn-sm {
+        padding: 10px 16px;
+        font-size: 0.88rem;
     }
 
     .detail-hero-v2 {
-        margin: 2px auto 14px;
+        margin: 10px auto 18px;
     }
 
     .detail-hero-logo-v2 {
-        width: 110px;
+        width: 60px;
+        height: 60px;
     }
 
     .detail-title-v2 {
-        font-size: 1.7rem;
+        font-size: 1.55rem;
     }
 
     .detail-subtitle-v2 {
         font-size: 0.86rem;
     }
 
-    .detail-content-v2 {
-        grid-template-columns: 1fr;
-        gap: 10px;
+    .qa-card-v2 {
+        padding: 18px 16px 20px 20px;
+        border-radius: 14px;
     }
 
-    .detail-side-labels-v2 {
-        flex-direction: row;
-        gap: 10px;
-        padding-top: 0;
-        justify-content: center;
+    /* Tanggal pindah ke bawah judul agar kepala kartu tidak berdesakan. */
+    .qa-card-head-v2 {
+        flex-wrap: wrap;
+        gap: 12px;
     }
 
-    .side-label-item-v2 {
-        flex-direction: row;
-        gap: 6px;
+    .qa-card-date-v2 {
+        width: 100%;
+        padding-left: 54px;
     }
 
-    .side-label-badge-v2 {
-        width: 44px;
-        height: 44px;
+    .qa-badge-v2 {
+        width: 34px;
+        height: 34px;
         border-radius: 10px;
-        font-size: 1.35rem;
-    }
-
-    .side-label-text-v2 {
         font-size: 1rem;
     }
 
-    .detail-cards-v2 {
-        gap: 12px;
-        padding-top: 0;
+    .qa-card-body-v2 p {
+        font-size: 0.94rem;
     }
-
-    .detail-question-card-v2,
-    .detail-answer-card-v2 {
-        padding: 14px 12px;
-    }
-
-        .detail-question-card-v2 p,
-        .detail-answer-card-v2 p {
-            font-size: 1.02rem;
-            text-align: left;
-        }
 }
 
 /* Halaman Admin Dashboard */
@@ -1753,6 +1842,98 @@ main[role="main"] {
     font-weight: 600;
 }
 
+/* Tombol unduh: tinggi disamakan dengan kotak pencarian di sebelahnya. */
+.inv2-export-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    height: 28px;
+    padding: 0 14px;
+    border: 1px solid #cddcec;
+    border-radius: 6px;
+    background: #fff;
+    color: #2f6fae;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1;
+    white-space: nowrap;
+    cursor: pointer;
+    box-shadow: 0 1px 2px rgba(18, 40, 76, 0.06);
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
+}
+
+    .inv2-export-btn:hover:not(:disabled) {
+        background: #f2f8ff;
+        border-color: #9dc4ec;
+        color: #1b5aa0;
+        box-shadow: 0 2px 6px rgba(18, 40, 76, 0.12);
+    }
+
+    .inv2-export-btn:active:not(:disabled) {
+        transform: translateY(1px);
+        box-shadow: none;
+    }
+
+    /* Cincin fokus hanya muncul untuk navigasi keyboard, bukan saat diklik mouse. */
+    .inv2-export-btn:focus-visible {
+        outline: 2px solid #2f91f5;
+        outline-offset: 2px;
+    }
+
+    .inv2-export-btn:disabled {
+        opacity: 0.65;
+        cursor: default;
+    }
+
+.inv2-export-icon,
+.inv2-export-spinner {
+    flex: none;
+}
+
+.inv2-export-icon {
+    transition: transform 0.15s ease;
+}
+
+/* Panah ikut bergerak turun saat hover - isyarat halus arah "unduh". */
+.inv2-export-btn:hover:not(:disabled) .inv2-export-icon {
+    transform: translateY(1px);
+}
+
+.inv2-export-spinner {
+    display: none;
+    animation: inv2-spin 0.7s linear infinite;
+}
+
+.inv2-export-btn.is-loading .inv2-export-icon {
+    display: none;
+}
+
+.inv2-export-btn.is-loading .inv2-export-spinner {
+    display: block;
+}
+
+@keyframes inv2-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .inv2-export-btn,
+    .inv2-export-icon {
+        transition: none;
+    }
+
+    .inv2-export-btn:hover:not(:disabled) .inv2-export-icon {
+        transform: none;
+    }
+
+    .inv2-export-spinner {
+        animation-duration: 2s;
+    }
+}
+
 .inv2-table-card {
     background: #fff;
     border: 1px solid #d9e3ef;
@@ -1816,6 +1997,19 @@ main[role="main"] {
     cursor: pointer;
 }
 
+    /* Tombol reset hanya menonjol saat benar-benar ada filter yang aktif. */
+    .inv2-filter-actions button:disabled {
+        opacity: 0.45;
+        cursor: default;
+    }
+
+    .inv2-filter-actions button.is-active {
+        border-color: #f3a06f;
+        background: #fff1e9;
+        color: #d66a2f;
+        font-weight: 700;
+    }
+
 .inv2-table tbody td {
     font-size: 12px;
     color: #103459;
@@ -1842,6 +2036,26 @@ main[role="main"] {
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+/* Tombol submit yang tampil seperti tautan (navigasi detail memakai POST). */
+.inv2-question-link {
+    display: inline;
+    max-width: 100%;
+    padding: 0;
+    background: none;
+    border: 0;
+    cursor: pointer;
+    font: inherit;
+    text-align: left;
+    color: #0a58ca;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+    .inv2-question-link:hover {
+        text-decoration: underline;
+    }
 
 .inv2-badge {
     display: inline-flex;
@@ -1878,6 +2092,32 @@ main[role="main"] {
     text-align: center;
     padding: 20px 10px !important;
     color: #6c8298 !important;
+}
+
+.inv2-empty-action {
+    margin-top: 10px;
+}
+
+    .inv2-empty-action button {
+        border: 1px solid #c9dbef;
+        border-radius: 4px;
+        background: #fff;
+        color: #2f91f5;
+        font-family: inherit;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 5px 14px;
+        cursor: pointer;
+    }
+
+    .inv2-empty-action button:hover {
+        background: #f2f8ff;
+    }
+
+/* Baris meredup selama data baru sedang dimuat. */
+.inv2-table tbody[aria-busy="true"] {
+    opacity: 0.55;
+    transition: opacity 0.15s ease;
 }
 
 .inv2-footer {
@@ -2127,6 +2367,33 @@ main[role="main"] {
             text-shadow: 0 0 10px rgba(120, 205, 255, 0.45);
         }
 
+/* Tautan area administrator, diletakkan paling bawah pada kartu
+   "Tentang Pilar Keuangan" dan dipisahkan garis tipis. */
+.site-footer-admin-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 10px;
+    padding-top: 9px;
+    border-top: 1px solid rgba(255, 255, 255, 0.14);
+    width: 100%;
+    font-size: 10px;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    color: rgba(196, 224, 255, 0.72) !important;
+    transition: color 0.2s ease, text-shadow 0.2s ease;
+}
+
+    .site-footer-admin-link svg {
+        flex: none;
+        opacity: 0.85;
+    }
+
+    .site-footer-admin-link:hover {
+        color: #b8e4ff !important;
+        text-shadow: 0 0 10px rgba(120, 205, 255, 0.45);
+    }
+
 .site-footer-bottom {
     max-width: 1240px;
     margin: 14px auto 0;
@@ -2227,4 +2494,440 @@ main[role="main"] {
             letter-spacing: 0.2px;
             color: rgba(214, 230, 250, 0.9);
         }
+}
+
+/* ===========================================================================
+   Halaman Masuk Administrator
+   =========================================================================== */
+.login-page {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    background-image: url('/images/background.png');
+    background-size: cover;
+    background-position: center;
+    overflow: hidden;
+}
+
+    .login-page::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, rgba(4, 30, 66, 0.9), rgba(2, 22, 51, 0.94));
+    }
+
+.login-shell {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 1020px;
+    display: grid;
+    grid-template-columns: 1.02fr 1fr;
+    border-radius: 26px;
+    overflow: hidden;
+    background: #ffffff;
+    box-shadow: 0 40px 90px rgba(2, 18, 42, 0.55);
+}
+
+/* ---------- Panel identitas ---------- */
+.login-brand {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 26px;
+    padding: 44px 40px 32px;
+    overflow: hidden;
+    color: #eaf4ff;
+    background: linear-gradient(158deg, #0a3f7d 0%, #052c5c 52%, #021c3d 100%);
+}
+
+.login-brand-glow {
+    position: absolute;
+    top: -110px;
+    right: -90px;
+    width: 320px;
+    height: 320px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(13, 202, 240, 0.42), transparent 68%);
+    pointer-events: none;
+}
+
+/* Motif pilar: representasi visual dari nama "Pilar Keuangan". */
+.login-pillars {
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 190px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 14px;
+    opacity: 0.14;
+    pointer-events: none;
+}
+
+    .login-pillars span {
+        width: 26px;
+        border-radius: 13px 13px 0 0;
+        background: linear-gradient(180deg, #e8c678, rgba(232, 198, 120, 0));
+    }
+
+        .login-pillars span:nth-child(1) {
+            height: 78px;
+        }
+
+        .login-pillars span:nth-child(2) {
+            height: 126px;
+        }
+
+        .login-pillars span:nth-child(3) {
+            height: 168px;
+        }
+
+        .login-pillars span:nth-child(4) {
+            height: 168px;
+        }
+
+        .login-pillars span:nth-child(5) {
+            height: 126px;
+        }
+
+        .login-pillars span:nth-child(6) {
+            height: 78px;
+        }
+
+.login-brand-content {
+    position: relative;
+    z-index: 1;
+}
+
+.login-brand-logo {
+    width: 150px;
+    max-width: 100%;
+    filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.35));
+}
+
+.login-brand-title {
+    margin: 22px 0 8px;
+    font-size: 1.9rem;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    line-height: 1.15;
+    color: #ffffff;
+}
+
+.login-brand-tagline {
+    margin: 0 0 26px;
+    max-width: 330px;
+    font-size: 0.88rem;
+    font-weight: 500;
+    line-height: 1.6;
+    color: rgba(216, 234, 255, 0.78);
+}
+
+.login-brand-points {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+    .login-brand-points li {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        font-size: 0.83rem;
+        font-weight: 600;
+        line-height: 1.45;
+        color: rgba(226, 240, 255, 0.9);
+    }
+
+    .login-brand-points svg {
+        flex: none;
+        margin-top: 2px;
+        color: #0dcaf0;
+    }
+
+.login-brand-footnote {
+    position: relative;
+    z-index: 1;
+    margin: 0;
+    padding-top: 18px;
+    border-top: 1px solid rgba(255, 255, 255, 0.14);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(196, 222, 252, 0.62);
+}
+
+/* ---------- Panel formulir ---------- */
+.login-panel {
+    display: flex;
+    align-items: center;
+    background: #ffffff;
+}
+
+.login-panel-inner {
+    width: 100%;
+    padding: 48px 44px;
+}
+
+.login-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border-radius: 999px;
+    background: #eef6ff;
+    border: 1px solid #d6e8fb;
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #1b5aa0;
+}
+
+.login-title {
+    margin: 16px 0 6px;
+    font-size: 1.6rem;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    color: #0f2a4d;
+}
+
+.login-subtitle {
+    margin: 0 0 26px;
+    font-size: 0.88rem;
+    font-weight: 500;
+    line-height: 1.55;
+    color: #6b849e;
+}
+
+.login-alert {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 20px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    font-size: 0.83rem;
+    font-weight: 500;
+    line-height: 1.5;
+}
+
+    .login-alert svg {
+        flex: none;
+        margin-top: 1px;
+    }
+
+    .login-alert code {
+        padding: 1px 5px;
+        border-radius: 4px;
+        background: rgba(15, 42, 77, 0.08);
+        font-size: 0.78rem;
+    }
+
+.login-alert-error {
+    color: #a32020;
+    background: #fdeded;
+    border: 1px solid #f5c6c6;
+}
+
+.login-alert-info {
+    color: #1b5aa0;
+    background: #eef6ff;
+    border: 1px solid #d0e4f8;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.login-field-group label {
+    display: block;
+    margin-bottom: 7px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #24405f;
+}
+
+.login-field {
+    position: relative;
+    display: flex;
+    align-items: center;
+    border: 1px solid #d7e3f0;
+    border-radius: 12px;
+    background: #f8fbff;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+
+    .login-field:focus-within {
+        border-color: #0dcaf0;
+        background: #ffffff;
+        box-shadow: 0 0 0 4px rgba(13, 202, 240, 0.16);
+    }
+
+.login-field-icon {
+    flex: none;
+    margin-left: 14px;
+    color: #8ba5c0;
+}
+
+.login-field input {
+    flex: 1;
+    min-width: 0;
+    height: 46px;
+    padding: 0 14px;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-family: inherit;
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: #14335a;
+}
+
+    .login-field input::placeholder {
+        font-weight: 500;
+        color: #9db3c9;
+    }
+
+.login-field-toggle {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 46px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: #8ba5c0;
+    cursor: pointer;
+    border-radius: 0 12px 12px 0;
+}
+
+    .login-field-toggle:hover {
+        color: #1b5aa0;
+    }
+
+    .login-field-toggle:focus-visible {
+        outline: 2px solid #0dcaf0;
+        outline-offset: -3px;
+    }
+
+    /* Ikon mata tertutup hanya muncul saat kata sandi sedang ditampilkan. */
+    .login-field-toggle .login-eye-closed {
+        display: none;
+    }
+
+    .login-field-toggle.is-visible .login-eye-open {
+        display: none;
+    }
+
+    .login-field-toggle.is-visible .login-eye-closed {
+        display: block;
+    }
+
+.login-field-error {
+    display: block;
+    margin-top: 6px;
+    font-size: 0.76rem;
+    font-weight: 600;
+    color: #c02b2b;
+}
+
+.login-remember {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #4d6884;
+    cursor: pointer;
+    user-select: none;
+}
+
+    .login-remember input {
+        width: 16px;
+        height: 16px;
+        accent-color: #0a69cf;
+        cursor: pointer;
+    }
+
+.login-submit {
+    width: 100%;
+    margin-top: 4px;
+    padding: 14px 20px;
+    font-size: 0.98rem;
+}
+
+.login-back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    margin-top: 26px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-decoration: none;
+    color: #6b849e;
+    transition: color 0.15s ease;
+}
+
+    .login-back-link:hover {
+        color: #1b5aa0;
+    }
+
+@media (max-width: 900px) {
+    .login-page {
+        padding: 0;
+        align-items: stretch;
+    }
+
+    .login-shell {
+        grid-template-columns: 1fr;
+        max-width: 520px;
+        margin: 0 auto;
+        border-radius: 0;
+        min-height: 100vh;
+        align-content: start;
+    }
+
+    /* Di layar kecil panel identitas dipadatkan menjadi kepala halaman. */
+    .login-brand {
+        padding: 28px 26px 24px;
+        gap: 0;
+    }
+
+    .login-brand-points,
+    .login-brand-footnote,
+    .login-pillars {
+        display: none;
+    }
+
+    .login-brand-logo {
+        width: 118px;
+    }
+
+    .login-brand-title {
+        margin: 16px 0 6px;
+        font-size: 1.5rem;
+    }
+
+    .login-brand-tagline {
+        margin: 0;
+        font-size: 0.8rem;
+    }
+
+    .login-panel-inner {
+        padding: 30px 26px 40px;
+    }
 }

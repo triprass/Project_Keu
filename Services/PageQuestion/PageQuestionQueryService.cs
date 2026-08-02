@@ -1,15 +1,30 @@
 using Microsoft.EntityFrameworkCore;
 using Project_Keu.Data;
+using Project_Keu.Infrastructure;
+using Project_Keu.Models;
 
-namespace Project_Keu.Services.AdminDashboardV2;
+namespace Project_Keu.Services.PageQuestion;
 
-public sealed class AdminDashboardV2QueryService
+public sealed class PageQuestionQueryService
 {
-    private readonly AppDbContext _context;
+    /// <summary>Batas atas ukuran halaman untuk permintaan biasa.</summary>
+    public const int MaxPageSize = 100;
 
-    public AdminDashboardV2QueryService(AppDbContext context)
+    /// <summary>Batas keras jumlah baris export, supaya satu permintaan tidak menghabiskan memori server.</summary>
+    public const int MaxExportRows = 20_000;
+
+    /// <summary>Batas panjang kata kunci; di atas ini pencarian hanya membebani database.</summary>
+    private const int MaxKeywordLength = 200;
+
+    private const string LikeEscape = "\\";
+
+    private readonly AppDbContext _context;
+    private readonly AppTimeZone _appTimeZone;
+
+    public PageQuestionQueryService(AppDbContext context, AppTimeZone appTimeZone)
     {
         _context = context;
+        _appTimeZone = appTimeZone;
     }
 
     public sealed class QueryRequest
@@ -39,6 +54,13 @@ public sealed class AdminDashboardV2QueryService
         public string StatusName { get; set; } = string.Empty;
         public string EmployeeName { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
+
+        /// <summary>
+        /// Tanggal siap tampil dalam zona waktu aplikasi. Dikirim dari server supaya
+        /// yang dilihat pengguna sama persis dengan yang dipakai saat memfilter, tidak
+        /// bergantung pada zona waktu browser masing-masing.
+        /// </summary>
+        public string CreatedAtDisplay { get; set; } = string.Empty;
     }
 
     public sealed class QueryResult
@@ -48,70 +70,172 @@ public sealed class AdminDashboardV2QueryService
         public int TotalPages { get; set; }
         public int Page { get; set; }
         public int PageSize { get; set; }
+
+        /// <summary>
+        /// Jumlah baris dalam lingkup halaman tanpa filter pengguna, dipakai untuk
+        /// membedakan "belum ada data" dari "tidak ada yang cocok". Hanya dihitung
+        /// terpisah ketika <see cref="TotalItems"/> nol; selain itu nilainya sama.
+        /// </summary>
+        public int TotalUnfiltered { get; set; }
     }
 
-    public async Task<QueryResult> GetQuestionsAsync(QueryRequest request)
+    public async Task<QueryResult> GetQuestionsAsync(QueryRequest request, CancellationToken cancellationToken = default)
     {
-        if (request.Page < 1) request.Page = 1;
-        if (request.PageSize <= 0) request.PageSize = 10;
-        if (request.PageSize > 100) request.PageSize = 100;
+        Normalize(request);
 
-        var query = _context.Questions
-            .AsNoTracking()
-            .AsQueryable();
+        var query = BuildFilteredQuery(request);
 
-        if (!string.IsNullOrWhiteSpace(request.Q))
+        var totalItems = await query.CountAsync(cancellationToken);
+        var totalPages = Math.Max(1, (int)Math.Ceiling(totalItems / (double)request.PageSize));
+
+        if (request.Page > totalPages) request.Page = totalPages;
+
+        var questions = await Project(query)
+            .Skip((request.Page - 1) * request.PageSize)
+            .Take(request.PageSize)
+            .ToListAsync(cancellationToken);
+
+        ApplyDisplayFormatting(questions);
+
+        // Query tambahan hanya dijalankan saat hasil kosong, untuk memilih pesan
+        // yang tepat. Pada kasus normal tidak ada biaya tambahan.
+        var totalUnfiltered = totalItems;
+
+        if (totalItems == 0)
         {
-            var search = request.Q.Trim();
-            query = query.Where(x =>
-                (x.QuestionNo != null && x.QuestionNo.Contains(search)) ||
-                (x.Title != null && x.Title.Contains(search)) ||
-                (x.QuestionText != null && x.QuestionText.Contains(search)));
+            totalUnfiltered = await BaseQuery(request.CategoryId).CountAsync(cancellationToken);
         }
 
-        if (!string.IsNullOrWhiteSpace(request.EmployeeKeyword))
+        return new QueryResult
         {
-            var keyword = request.EmployeeKeyword.Trim();
+            Questions = questions,
+            TotalItems = totalItems,
+            TotalPages = totalPages,
+            Page = request.Page,
+            PageSize = request.PageSize,
+            TotalUnfiltered = totalUnfiltered
+        };
+    }
+
+    /// <summary>
+    /// Mengambil seluruh baris yang cocok untuk keperluan export. Dipisahkan dari
+    /// <see cref="GetQuestionsAsync"/> karena batas <see cref="MaxPageSize"/> di sana
+    /// akan memotong hasil export menjadi satu halaman saja.
+    /// </summary>
+    public async Task<List<QuestionResponse>> GetQuestionsForExportAsync(QueryRequest request, CancellationToken cancellationToken = default)
+    {
+        Normalize(request);
+
+        var rows = await Project(BuildFilteredQuery(request))
+            .Take(MaxExportRows)
+            .ToListAsync(cancellationToken);
+
+        ApplyDisplayFormatting(rows);
+
+        return rows;
+    }
+
+    /// <summary>
+    /// Rapikan input sebelum dipakai: spasi berlebih dibuang, nilai di luar batas
+    /// dijepit, dan rentang tanggal terbalik ditukar supaya tetap memberi hasil.
+    /// </summary>
+    private static void Normalize(QueryRequest request)
+    {
+        request.Q = NormalizeKeyword(request.Q);
+        request.EmployeeKeyword = NormalizeKeyword(request.EmployeeKeyword);
+        request.CategoryKeyword = NormalizeKeyword(request.CategoryKeyword);
+        request.StatusKeyword = NormalizeKeyword(request.StatusKeyword);
+        request.QuestionKeyword = NormalizeKeyword(request.QuestionKeyword);
+
+        if (request.DateFrom.HasValue && request.DateTo.HasValue && request.DateFrom > request.DateTo)
+        {
+            (request.DateFrom, request.DateTo) = (request.DateTo, request.DateFrom);
+        }
+
+        if (request.Page < 1) request.Page = 1;
+        if (request.PageSize <= 0) request.PageSize = 10;
+        if (request.PageSize > MaxPageSize) request.PageSize = MaxPageSize;
+    }
+
+    private static string? NormalizeKeyword(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return null;
+        }
+
+        var trimmed = value.Trim();
+
+        return trimmed.Length > MaxKeywordLength
+            ? trimmed[..MaxKeywordLength]
+            : trimmed;
+    }
+
+    private IQueryable<Question> BaseQuery(Guid? categoryId)
+    {
+        var query = _context.Questions.AsNoTracking();
+
+        // CategoryId adalah konteks halaman (berasal dari kartu kategori), bukan
+        // filter yang diisi pengguna, jadi ikut dipakai saat menghitung baseline.
+        return categoryId.HasValue
+            ? query.Where(x => x.CategoryId == categoryId.Value)
+            : query;
+    }
+
+    private IQueryable<Question> BuildFilteredQuery(QueryRequest request)
+    {
+        var query = BaseQuery(request.CategoryId);
+
+        // ILIKE, bukan Contains(). Contains() diterjemahkan menjadi LIKE biasa yang
+        // di PostgreSQL bersifat case-sensitive, sehingga mencari "perjalanan" tidak
+        // menemukan "Perjalanan".
+        if (request.Q is not null)
+        {
+            var pattern = ContainsPattern(request.Q);
+            query = query.Where(x =>
+                (x.QuestionNo != null && EF.Functions.ILike(x.QuestionNo, pattern, LikeEscape)) ||
+                (x.Title != null && EF.Functions.ILike(x.Title, pattern, LikeEscape)) ||
+                (x.QuestionText != null && EF.Functions.ILike(x.QuestionText, pattern, LikeEscape)));
+        }
+
+        if (request.EmployeeKeyword is not null)
+        {
+            var pattern = ContainsPattern(request.EmployeeKeyword);
             query = query.Where(x =>
                 x.CreatedByEmployeeNavigation != null &&
                 (
                     (x.CreatedByEmployeeNavigation.FullName != null &&
-                     EF.Functions.Like(x.CreatedByEmployeeNavigation.FullName, $"%{keyword}%")) ||
+                     EF.Functions.ILike(x.CreatedByEmployeeNavigation.FullName, pattern, LikeEscape)) ||
                     (x.CreatedByEmployeeNavigation.Nip != null &&
-                     EF.Functions.Like(x.CreatedByEmployeeNavigation.Nip, $"%{keyword}%"))
+                     EF.Functions.ILike(x.CreatedByEmployeeNavigation.Nip, pattern, LikeEscape))
                 ));
         }
 
-        if (!string.IsNullOrWhiteSpace(request.CategoryKeyword))
+        if (request.CategoryKeyword is not null)
         {
-            var keyword = request.CategoryKeyword.Trim();
+            var pattern = ContainsPattern(request.CategoryKeyword);
             query = query.Where(x =>
                 x.Category != null &&
                 x.Category.Name != null &&
-                x.Category.Name.Contains(keyword));
+                EF.Functions.ILike(x.Category.Name, pattern, LikeEscape));
         }
 
-        if (!string.IsNullOrWhiteSpace(request.StatusKeyword))
+        if (request.StatusKeyword is not null)
         {
-            var keyword = request.StatusKeyword.Trim();
+            var pattern = ContainsPattern(request.StatusKeyword);
             query = query.Where(x =>
                 x.Status != null &&
                 x.Status.Name != null &&
-                x.Status.Name.Contains(keyword));
+                EF.Functions.ILike(x.Status.Name, pattern, LikeEscape));
         }
 
-        if (!string.IsNullOrWhiteSpace(request.QuestionKeyword))
+        if (request.QuestionKeyword is not null)
         {
-            var keyword = request.QuestionKeyword.Trim();
+            var pattern = ContainsPattern(request.QuestionKeyword);
             query = query.Where(x =>
-                (x.QuestionText != null && x.QuestionText.Contains(keyword)) ||
-                (x.Title != null && x.Title.Contains(keyword)) ||
-                (x.QuestionNo != null && x.QuestionNo.Contains(keyword)));
-        }
-
-        if (request.CategoryId.HasValue)
-        {
-            query = query.Where(x => x.CategoryId == request.CategoryId.Value);
+                (x.QuestionText != null && EF.Functions.ILike(x.QuestionText, pattern, LikeEscape)) ||
+                (x.Title != null && EF.Functions.ILike(x.Title, pattern, LikeEscape)) ||
+                (x.QuestionNo != null && EF.Functions.ILike(x.QuestionNo, pattern, LikeEscape)));
         }
 
         if (request.StatusId.HasValue)
@@ -124,34 +248,38 @@ public sealed class AdminDashboardV2QueryService
             query = query.Where(x => x.CreatedByEmployee == request.CreatedByEmployee.Value);
         }
 
+        // Batas hari dihitung pada zona waktu aplikasi lalu diubah ke UTC, bukan
+        // dipotong pada tengah malam UTC.
         if (request.CreatedDate.HasValue)
         {
-            var date = request.CreatedDate.Value.Date;
-            var next = date.AddDays(1);
-            query = query.Where(x => x.CreatedAt >= date && x.CreatedAt < next);
+            var from = _appTimeZone.StartOfLocalDayUtc(request.CreatedDate.Value);
+            var toExclusive = _appTimeZone.StartOfNextLocalDayUtc(request.CreatedDate.Value);
+            query = query.Where(x => x.CreatedAt >= from && x.CreatedAt < toExclusive);
         }
 
         if (request.DateFrom.HasValue)
         {
-            var fromDate = request.DateFrom.Value.Date;
-            query = query.Where(x => x.CreatedAt >= fromDate);
+            var from = _appTimeZone.StartOfLocalDayUtc(request.DateFrom.Value);
+            query = query.Where(x => x.CreatedAt >= from);
         }
 
         if (request.DateTo.HasValue)
         {
-            var toDateExclusive = request.DateTo.Value.Date.AddDays(1);
-            query = query.Where(x => x.CreatedAt < toDateExclusive);
+            // Eksklusif pada awal hari berikutnya supaya tanggal akhir ikut terjaring penuh.
+            var toExclusive = _appTimeZone.StartOfNextLocalDayUtc(request.DateTo.Value);
+            query = query.Where(x => x.CreatedAt < toExclusive);
         }
 
-        var totalItems = await query.CountAsync();
-        var totalPages = Math.Max(1, (int)Math.Ceiling(totalItems / (double)request.PageSize));
+        return query;
+    }
 
-        if (request.Page > totalPages) request.Page = totalPages;
-
-        var questions = await query
+    private static IQueryable<QuestionResponse> Project(IQueryable<Question> query)
+    {
+        return query
             .OrderByDescending(x => x.CreatedAt)
-            .Skip((request.Page - 1) * request.PageSize)
-            .Take(request.PageSize)
+            // Pemecah seri agar urutan stabil; tanpa ini baris dengan CreatedAt sama
+            // bisa berpindah halaman antar permintaan dan tampil ganda/hilang.
+            .ThenByDescending(x => x.Id)
             .Select(x => new QuestionResponse
             {
                 Id = x.Id,
@@ -162,16 +290,28 @@ public sealed class AdminDashboardV2QueryService
                 StatusName = x.Status != null ? (x.Status.Name ?? string.Empty) : string.Empty,
                 EmployeeName = x.CreatedByEmployeeNavigation != null ? (x.CreatedByEmployeeNavigation.FullName ?? string.Empty) : string.Empty,
                 CreatedAt = x.CreatedAt
-            })
-            .ToListAsync();
+            });
+    }
 
-        return new QueryResult
+    private void ApplyDisplayFormatting(List<QuestionResponse> rows)
+    {
+        foreach (var row in rows)
         {
-            Questions = questions,
-            TotalItems = totalItems,
-            TotalPages = totalPages,
-            Page = request.Page,
-            PageSize = request.PageSize
-        };
+            row.CreatedAtDisplay = _appTimeZone.ToLocal(row.CreatedAt).ToString("dd-MM-yyyy");
+        }
+    }
+
+    /// <summary>
+    /// Bentuk pola <c>%kata%</c> dengan wildcard milik pengguna dinetralkan, supaya
+    /// mengetik "100%" mencari teks "100%" dan bukan cocok ke semua baris.
+    /// </summary>
+    private static string ContainsPattern(string value)
+    {
+        var escaped = value
+            .Replace("\\", "\\\\")
+            .Replace("%", "\\%")
+            .Replace("_", "\\_");
+
+        return $"%{escaped}%";
     }
 }

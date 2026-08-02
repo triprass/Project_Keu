@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Project_Keu.Infrastructure;
 using Project_Keu.Models;
 using Project_Keu.Services.Categories;
 
@@ -35,6 +36,7 @@ public class CategoriesController : ControllerBase
     }
 
     [HttpPost]
+    [RequireApiKey]
     public async Task<IActionResult> Create([FromBody] Category request)
     {
         var item = await _service.CreateAsync(request);
@@ -42,6 +44,7 @@ public class CategoriesController : ControllerBase
     }
 
     [HttpPut("{id:guid}")]
+    [RequireApiKey]
     public async Task<IActionResult> Update(Guid id, [FromBody] Category request)
     {
         var item = await _service.UpdateAsync(id, request);
@@ -52,6 +55,7 @@ public class CategoriesController : ControllerBase
     }
 
     [HttpDelete("{id:guid}")]
+    [RequireApiKey]
     public async Task<IActionResult> Delete(Guid id)
     {
         var deleted = await _service.DeleteAsync(id);

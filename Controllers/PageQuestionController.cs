@@ -1,95 +1,49 @@
 using Microsoft.AspNetCore.Mvc;
-using Project_Keu.Services.AdminDashboardV2;
+using Project_Keu.Services.PageQuestion;
 
 namespace Project_Keu.Controllers;
 
 [ApiController]
-[Route("api/admin-dashboard-v2")]
-public class AdminDashboardV2Controller : ControllerBase
+[Route("api/page-question")]
+[Produces("application/json")]
+public class PageQuestionController : ControllerBase
 {
-    private readonly AdminDashboardV2QueryService _service;
-    private readonly AdminDashboardV2ExportService _exportService;
+    private readonly PageQuestionQueryService _service;
+    private readonly PageQuestionExportService _exportService;
 
-    public AdminDashboardV2Controller(
-        AdminDashboardV2QueryService service,
-        AdminDashboardV2ExportService exportService)
+    public PageQuestionController(
+        PageQuestionQueryService service,
+        PageQuestionExportService exportService)
     {
         _service = service;
         _exportService = exportService;
     }
 
-    [HttpGet("questions")]
+    // Filter dikirim lewat request body (POST) supaya CategoryId dan
+    // parameter lain tidak muncul di URL / log akses.
+    [HttpPost("questions")]
+    [ProducesResponseType(typeof(PageQuestionQueryService.QueryResult), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetQuestions(
-        [FromQuery] string? q,
-        [FromQuery] string? employeeKeyword,
-        [FromQuery] string? categoryKeyword,
-        [FromQuery] string? statusKeyword,
-        [FromQuery] string? questionKeyword,
-        [FromQuery] DateTime? createdDate,
-        [FromQuery] Guid? categoryId,
-        [FromQuery] Guid? statusId,
-        [FromQuery] Guid? createdByEmployee,
-        [FromQuery] DateTime? dateFrom,
-        [FromQuery] DateTime? dateTo,
-        [FromQuery] int page = 1,
-        [FromQuery] int pageSize = 10)
+        [FromBody] PageQuestionQueryService.QueryRequest? request,
+        CancellationToken cancellationToken)
     {
-        var request = new AdminDashboardV2QueryService.QueryRequest
-        {
-            Q = q,
-            EmployeeKeyword = employeeKeyword,
-            CategoryKeyword = categoryKeyword,
-            StatusKeyword = statusKeyword,
-            QuestionKeyword = questionKeyword,
-            CreatedDate = createdDate,
-            CategoryId = categoryId,
-            StatusId = statusId,
-            CreatedByEmployee = createdByEmployee,
-            DateFrom = dateFrom,
-            DateTo = dateTo,
-            Page = page,
-            PageSize = pageSize
-        };
+        request ??= new PageQuestionQueryService.QueryRequest();
 
-        var result = await _service.GetQuestionsAsync(request);
+        var result = await _service.GetQuestionsAsync(request, cancellationToken);
         return Ok(result);
     }
 
-    [HttpGet("questions/export")]
+    [HttpPost("questions/export")]
     public async Task<IActionResult> ExportQuestions(
-        [FromQuery] string? q,
-        [FromQuery] string? employeeKeyword,
-        [FromQuery] string? categoryKeyword,
-        [FromQuery] string? statusKeyword,
-        [FromQuery] string? questionKeyword,
-        [FromQuery] DateTime? createdDate,
-        [FromQuery] Guid? categoryId,
-        [FromQuery] Guid? statusId,
-        [FromQuery] Guid? createdByEmployee,
-        [FromQuery] DateTime? dateFrom,
-        [FromQuery] DateTime? dateTo)
+        [FromBody] PageQuestionQueryService.QueryRequest? request,
+        CancellationToken cancellationToken)
     {
-        var request = new AdminDashboardV2QueryService.QueryRequest
-        {
-            Q = q,
-            EmployeeKeyword = employeeKeyword,
-            CategoryKeyword = categoryKeyword,
-            StatusKeyword = statusKeyword,
-            QuestionKeyword = questionKeyword,
-            CreatedDate = createdDate,
-            CategoryId = categoryId,
-            StatusId = statusId,
-            CreatedByEmployee = createdByEmployee,
-            DateFrom = dateFrom,
-            DateTo = dateTo,
-            Page = 1,
-            PageSize = 10000
-        };
+        request ??= new PageQuestionQueryService.QueryRequest();
 
-        var result = await _service.GetQuestionsAsync(request);
-        var fileBytes = _exportService.BuildExcelCompatibleCsv(result.Questions);
+        var rows = await _service.GetQuestionsForExportAsync(request, cancellationToken);
+        var fileBytes = _exportService.BuildWorkbook(rows);
 
-        var fileName = $"admin-dashboard-v2-{DateTime.UtcNow:yyyyMMdd-HHmmss}.csv";
-        return File(fileBytes, "text/csv; charset=utf-8", fileName);
+        var fileName = $"daftar-pertanyaan-{DateTime.UtcNow:yyyyMMdd-HHmmss}.xlsx";
+        return File(fileBytes, PageQuestionExportService.ContentType, fileName);
     }
 }

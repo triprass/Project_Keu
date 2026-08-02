@@ -8,23 +8,23 @@ namespace Project_Keu.Pages;
 
 public class FormPertanyaanModel : PageModel
 {
-    private readonly AppDbContext _context;
+    /// <summary>Batas panjang isi pertanyaan agar satu request tidak bisa mengirim payload raksasa.</summary>
+    private const int MaxQuestionLength = 4000;
+
+    private const int MaxQuestionNoAttempts = 3;
+
     private static readonly Guid DefaultStatusId = Guid.Parse("589362d4-83e4-457f-af89-dad137b68845");
 
-    public FormPertanyaanModel(AppDbContext context)
+    private readonly AppDbContext _context;
+    private readonly ILogger<FormPertanyaanModel> _logger;
+
+    public FormPertanyaanModel(AppDbContext context, ILogger<FormPertanyaanModel> logger)
     {
         _context = context;
-    }
-
-    public sealed class QuestionGroupViewModel
-    {
-        public Guid CategoryId { get; set; }
-        public string CategoryName { get; set; } = string.Empty;
-        public List<Question> Questions { get; set; } = new();
+        _logger = logger;
     }
 
     public List<QuestionCategory> Categories { get; private set; } = new();
-    public List<QuestionGroupViewModel> QuestionGroups { get; private set; } = new();
 
     [BindProperty]
     public string? Pertanyaan { get; set; }
@@ -41,16 +41,14 @@ public class FormPertanyaanModel : PageModel
     [BindProperty]
     public Guid? EmployeeId { get; set; }
 
-    public async Task OnGetAsync()
+    public Task OnGetAsync(CancellationToken cancellationToken)
     {
-        await LoadCategoriesAsync();
-        await LoadQuestionGroupsAsync();
+        return LoadCategoriesAsync(cancellationToken);
     }
 
-    public async Task<IActionResult> OnPostAsync()
+    public async Task<IActionResult> OnPostAsync(CancellationToken cancellationToken)
     {
-        await LoadCategoriesAsync();
-        await LoadQuestionGroupsAsync();
+        await LoadCategoriesAsync(cancellationToken);
 
         if (string.IsNullOrWhiteSpace(Pertanyaan) || CategoryId is null || EmployeeId is null)
         {
@@ -58,9 +56,17 @@ public class FormPertanyaanModel : PageModel
             return Page();
         }
 
+        var questionText = Pertanyaan.Trim();
+
+        if (questionText.Length > MaxQuestionLength)
+        {
+            ModelState.AddModelError(string.Empty, $"Pertanyaan terlalu panjang. Maksimal {MaxQuestionLength} karakter.");
+            return Page();
+        }
+
         var category = await _context.QuestionCategories
             .AsNoTracking()
-            .FirstOrDefaultAsync(c => c.Id == CategoryId.Value && c.IsActive);
+            .FirstOrDefaultAsync(c => c.Id == CategoryId.Value && c.IsActive, cancellationToken);
 
         if (category is null)
         {
@@ -70,7 +76,7 @@ public class FormPertanyaanModel : PageModel
 
         var employeeExists = await _context.Employees
             .AsNoTracking()
-            .AnyAsync(e => e.Id == EmployeeId.Value);
+            .AnyAsync(e => e.Id == EmployeeId.Value, cancellationToken);
 
         if (!employeeExists)
         {
@@ -78,76 +84,102 @@ public class FormPertanyaanModel : PageModel
             return Page();
         }
 
-        var questionNo = await GenerateQuestionNoAsync();
+        var defaultStatusExists = await _context.QuestionStatuses
+            .AsNoTracking()
+            .AnyAsync(s => s.Id == DefaultStatusId, cancellationToken);
+
+        if (!defaultStatusExists)
+        {
+            _logger.LogError("Status default {StatusId} tidak ada di tb_m_question_status.", DefaultStatusId);
+            ModelState.AddModelError(string.Empty, "Konfigurasi status pertanyaan belum lengkap. Hubungi administrator.");
+            return Page();
+        }
 
         var question = new Question
         {
             Id = Guid.NewGuid(),
-            QuestionNo = questionNo,
             CategoryId = CategoryId.Value,
             Title = category.Name,
-            QuestionText = Pertanyaan.Trim(),
+            QuestionText = questionText,
             CreatedByEmployee = EmployeeId.Value,
             StatusId = DefaultStatusId,
             CreatedAt = DateTime.UtcNow
         };
 
-        _context.Questions.Add(question);
-        await _context.SaveChangesAsync();
+        if (!await SaveWithGeneratedQuestionNoAsync(question, cancellationToken))
+        {
+            ModelState.AddModelError(string.Empty, "Pertanyaan gagal disimpan. Silakan coba lagi.");
+            return Page();
+        }
 
         return RedirectToPage("/Pertanyaan");
     }
 
-    private async Task LoadCategoriesAsync()
+    /// <summary>
+    /// Nomor pertanyaan dihitung dari baris terakhir, sehingga dua pengiriman yang
+    /// hampir bersamaan bisa menghasilkan nomor yang sama. Penyimpanan diulang
+    /// beberapa kali bila database menolak karena bentrok.
+    /// </summary>
+    private async Task<bool> SaveWithGeneratedQuestionNoAsync(Question question, CancellationToken cancellationToken)
+    {
+        for (var attempt = 1; attempt <= MaxQuestionNoAttempts; attempt++)
+        {
+            question.QuestionNo = await GenerateQuestionNoAsync(cancellationToken);
+            _context.Questions.Add(question);
+
+            try
+            {
+                await _context.SaveChangesAsync(cancellationToken);
+                return true;
+            }
+            catch (DbUpdateException ex)
+            {
+                _context.Entry(question).State = EntityState.Detached;
+
+                if (attempt == MaxQuestionNoAttempts)
+                {
+                    _logger.LogError(ex, "Gagal menyimpan pertanyaan setelah {Attempts} percobaan.", attempt);
+                    return false;
+                }
+
+                _logger.LogWarning(ex, "Percobaan {Attempt} menyimpan pertanyaan gagal, mencoba nomor berikutnya.", attempt);
+            }
+        }
+
+        return false;
+    }
+
+    private async Task LoadCategoriesAsync(CancellationToken cancellationToken)
     {
         Categories = await _context.QuestionCategories
             .AsNoTracking()
             .Where(x => x.IsActive)
             .OrderBy(x => x.Name)
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
     }
 
-    private async Task LoadQuestionGroupsAsync()
+    private async Task<string> GenerateQuestionNoAsync(CancellationToken cancellationToken)
     {
-        var grouped = await _context.Questions
-            .AsNoTracking()
-            .Include(q => q.Category)
-            .OrderByDescending(q => q.CreatedAt)
-            .GroupBy(q => new { q.CategoryId, CategoryName = q.Category != null ? q.Category.Name : "-" })
-            .Select(g => new QuestionGroupViewModel
-            {
-                CategoryId = g.Key.CategoryId,
-                CategoryName = g.Key.CategoryName,
-                Questions = g.Take(5).ToList()
-            })
-            .ToListAsync();
+        var prefix = $"Q{DateTime.UtcNow:yyyyMM}";
 
-        QuestionGroups = grouped;
-    }
-
-    private async Task<string> GenerateQuestionNoAsync()
-    {
-        var now = DateTime.UtcNow;
-        var prefix = $"Q{now:yyyyMM}";
-        var maxExisting = await _context.Questions
+        // Nomor terakhir diambil langsung lewat ORDER BY ... LIMIT 1 di database,
+        // bukan dengan menarik seluruh baris bulan berjalan ke memori aplikasi.
+        var lastNo = await _context.Questions
             .AsNoTracking()
             .Where(q => q.QuestionNo != null && q.QuestionNo.StartsWith(prefix))
+            .OrderByDescending(q => q.QuestionNo!.Length)
+            .ThenByDescending(q => q.QuestionNo)
             .Select(q => q.QuestionNo!)
-            .ToListAsync();
+            .FirstOrDefaultAsync(cancellationToken);
 
-        var maxRunning = 0;
-        foreach (var qn in maxExisting)
+        var lastRunningNumber = 0;
+
+        if (lastNo is not null && lastNo.Length > prefix.Length &&
+            int.TryParse(lastNo.AsSpan(prefix.Length), out var parsed))
         {
-            if (qn.Length >= prefix.Length + 3)
-            {
-                var suffix = qn.Substring(prefix.Length, 3);
-                if (int.TryParse(suffix, out var num) && num > maxRunning)
-                {
-                    maxRunning = num;
-                }
-            }
+            lastRunningNumber = parsed;
         }
 
-        return $"{prefix}{(maxRunning + 1):D3}";
+        return $"{prefix}{lastRunningNumber + 1:D3}";
     }
 }
