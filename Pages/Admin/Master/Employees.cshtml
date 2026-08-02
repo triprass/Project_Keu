@@ -1,0 +1,327 @@
+@page
+@model Project_Keu.Pages.Admin.Master.EmployeesModel
+@{
+    ViewData["Title"] = "Pegawai";
+    ViewData["Lead"] = "Data pegawai yang berhak mengajukan pertanyaan. NIP dipakai halaman publik untuk mengenali pengaju.";
+
+    var isEdit = Model.Input.Id is not null && Model.Input.Id != Guid.Empty;
+
+    string Iso(DateOnly? value) => value?.ToString("yyyy-MM-dd") ?? string.Empty;
+    string Dash(string? value) => string.IsNullOrWhiteSpace(value) ? "—" : value;
+}
+
+<section class="adm-card">
+
+    <div class="adm-toolbar">
+        @* Kata kunci dan saringan status berada pada satu formulir agar keduanya
+           selalu terkirim bersama dan tidak saling menghapus. *@
+        <form method="get" class="adm-toolbar-form" data-auto-submit role="search">
+            <div class="adm-search">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                     stroke-width="2" stroke-linecap="round" aria-hidden="true">
+                    <circle cx="11" cy="11" r="7" /><line x1="16.5" y1="16.5" x2="21" y2="21" />
+                </svg>
+                <input type="search" name="q" value="@Model.Search" data-auto="text"
+                       placeholder="Cari nama, NIP, nomor pegawai, surel" maxlength="100"
+                       autocomplete="off" aria-label="Cari pegawai" />
+            </div>
+
+            <select name="s" class="adm-filter" data-auto="instant" aria-label="Saring berdasarkan status">
+                <option value="">Semua status</option>
+                <option value="1" selected="@(Model.StatusFilter == "1")">Aktif</option>
+                <option value="0" selected="@(Model.StatusFilter == "0")">Nonaktif</option>
+            </select>
+        </form>
+
+        <div class="adm-toolbar-actions">
+            <button type="button" class="adm-btn adm-btn-primary"
+                    data-modal-open="employeeDialog" data-mode="create" data-title="Tambah Pegawai"
+                    data-field-id="" data-field-employeeno="" data-field-nip="" data-field-fullname=""
+                    data-field-nickname="" data-field-email="" data-field-phonenumber="" data-field-gender=""
+                    data-field-birthdate="" data-field-company="" data-field-branch="" data-field-location=""
+                    data-field-hiredate="" data-field-resigndate="" data-field-employmentstatus=""
+                    data-field-isactive="true">
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor"
+                     stroke-width="2.4" stroke-linecap="round" aria-hidden="true">
+                    <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
+                </svg>
+                Tambah Pegawai
+            </button>
+        </div>
+    </div>
+
+    @if (Model.Items.Count == 0)
+    {
+        <div class="adm-empty">
+            <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor"
+                 stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="2.5" y="5" width="19" height="14" rx="2" />
+                <circle cx="8.5" cy="11" r="2.2" /><path d="M5 16.4a3.6 3.6 0 0 1 7 0" />
+            </svg>
+            @if (Model.HasSearch || Model.StatusFilter is not null)
+            {
+                <strong>Tidak ada hasil</strong>
+                <p>Tidak ada pegawai yang cocok dengan pencarian atau saringan yang sedang aktif.</p>
+            }
+            else
+            {
+                <strong>Belum ada data pegawai</strong>
+                <p>Tambahkan pegawai agar mereka dapat mengajukan pertanyaan lewat halaman publik.</p>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="adm-table-wrap">
+            <table class="adm-table">
+                <thead>
+                    <tr>
+                        <th class="adm-td-num">No</th>
+                        <th>Pegawai</th>
+                        <th>NIP</th>
+                        <th>Kontak</th>
+                        <th>Penempatan</th>
+                        <th>Pertanyaan</th>
+                        <th>Status</th>
+                        <th class="adm-td-actions">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{ var rowNumber = Model.RowOffset; }
+                    @foreach (var item in Model.Items)
+                    {
+                        rowNumber++;
+
+                        <tr>
+                            <td class="adm-td-num">@rowNumber</td>
+                            <td data-label="Pegawai">
+                                <span class="adm-strong">@item.FullName</span>
+                                <br />
+                                <span class="adm-muted adm-mono">@item.EmployeeNo</span>
+                            </td>
+                            <td data-label="NIP"><span class="adm-mono">@Dash(item.Nip)</span></td>
+                            <td data-label="Kontak">
+                                <span class="adm-muted">@Dash(item.Email)</span>
+                                @if (!string.IsNullOrWhiteSpace(item.PhoneNumber))
+                                {
+                                    <br />
+                                    <span class="adm-muted">@item.PhoneNumber</span>
+                                }
+                            </td>
+                            <td data-label="Penempatan">
+                                <span class="adm-muted">@Dash(item.Location)</span>
+                                @if (!string.IsNullOrWhiteSpace(item.EmploymentStatus))
+                                {
+                                    <br />
+                                    <span class="adm-badge adm-badge-info">@item.EmploymentStatus</span>
+                                }
+                            </td>
+                            <td data-label="Pertanyaan"><span class="adm-badge adm-badge-info">@item.QuestionCount</span></td>
+                            <td data-label="Status">
+                                <span class="adm-badge @(item.IsActive ? "adm-badge-on" : "adm-badge-off")">
+                                    <span class="adm-badge-dot"></span>@(item.IsActive ? "Aktif" : "Nonaktif")
+                                </span>
+                            </td>
+                            <td class="adm-td-actions" data-label="Aksi">
+                                <span class="adm-row-actions">
+                                    <button type="button" class="adm-btn adm-btn-icon" title="Ubah"
+                                            data-modal-open="employeeDialog" data-mode="edit" data-title="Ubah Data Pegawai"
+                                            data-field-id="@item.Id"
+                                            data-field-employeeno="@item.EmployeeNo"
+                                            data-field-nip="@item.Nip"
+                                            data-field-fullname="@item.FullName"
+                                            data-field-nickname="@item.NickName"
+                                            data-field-email="@item.Email"
+                                            data-field-phonenumber="@item.PhoneNumber"
+                                            data-field-gender="@item.Gender"
+                                            data-field-birthdate="@Iso(item.BirthDate)"
+                                            data-field-company="@item.Company"
+                                            data-field-branch="@item.Branch"
+                                            data-field-location="@item.Location"
+                                            data-field-hiredate="@Iso(item.HireDate)"
+                                            data-field-resigndate="@Iso(item.ResignDate)"
+                                            data-field-employmentstatus="@item.EmploymentStatus"
+                                            data-field-isactive="@item.IsActive.ToString().ToLowerInvariant()">
+                                        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor"
+                                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                            <path d="M12 20h9" />
+                                            <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7.5 18.5 3 20l1.5-4.5z" />
+                                        </svg>
+                                    </button>
+
+                                    <form method="post" asp-page-handler="Delete" class="adm-inline-form"
+                                          data-confirm="Hapus data pegawai &quot;@item.FullName&quot;? Riwayat pertanyaannya tetap tersimpan.">
+                                        <input type="hidden" name="id" value="@item.Id" />
+                                        <button type="submit" class="adm-btn adm-btn-icon is-danger" title="Hapus">
+                                            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor"
+                                                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                                <polyline points="3 6 21 6" />
+                                                <path d="M8 6V4.5A1.5 1.5 0 0 1 9.5 3h5A1.5 1.5 0 0 1 16 4.5V6" />
+                                                <path d="M6 6v13.5A1.5 1.5 0 0 0 7.5 21h9a1.5 1.5 0 0 0 1.5-1.5V6" />
+                                            </svg>
+                                        </button>
+                                    </form>
+                                </span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    <partial name="_AdminPager" model="Model" />
+</section>
+
+<div class="adm-modal" id="employeeDialog" role="dialog" aria-modal="true" aria-labelledby="employeeDialogTitle"
+     hidden data-open-on-load="@(Model.ReopenDialog ? "true" : "false")">
+    <div class="adm-modal-box is-wide">
+        <form method="post" asp-page-handler="Save">
+            <input type="hidden" name="Input.Id" data-name="id" value="@Model.Input.Id" />
+
+            <div class="adm-modal-head">
+                <div>
+                    <h3 id="employeeDialogTitle" data-modal-title>@(isEdit ? "Ubah Data Pegawai" : "Tambah Pegawai")</h3>
+                    <p>Nomor pegawai dan NIP harus unik. Menghapus pegawai tidak menghapus pertanyaannya.</p>
+                </div>
+                <button type="button" class="adm-modal-close" data-modal-close aria-label="Tutup">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
+                         stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
+                        <line x1="6" y1="6" x2="18" y2="18" /><line x1="18" y1="6" x2="6" y2="18" />
+                    </svg>
+                </button>
+            </div>
+
+            <div class="adm-modal-body">
+                <div asp-validation-summary="ModelOnly" class="adm-alert adm-alert-error adm-validation-summary"></div>
+
+                <p class="adm-section-label">Identitas</p>
+                <div class="adm-form-grid">
+                    <div class="adm-field">
+                        <label for="empNo">Nomor Pegawai<span class="adm-req">*</span></label>
+                        <input id="empNo" type="text" name="Input.EmployeeNo" data-name="employeeno" data-autofocus
+                               value="@Model.Input.EmployeeNo" maxlength="20" required autocomplete="off" />
+                        <span asp-validation-for="Input.EmployeeNo" class="adm-validation"></span>
+                    </div>
+
+                    <div class="adm-field">
+                        <label for="empNip">NIP</label>
+                        <input id="empNip" type="text" name="Input.Nip" data-name="nip"
+                               value="@Model.Input.Nip" maxlength="30" autocomplete="off" />
+                        <span asp-validation-for="Input.Nip" class="adm-validation"></span>
+                    </div>
+
+                    <div class="adm-field">
+                        <label for="empFullName">Nama Lengkap<span class="adm-req">*</span></label>
+                        <input id="empFullName" type="text" name="Input.FullName" data-name="fullname"
+                               value="@Model.Input.FullName" maxlength="150" required autocomplete="off" />
+                        <span asp-validation-for="Input.FullName" class="adm-validation"></span>
+                    </div>
+
+                    <div class="adm-field">
+                        <label for="empNickName">Nama Panggilan</label>
+                        <input id="empNickName" type="text" name="Input.NickName" data-name="nickname"
+                               value="@Model.Input.NickName" maxlength="100" autocomplete="off" />
+                        <span asp-validation-for="Input.NickName" class="adm-validation"></span>
+                    </div>
+
+                    <div class="adm-field">
+                        <label for="empGender">Jenis Kelamin</label>
+                        <select id="empGender" name="Input.Gender" data-name="gender">
+                            @foreach (var option in Project_Keu.Pages.Admin.Master.EmployeesModel.GenderOptions)
+                            {
+                                <option value="@option.Value" selected="@(Model.Input.Gender == option.Value)">@option.Text</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="adm-field">
+                        <label for="empBirthDate">Tanggal Lahir</label>
+                        <input id="empBirthDate" type="date" name="Input.BirthDate" data-name="birthdate"
+                               value="@Iso(Model.Input.BirthDate)" />
+                        <span asp-validation-for="Input.BirthDate" class="adm-validation"></span>
+                    </div>
+                </div>
+
+                <p class="adm-section-label">Kontak</p>
+                <div class="adm-form-grid">
+                    <div class="adm-field">
+                        <label for="empEmail">Surel</label>
+                        <input id="empEmail" type="email" name="Input.Email" data-name="email"
+                               value="@Model.Input.Email" maxlength="150" autocomplete="off" />
+                        <span asp-validation-for="Input.Email" class="adm-validation"></span>
+                    </div>
+
+                    <div class="adm-field">
+                        <label for="empPhone">Nomor Telepon</label>
+                        <input id="empPhone" type="text" name="Input.PhoneNumber" data-name="phonenumber"
+                               value="@Model.Input.PhoneNumber" maxlength="30" autocomplete="off" />
+                        <span asp-validation-for="Input.PhoneNumber" class="adm-validation"></span>
+                    </div>
+                </div>
+
+                <p class="adm-section-label">Penempatan</p>
+                <div class="adm-form-grid">
+                    <div class="adm-field">
+                        <label for="empCompany">Instansi</label>
+                        <input id="empCompany" type="text" name="Input.Company" data-name="company"
+                               value="@Model.Input.Company" maxlength="100" autocomplete="off" />
+                    </div>
+
+                    <div class="adm-field">
+                        <label for="empBranch">Satuan Kerja</label>
+                        <input id="empBranch" type="text" name="Input.Branch" data-name="branch"
+                               value="@Model.Input.Branch" maxlength="100" autocomplete="off" />
+                    </div>
+
+                    <div class="adm-field">
+                        <label for="empLocation">Lokasi</label>
+                        <input id="empLocation" type="text" name="Input.Location" data-name="location"
+                               value="@Model.Input.Location" maxlength="100" autocomplete="off" />
+                    </div>
+
+                    <div class="adm-field">
+                        <label for="empEmployment">Status Kepegawaian</label>
+                        <input id="empEmployment" type="text" name="Input.EmploymentStatus" data-name="employmentstatus"
+                               value="@Model.Input.EmploymentStatus" maxlength="30" list="employmentStatusList"
+                               autocomplete="off" />
+                        <datalist id="employmentStatusList">
+                            @foreach (var suggestion in Project_Keu.Pages.Admin.Master.EmployeesModel.EmploymentStatusSuggestions)
+                            {
+                                <option value="@suggestion"></option>
+                            }
+                        </datalist>
+                        <span asp-validation-for="Input.EmploymentStatus" class="adm-validation"></span>
+                    </div>
+
+                    <div class="adm-field">
+                        <label for="empHireDate">Tanggal Masuk</label>
+                        <input id="empHireDate" type="date" name="Input.HireDate" data-name="hiredate"
+                               value="@Iso(Model.Input.HireDate)" />
+                    </div>
+
+                    <div class="adm-field">
+                        <label for="empResignDate">Tanggal Berhenti</label>
+                        <input id="empResignDate" type="date" name="Input.ResignDate" data-name="resigndate"
+                               value="@Iso(Model.Input.ResignDate)" />
+                        <span asp-validation-for="Input.ResignDate" class="adm-validation"></span>
+                    </div>
+
+                    <div class="adm-field adm-field-full">
+                        <label class="adm-check">
+                            <input type="checkbox" name="Input.IsActive" data-name="isactive" value="true"
+                                   checked="@Model.Input.IsActive" />
+                            <span>Aktif &mdash; masih berhak mengajukan pertanyaan</span>
+                        </label>
+                        <input type="hidden" name="Input.IsActive" value="false" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="adm-modal-foot">
+                <button type="button" class="adm-btn adm-btn-ghost" data-modal-close>Batal</button>
+                <button type="submit" class="adm-btn adm-btn-primary">Simpan</button>
+            </div>
+        </form>
+    </div>
+</div>

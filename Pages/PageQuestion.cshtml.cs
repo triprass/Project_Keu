@@ -40,6 +40,12 @@ public class PageQuestionModel : PageModel
     public string? QuestionKeyword { get; set; }
 
     [BindProperty]
+    public string? QuestionNoKeyword { get; set; }
+
+    [BindProperty]
+    public string? TitleKeyword { get; set; }
+
+    [BindProperty]
     public DateTime? CreatedDate { get; set; }
 
     [BindProperty]
@@ -68,13 +74,29 @@ public class PageQuestionModel : PageModel
     public int TotalItems { get; private set; }
     public int TotalPages { get; private set; }
 
+    /// <summary>
+    /// Pengelola yang sudah masuk melihat kolom lengkap. Lingkup datanya sendiri
+    /// tidak ditentukan oleh peran melainkan oleh <see cref="CategoryId"/>: dibuka
+    /// dari kartu kategori berarti satu kategori, dibuka dari menu berarti semuanya.
+    /// </summary>
+    public bool IsAdmin { get; private set; }
+
+    /// <summary>Nama kategori yang sedang dilihat; kosong bila daftarnya lintas kategori.</summary>
+    public string? CategoryName { get; private set; }
+
     public Task OnGetAsync(CancellationToken cancellationToken) => LoadAsync(cancellationToken);
 
     public Task OnPostAsync(CancellationToken cancellationToken) => LoadAsync(cancellationToken);
 
     private async Task LoadAsync(CancellationToken cancellationToken)
     {
+        IsAdmin = User.Identity?.IsAuthenticated == true;
+
+        // CategoryId dihormati apa adanya, termasuk bagi pengelola: datang dari kartu
+        // kategori berarti daftarnya memang dibatasi kategori itu. Daftar menyeluruh
+        // didapat dengan membuka halaman ini tanpa membawa kategori, yaitu lewat menu.
         await LoadFilterOptionsAsync(cancellationToken);
+        await LoadCategoryNameAsync(cancellationToken);
 
         var result = await _queryService.GetQuestionsAsync(new PageQuestionQueryService.QueryRequest
         {
@@ -83,6 +105,8 @@ public class PageQuestionModel : PageModel
             CategoryKeyword = CategoryKeyword,
             StatusKeyword = StatusKeyword,
             QuestionKeyword = QuestionKeyword,
+            QuestionNoKeyword = QuestionNoKeyword,
+            TitleKeyword = TitleKeyword,
             CreatedDate = CreatedDate,
             CategoryId = CategoryId,
             StatusId = StatusId,
@@ -98,6 +122,20 @@ public class PageQuestionModel : PageModel
         TotalPages = result.TotalPages;
         PageNumber = result.Page;
         PageSize = result.PageSize;
+    }
+
+    private async Task LoadCategoryNameAsync(CancellationToken cancellationToken)
+    {
+        if (!CategoryId.HasValue)
+        {
+            return;
+        }
+
+        CategoryName = await _context.QuestionCategories
+            .AsNoTracking()
+            .Where(x => x.Id == CategoryId.Value)
+            .Select(x => x.Name)
+            .FirstOrDefaultAsync(cancellationToken);
     }
 
     private async Task LoadFilterOptionsAsync(CancellationToken cancellationToken)

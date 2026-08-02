@@ -1,11 +1,14 @@
 using System.Text.Json.Serialization;
 using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Project_Keu.Data;
 using Project_Keu.Infrastructure;
+using Project_Keu.Infrastructure.Authorization;
+using Project_Keu.Services.Admin;
 using Project_Keu.Services.Answers;
 using Project_Keu.Services.Categories;
 using Project_Keu.Services.Employees;
@@ -19,7 +22,7 @@ using Project_Keu.Services.QuestionStatuses;
 // Keluarannya diisikan ke environment variable Admin__PasswordHash.
 if (args is ["--hash-password", var plainPassword, ..])
 {
-    Console.WriteLine(AdminCredentialService.HashPassword(plainPassword));
+    Console.WriteLine(PasswordHasher.Hash(plainPassword));
     return;
 }
 
@@ -164,7 +167,14 @@ builder.Services.AddRateLimiter(options =>
 });
 
 builder.Services.AddSingleton<AppTimeZone>();
-builder.Services.AddSingleton<AdminCredentialService>();
+
+// Otorisasi berbasis izin: policy dibentuk otomatis dari kode izin, sehingga
+// [Authorize(Policy = "questions.export")] langsung berlaku tanpa pendaftaran manual.
+builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
+builder.Services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
+
+builder.Services.AddScoped<AdminAccountService>();
+builder.Services.AddScoped<AdminDashboardService>();
 
 builder.Services.AddScoped<PageQuestionQueryService>();
 builder.Services.AddScoped<PageQuestionExportService>();

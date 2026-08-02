@@ -1,0 +1,74 @@
+@model Project_Keu.Pages.Admin.AdminPageModelBase
+@{
+    // Tautan halaman hanya membawa keadaan daftar (kata kunci, saringan, nomor
+    // halaman), tidak pernah membawa id baris.
+    string LinkTo(int target) => Url.Page(null, Model.ListStateForPage(target)) ?? "#";
+
+    var first = Model.TotalItems == 0 ? 0 : Model.RowOffset + 1;
+    var last = Math.Min(Model.RowOffset + Project_Keu.Pages.Admin.AdminPageModelBase.PageSize, Model.TotalItems);
+
+    // Tampilkan dua nomor di kiri dan kanan halaman aktif.
+    var from = Math.Max(1, Model.PageNumber - 2);
+    var to = Math.Min(Model.TotalPages, Model.PageNumber + 2);
+}
+
+@if (Model.TotalItems > 0)
+{
+    <div class="adm-pager">
+        <span>Menampilkan <strong>@first</strong>&ndash;<strong>@last</strong> dari <strong>@Model.TotalItems</strong> data</span>
+
+        @if (Model.TotalPages > 1)
+        {
+            <nav class="adm-pager-links" aria-label="Navigasi halaman">
+                @if (Model.PageNumber <= 1)
+                {
+                    <span class="is-disabled" aria-hidden="true">&lsaquo;</span>
+                }
+                else
+                {
+                    <a href="@LinkTo(Model.PageNumber - 1)" rel="prev" aria-label="Halaman sebelumnya">&lsaquo;</a>
+                }
+
+                @if (from > 1)
+                {
+                    <a href="@LinkTo(1)">1</a>
+                    @if (from > 2)
+                    {
+                        <span class="is-disabled">&hellip;</span>
+                    }
+                }
+
+                @* Nama "page" dihindari: di Razor, @page adalah direktif, bukan variabel. *@
+                @for (var number = from; number <= to; number++)
+                {
+                    if (number == Model.PageNumber)
+                    {
+                        <span class="is-current" aria-current="page">@number</span>
+                    }
+                    else
+                    {
+                        <a href="@LinkTo(number)">@number</a>
+                    }
+                }
+
+                @if (to < Model.TotalPages)
+                {
+                    @if (to < Model.TotalPages - 1)
+                    {
+                        <span class="is-disabled">&hellip;</span>
+                    }
+                    <a href="@LinkTo(Model.TotalPages)">@Model.TotalPages</a>
+                }
+
+                @if (Model.PageNumber >= Model.TotalPages)
+                {
+                    <span class="is-disabled" aria-hidden="true">&rsaquo;</span>
+                }
+                else
+                {
+                    <a href="@LinkTo(Model.PageNumber + 1)" rel="next" aria-label="Halaman berikutnya">&rsaquo;</a>
+                }
+            </nav>
+        }
+    </div>
+}

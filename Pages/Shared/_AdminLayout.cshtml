@@ -1,0 +1,214 @@
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Authorization
+@using Project_Keu.Infrastructure.Admin
+@inject IAuthorizationService Authorization
+
+@{
+    var currentPage = ViewContext.RouteData.Values["page"] as string;
+    var activeItem = AdminMenu.Find(currentPage);
+
+    var pageTitle = ViewData["Title"] as string ?? activeItem?.Title ?? "Administrasi";
+    var pageLead = ViewData["Lead"] as string ?? activeItem?.Description;
+
+    var displayName = User.Identity?.Name ?? User.FindFirstValue("username") ?? "Administrator";
+    var roleNames = User.FindAll(ClaimTypes.Role).Select(c => c.Value).ToList();
+    var roleLabel = roleNames.Count > 0 ? string.Join(", ", roleNames) : "Tanpa peran";
+
+    // Inisial dipakai sebagai avatar sederhana, tanpa perlu unggahan foto.
+    var initials = string.Concat(
+        displayName.Split(' ', StringSplitOptions.RemoveEmptyEntries)
+            .Take(2)
+            .Select(part => char.ToUpperInvariant(part[0])));
+
+    // Menu yang tidak boleh diakses tidak dirender sama sekali, jadi tidak pernah ada
+    // tautan yang berujung ke halaman "akses ditolak". Penyaringan dilakukan di sini
+    // agar bagian markup di bawah tetap bersih dari logika.
+    var menuGroups = new List<(string Title, List<AdminMenuItem> Items)>();
+
+    foreach (var group in AdminMenu.Sections)
+    {
+        var visible = new List<AdminMenuItem>();
+
+        foreach (var item in group.Items)
+        {
+            if (item.Policy is null)
+            {
+                visible.Add(item);
+                continue;
+            }
+
+            var allowed = await Authorization.AuthorizeAsync(User, item.Policy);
+
+            if (allowed.Succeeded)
+            {
+                visible.Add(item);
+            }
+        }
+
+        if (visible.Count > 0)
+        {
+            menuGroups.Add((group.Title, visible));
+        }
+    }
+}
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>@pageTitle · Pilar Keuangan</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body class="adm-body">
+
+<div class="adm-shell" id="admShell">
+
+    @* ---------------------------------------------------------------- Sidebar *@
+    <aside class="adm-sidebar" id="admSidebar" aria-label="Menu administrasi">
+        <div class="adm-brand">
+            <img src="~/images/logo.png" alt="" class="adm-brand-logo" aria-hidden="true" />
+            <div class="adm-brand-text">
+                <strong>Pilar Keuangan</strong>
+                <span>Panel Administrasi</span>
+            </div>
+            <button type="button" class="adm-sidebar-close" id="admSidebarClose" aria-label="Tutup menu">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
+                     stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
+                    <line x1="6" y1="6" x2="18" y2="18" /><line x1="18" y1="6" x2="6" y2="18" />
+                </svg>
+            </button>
+        </div>
+
+        <nav class="adm-nav">
+            @foreach (var group in menuGroups)
+            {
+                <p class="adm-nav-section">@group.Title</p>
+                <ul class="adm-nav-list">
+                    @foreach (var item in group.Items)
+                    {
+                        var isActive = string.Equals(item.PageName, currentPage, StringComparison.OrdinalIgnoreCase);
+
+                        <li>
+                            @* title dipasang selalu: saat sidebar diciutkan, hanya ikon
+                               yang terlihat sehingga tooltip inilah penanda menunya. *@
+                            <a asp-page="@item.PageName"
+                               class="adm-nav-link @(isActive ? "is-active" : null)"
+                               title="@item.Title"
+                               aria-current="@(isActive ? "page" : null)">
+                                <svg class="adm-nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none"
+                                     stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                                     stroke-linejoin="round" aria-hidden="true">
+                                    @Html.Raw(item.IconPath)
+                                </svg>
+                                <span>@item.Title</span>
+                            </a>
+                        </li>
+                    }
+                </ul>
+            }
+        </nav>
+
+        <div class="adm-sidebar-foot">
+            <a asp-page="/Index" class="adm-sidebar-exit" title="Lihat situs publik">
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor"
+                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" />
+                </svg>
+                <span>Lihat situs publik</span>
+            </a>
+        </div>
+    </aside>
+
+    <div class="adm-scrim" id="admScrim" hidden></div>
+
+    @* ------------------------------------------------------------- Area utama *@
+    <div class="adm-main">
+
+        <header class="adm-topbar">
+            @* Satu tombol untuk dua konteks: di layar lebar ia menciutkan sidebar
+               menjadi rel ikon, di layar sempit ia membuka laci menu. *@
+            <button type="button" class="adm-burger" id="admBurger" aria-label="Sembunyikan menu"
+                    title="Sembunyikan menu" aria-controls="admSidebar" aria-expanded="true">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor"
+                     stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
+                    <line x1="4" y1="7" x2="20" y2="7" />
+                    <line x1="4" y1="12" x2="20" y2="12" />
+                    <line x1="4" y1="17" x2="20" y2="17" />
+                </svg>
+            </button>
+
+            <div class="adm-topbar-title">
+                <span class="adm-crumb">Administrasi</span>
+                <h1>@pageTitle</h1>
+            </div>
+
+            <div class="adm-topbar-right">
+                <div class="adm-user">
+                    <span class="adm-avatar" aria-hidden="true">@(initials.Length > 0 ? initials : "A")</span>
+                    <span class="adm-user-text">
+                        <strong>@displayName</strong>
+                        <small>@roleLabel</small>
+                    </span>
+                </div>
+
+                <form method="post" asp-page="/Logout" class="adm-logout-form">
+                    <button type="submit" class="adm-logout" title="Keluar dari panel administrasi">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M15 17v1.5a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-13a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2V7" />
+                            <polyline points="18 15 21 12 18 9" />
+                            <line x1="21" y1="12" x2="10" y2="12" />
+                        </svg>
+                        <span>Keluar</span>
+                    </button>
+                </form>
+            </div>
+        </header>
+
+        <main class="adm-content">
+            @if (!string.IsNullOrWhiteSpace(pageLead))
+            {
+                <p class="adm-lead">@pageLead</p>
+            }
+
+            @* Pesan hasil aksi disimpan di TempData supaya tetap tampil setelah
+               pola POST-redirect-GET, dan tidak terkirim ulang saat halaman di-refresh. *@
+            @if (TempData["AdminSuccess"] is string successMessage)
+            {
+                <div class="adm-alert adm-alert-success" role="status">
+                    <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor"
+                         stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                    <span>@successMessage</span>
+                </div>
+            }
+
+            @if (TempData["AdminError"] is string errorMessage)
+            {
+                <div class="adm-alert adm-alert-error" role="alert">
+                    <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor"
+                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="12" cy="12" r="9" />
+                        <line x1="12" y1="7.5" x2="12" y2="12.5" />
+                        <line x1="12" y1="16.5" x2="12" y2="16.5" />
+                    </svg>
+                    <span>@errorMessage</span>
+                </div>
+            }
+
+            @RenderBody()
+        </main>
+    </div>
+</div>
+
+<script src="~/js/admin.js" asp-append-version="true"></script>
+@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,245 @@
+@page
+@using Microsoft.AspNetCore.Authorization
+@using Project_Keu.Infrastructure.Admin
+@model Project_Keu.Pages.Admin.IndexModel
+@inject IAuthorizationService Authorization
+@{
+    ViewData["Title"] = "Beranda Administrasi";
+    ViewData["Lead"] = $"Ringkasan layanan Pilar Keuangan · {Model.Today}";
+
+    // Pintasan mengikuti menu, jadi master baru otomatis muncul di sini juga.
+    var shortcuts = new List<AdminMenuItem>();
+
+    foreach (var item in AdminMenu.AllItems)
+    {
+        if (item.PageName == "/Admin/Index")
+        {
+            continue;
+        }
+
+        if (item.Policy is null || (await Authorization.AuthorizeAsync(User, item.Policy)).Succeeded)
+        {
+            shortcuts.Add(item);
+        }
+    }
+}
+
+@if (Model.LoadError is not null)
+{
+    <div class="adm-alert adm-alert-error" role="alert">
+        <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="9" />
+            <line x1="12" y1="7.5" x2="12" y2="12.5" />
+            <line x1="12" y1="16.5" x2="12" y2="16.5" />
+        </svg>
+        <span>@Model.LoadError</span>
+    </div>
+}
+
+@if (Model.Data is { } data)
+{
+    <section class="adm-stats" aria-label="Ringkasan angka">
+        <article class="adm-stat">
+            <span class="adm-stat-icon t-navy" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor"
+                     stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                </svg>
+            </span>
+            <span class="adm-stat-text">
+                <span class="adm-stat-value">@data.TotalQuestions</span>
+                <span class="adm-stat-label">Total pertanyaan</span>
+            </span>
+        </article>
+
+        <article class="adm-stat">
+            <span class="adm-stat-icon t-green" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor"
+                     stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 11.1V12a10 10 0 1 1-5.9-9.1" />
+                    <polyline points="22 4 12 14.01 9 11.01" />
+                </svg>
+            </span>
+            <span class="adm-stat-text">
+                <span class="adm-stat-value">@data.AnsweredQuestions</span>
+                <span class="adm-stat-label">Sudah dijawab</span>
+            </span>
+        </article>
+
+        <article class="adm-stat">
+            <span class="adm-stat-icon t-amber" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor"
+                     stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="9" />
+                    <polyline points="12 7 12 12 15.5 14" />
+                </svg>
+            </span>
+            <span class="adm-stat-text">
+                <span class="adm-stat-value">@data.PendingQuestions</span>
+                <span class="adm-stat-label">Menunggu jawaban</span>
+            </span>
+        </article>
+
+        <article class="adm-stat">
+            <span class="adm-stat-icon t-cyan" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor"
+                     stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="3 16 9 10 13 14 21 6" />
+                    <polyline points="15 6 21 6 21 12" />
+                </svg>
+            </span>
+            <span class="adm-stat-text">
+                <span class="adm-stat-value">@data.QuestionsLast7Days</span>
+                <span class="adm-stat-label">Masuk 7 hari terakhir</span>
+            </span>
+        </article>
+    </section>
+
+    <div class="adm-grid-2">
+
+        @* -------------------------------------------------- Pertanyaan terbaru *@
+        <section class="adm-card">
+            <div class="adm-card-head">
+                <div>
+                    <h2>Pertanyaan Terbaru</h2>
+                    <p>Enam pengajuan paling akhir dari pegawai.</p>
+                </div>
+                <div class="adm-card-head-actions">
+                    <a asp-page="/PageQuestion" class="adm-btn adm-btn-ghost adm-btn-sm">Lihat semua</a>
+                </div>
+            </div>
+
+            @if (data.Recent.Count == 0)
+            {
+                <div class="adm-empty">
+                    <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor"
+                         stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M21 15a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                    </svg>
+                    <strong>Belum ada pertanyaan</strong>
+                    <p>Pertanyaan yang diajukan pegawai akan muncul di sini.</p>
+                </div>
+            }
+            else
+            {
+                <div class="adm-table-wrap">
+                    <table class="adm-table">
+                        <thead>
+                            <tr>
+                                <th>Nomor</th>
+                                <th>Judul</th>
+                                <th>Pegawai</th>
+                                <th>Status</th>
+                                <th>Dibuat</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in data.Recent)
+                            {
+                                <tr>
+                                    <td data-label="Nomor"><span class="adm-code">@item.QuestionNo</span></td>
+                                    <td data-label="Judul"><span class="adm-clamp adm-strong">@item.Title</span></td>
+                                    <td data-label="Pegawai">@item.EmployeeName</td>
+                                    <td data-label="Status">
+                                        <span class="adm-badge @(item.StatusName.Contains("jawab", StringComparison.OrdinalIgnoreCase) ? "adm-badge-on" : "adm-badge-warn")">
+                                            @item.StatusName
+                                        </span>
+                                    </td>
+                                    <td data-label="Dibuat" class="adm-muted">@Model.FormatDate(item.CreatedAtUtc)</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </section>
+
+        @* ------------------------------------------------------- Kolom kanan *@
+        <div>
+            <section class="adm-card" style="margin-bottom:18px;">
+                <div class="adm-card-head">
+                    <div>
+                        <h2>Sebaran Status</h2>
+                        <p>Proporsi pertanyaan per tahapan penanganan.</p>
+                    </div>
+                </div>
+                <div class="adm-card-body">
+                    @if (data.ByStatus.Count == 0)
+                    {
+                        <p class="adm-muted" style="margin:0;font-size:.82rem;">Belum ada data untuk ditampilkan.</p>
+                    }
+                    else
+                    {
+                        <ul class="adm-tally">
+                            @foreach (var tally in data.ByStatus)
+                            {
+                                var percent = Project_Keu.Pages.Admin.IndexModel.Percentage(tally.Total, data.TotalQuestions);
+
+                                <li>
+                                    <div class="adm-tally-head">
+                                        <span>@tally.StatusName</span>
+                                        <strong>@tally.Total <small>(@percent%)</small></strong>
+                                    </div>
+                                    <div class="adm-tally-bar" role="presentation">
+                                        <span style="width:@(percent)%"></span>
+                                    </div>
+                                </li>
+                            }
+                        </ul>
+                    }
+                </div>
+            </section>
+
+            <section class="adm-card">
+                <div class="adm-card-head">
+                    <div>
+                        <h2>Data Pendukung</h2>
+                        <p>Jumlah data master yang sedang aktif.</p>
+                    </div>
+                </div>
+                <div class="adm-card-body">
+                    <ul class="adm-mini-stats">
+                        <li><span>Pegawai aktif</span><strong>@data.ActiveEmployees</strong></li>
+                        <li><span>Kategori pertanyaan aktif</span><strong>@data.ActiveCategories</strong></li>
+                        <li><span>Akun admin aktif</span><strong>@data.ActiveAdmins</strong></li>
+                    </ul>
+                </div>
+            </section>
+        </div>
+    </div>
+}
+
+@* ------------------------------------------------------------- Pintasan menu *@
+<section class="adm-card" style="margin-top:18px;">
+    <div class="adm-card-head">
+        <div>
+            <h2>Pemeliharaan Data Master</h2>
+            <p>Hanya menu yang sesuai hak akses Anda yang ditampilkan.</p>
+        </div>
+    </div>
+    <div class="adm-card-body">
+        <div class="adm-shortcuts">
+            @foreach (var item in shortcuts)
+            {
+                <a asp-page="@item.PageName" class="adm-shortcut">
+                    <span class="adm-shortcut-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
+                             stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            @Html.Raw(item.IconPath)
+                        </svg>
+                    </span>
+                    <span class="adm-shortcut-text">
+                        <strong>@item.Title</strong>
+                        <small>@item.Description</small>
+                    </span>
+                    <svg class="adm-shortcut-arrow" viewBox="0 0 24 24" width="17" height="17" fill="none"
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                         aria-hidden="true">
+                        <polyline points="9 6 15 12 9 18" />
+                    </svg>
+                </a>
+            }
+        </div>
+    </div>
+</section>

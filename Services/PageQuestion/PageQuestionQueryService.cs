@@ -33,7 +33,15 @@ public sealed class PageQuestionQueryService
         public string? EmployeeKeyword { get; set; }
         public string? CategoryKeyword { get; set; }
         public string? StatusKeyword { get; set; }
+
+        /// <summary>Kata kunci untuk kolom "Pertanyaan": mencakup isi, judul, dan nomor.</summary>
         public string? QuestionKeyword { get; set; }
+
+        /// <summary>Saringan khusus kolom "No. Pertanyaan"; hanya dipakai tampilan admin.</summary>
+        public string? QuestionNoKeyword { get; set; }
+
+        /// <summary>Saringan khusus kolom "Judul"; hanya dipakai tampilan admin.</summary>
+        public string? TitleKeyword { get; set; }
         public DateTime? CreatedDate { get; set; }
         public Guid? CategoryId { get; set; }
         public Guid? StatusId { get; set; }
@@ -146,6 +154,8 @@ public sealed class PageQuestionQueryService
         request.CategoryKeyword = NormalizeKeyword(request.CategoryKeyword);
         request.StatusKeyword = NormalizeKeyword(request.StatusKeyword);
         request.QuestionKeyword = NormalizeKeyword(request.QuestionKeyword);
+        request.QuestionNoKeyword = NormalizeKeyword(request.QuestionNoKeyword);
+        request.TitleKeyword = NormalizeKeyword(request.TitleKeyword);
 
         if (request.DateFrom.HasValue && request.DateTo.HasValue && request.DateFrom > request.DateTo)
         {
@@ -236,6 +246,22 @@ public sealed class PageQuestionQueryService
                 (x.QuestionText != null && EF.Functions.ILike(x.QuestionText, pattern, LikeEscape)) ||
                 (x.Title != null && EF.Functions.ILike(x.Title, pattern, LikeEscape)) ||
                 (x.QuestionNo != null && EF.Functions.ILike(x.QuestionNo, pattern, LikeEscape)));
+        }
+
+        // Dua saringan berikut menyempit ke satu kolom saja. Tampilan publik hanya
+        // punya satu kolom "Pertanyaan" sehingga cukup memakai QuestionKeyword yang
+        // mencakup ketiganya; tampilan admin memisah kolomnya, jadi butuh saringan
+        // yang sesuai dengan kolom yang dilihatnya.
+        if (request.QuestionNoKeyword is not null)
+        {
+            var pattern = ContainsPattern(request.QuestionNoKeyword);
+            query = query.Where(x => x.QuestionNo != null && EF.Functions.ILike(x.QuestionNo, pattern, LikeEscape));
+        }
+
+        if (request.TitleKeyword is not null)
+        {
+            var pattern = ContainsPattern(request.TitleKeyword);
+            query = query.Where(x => x.Title != null && EF.Functions.ILike(x.Title, pattern, LikeEscape));
         }
 
         if (request.StatusId.HasValue)

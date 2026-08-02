@@ -31,10 +31,55 @@
             </svg>
             <span>Kembali</span>
         </a>
+
+        @* Halaman ini tetap terbuka untuk umum. Jalan pintas ke panel administrasi
+           hanya muncul bagi yang sudah masuk, sehingga tampilan publik tidak berubah. *@
+        @if (User.Identity?.IsAuthenticated == true)
+        {
+            <a asp-page="/Admin/Index" class="app-btn app-btn-sm" aria-label="Buka panel administrasi">
+                <svg class="app-btn-icon" viewBox="0 0 24 24" width="16" height="16"
+                     fill="none" stroke="currentColor" stroke-width="2"
+                     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                    <rect x="3" y="3" width="7.5" height="7.5" rx="1.5" />
+                    <rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5" />
+                    <rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5" />
+                    <rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5" />
+                </svg>
+                <span>Dashboard</span>
+            </a>
+        }
     </nav>
 
     <section class="admin-table-wrap admin-table-wrap-v2">
-        <div class="admin-table-title admin-table-title-v2">Daftar Pertanyaan Kategori Akun Belanja Perjalanan Dinas</div>
+        @* Judul mengikuti lingkup daftarnya, bukan peran pembacanya: ada kategori
+           berarti daftarnya dibatasi kategori itu, siapa pun yang membuka. *@
+        <div class="admin-table-title admin-table-title-v2">
+            @if (!string.IsNullOrWhiteSpace(Model.CategoryName))
+            {
+                <text>Daftar Pertanyaan Kategori @Model.CategoryName</text>
+
+                @* Pengelola perlu jalan keluar dari lingkup kategori: konteks halaman
+                   sengaja tidak ikut dibersihkan tombol reset filter. *@
+                if (Model.IsAdmin)
+                {
+                    <a asp-page="/PageQuestion" class="inv2-scope-reset" title="Tampilkan pertanyaan dari semua kategori">
+                        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor"
+                             stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <line x1="6" y1="6" x2="18" y2="18" /><line x1="18" y1="6" x2="6" y2="18" />
+                        </svg>
+                        Lihat semua kategori
+                    </a>
+                }
+            }
+            else if (Model.IsAdmin)
+            {
+                <text>Daftar Seluruh Pertanyaan</text>
+            }
+            else
+            {
+                <text>Daftar Pertanyaan</text>
+            }
+        </div>
 
         <div class="inv2-page">
             <div class="inv2-shell">
@@ -81,25 +126,50 @@
                     <form method="post" id="filterForm">
                         @* CategoryId adalah konteks halaman (dari kartu kategori), bukan
                            filter yang bisa diubah pengguna, jadi tidak ikut dibersihkan
-                           oleh tombol reset. *@
+                           oleh tombol reset. Kosong berarti daftarnya lintas kategori. *@
                         <input type="hidden" name="CategoryId" value="@Model.CategoryId" />
                         <input type="hidden" name="CreatedByEmployee" data-filter="hidden" value="@Model.CreatedByEmployee" />
 
                         <div class="inv2-table-wrap">
                             <table class="inv2-table">
+                                @* Susunan kolom mengikuti peran pembaca. Pengelola melihat
+                                   kolom lengkap seperti pada berkas unduhan; pengunjung
+                                   umum melihat susunan ringkas yang sudah ada. *@
                                 <thead>
                                     <tr class="inv2-head-label">
                                         <th style="width:38px;"></th>
-                                        <th style="width:80px;">No</th>
-                                        <th style="width:130px;">Tgl Dibuat</th>
-                                        <th style="width:560px;">Pertanyaan</th>
-                                        <th style="width:220px;">Pegawai</th>
-                                        <th style="width:140px;">Status</th>
+                                        <th style="width:60px;">No</th>
+                                        @if (Model.IsAdmin)
+                                        {
+                                            <th style="width:130px;">No. Pertanyaan</th>
+                                        }
+                                        <th style="width:120px;">Tgl Dibuat</th>
+                                        @if (Model.IsAdmin)
+                                        {
+                                            <th style="width:240px;">Judul</th>
+                                        }
+                                        <th style="width:@(Model.IsAdmin ? "340px" : "560px");">Pertanyaan</th>
+                                        @if (Model.IsAdmin)
+                                        {
+                                            <th style="width:180px;">Kategori</th>
+                                        }
+                                        <th style="width:200px;">Pegawai</th>
+                                        <th style="width:130px;">Status</th>
                                         <th style="width:46px;"></th>
                                     </tr>
                                     <tr class="inv2-head-filter">
                                         <th><input type="checkbox" aria-label="Pilih semua baris" /></th>
                                         <th></th>
+
+                                        @if (Model.IsAdmin)
+                                        {
+                                            <th>
+                                                <input type="text" name="QuestionNoKeyword" data-filter="text"
+                                                       value="@Model.QuestionNoKeyword" placeholder="Cari nomor"
+                                                       maxlength="200" autocomplete="off" aria-label="Filter nomor pertanyaan" />
+                                            </th>
+                                        }
+
                                         <th>
                                             @* Rentang tanggal: DateFrom/DateTo sudah didukung server tetapi
                                                sebelumnya hanya ada sebagai hidden field tanpa kontrol. *@
@@ -112,11 +182,31 @@
                                                        aria-label="Tanggal dibuat sampai" title="Sampai tanggal" />
                                             </div>
                                         </th>
+
+                                        @if (Model.IsAdmin)
+                                        {
+                                            <th>
+                                                <input type="text" name="TitleKeyword" data-filter="text"
+                                                       value="@Model.TitleKeyword" placeholder="Cari judul"
+                                                       maxlength="200" autocomplete="off" aria-label="Filter judul" />
+                                            </th>
+                                        }
+
                                         <th>
                                             <input type="text" name="QuestionKeyword" data-filter="text"
                                                    value="@Model.QuestionKeyword" placeholder="Cari pertanyaan"
                                                    maxlength="200" autocomplete="off" aria-label="Filter pertanyaan" />
                                         </th>
+
+                                        @if (Model.IsAdmin)
+                                        {
+                                            <th>
+                                                <input type="text" name="CategoryKeyword" data-filter="text"
+                                                       value="@Model.CategoryKeyword" placeholder="Cari kategori"
+                                                       maxlength="200" autocomplete="off" aria-label="Filter kategori" />
+                                            </th>
+                                        }
+
                                         <th>
                                             <input type="text" name="EmployeeKeyword" data-filter="text"
                                                    value="@Model.EmployeeKeyword" placeholder="Cari pegawai / NIP"
@@ -148,7 +238,7 @@
 
                                 <tbody id="questionsTbody" aria-busy="true" aria-live="polite">
                                     <tr>
-                                        <td colspan="7" class="inv2-empty">Memuat data...</td>
+                                        <td colspan="@(Model.IsAdmin ? 10 : 7)" class="inv2-empty">Memuat data...</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -196,7 +286,10 @@
             const resetFilterButton = document.getElementById('resetFilterButton');
             const pageSizeSelect = document.getElementById('pageSizeSelect');
 
-            const COLUMN_COUNT = 7;
+            // Pengelola melihat kolom lengkap; pengunjung umum melihat susunan ringkas.
+            // Nilainya ditentukan server agar sama persis dengan <thead> yang dirender.
+            const IS_ADMIN = @(Model.IsAdmin ? "true" : "false");
+            const COLUMN_COUNT = IS_ADMIN ? 10 : 7;
             const DEBOUNCE_MS = 400;
 
             const numberFields = ['Page', 'PageSize'];
@@ -292,6 +385,8 @@
                 const offset = ((result?.page ?? 1) - 1) * (result?.pageSize ?? 10);
 
                 tbody.innerHTML = questions.map((q, index) => {
+                    const rowNumber = offset + index + 1;
+
                     const status = q?.statusName ?? '-';
                     const statusClass = String(status).toLowerCase().includes('jawab')
                         ? 'inv2-badge-success'
@@ -304,19 +399,38 @@
 
                     // Id dikirim sebagai value tombol submit ke #detailForm (POST),
                     // bukan sebagai query string.
-                    return `
-                        <tr>
-                            <td><input type="checkbox" aria-label="Pilih baris ${offset + index + 1}" /></td>
-                            <td>${offset + index + 1}</td>
-                            <td>${tglDibuat}</td>
-                            <td class="inv2-question">
-                                <button type="submit" form="detailForm" name="Id" value="${escapeHtml(q?.id ?? '')}" class="inv2-question-link" title="${pertanyaan}">${pertanyaan}</button>
-                            </td>
-                            <td>${pegawai}</td>
-                            <td><span class="inv2-badge ${statusClass}">${escapeHtml(status)}</span></td>
-                            <td class="inv2-kebab">⋮</td>
-                        </tr>
-                    `;
+                    const detailLink =
+                        `<button type="submit" form="detailForm" name="Id" value="${escapeHtml(q?.id ?? '')}" class="inv2-question-link" title="${pertanyaan}">${pertanyaan}</button>`;
+
+                    // Sel disusun sebagai daftar supaya urutannya tidak bisa melenceng
+                    // dari <thead>; jumlahnya selalu sama dengan COLUMN_COUNT.
+                    const cells = [
+                        `<td><input type="checkbox" aria-label="Pilih baris ${rowNumber}" /></td>`,
+                        `<td>${rowNumber}</td>`
+                    ];
+
+                    if (IS_ADMIN) {
+                        cells.push(`<td>${escapeHtml(q?.questionNo || '-')}</td>`);
+                    }
+
+                    cells.push(`<td>${tglDibuat}</td>`);
+
+                    if (IS_ADMIN) {
+                        const judul = escapeHtml(q?.title || '-');
+                        cells.push(`<td class="inv2-title" title="${judul}">${judul}</td>`);
+                    }
+
+                    cells.push(`<td class="inv2-question">${detailLink}</td>`);
+
+                    if (IS_ADMIN) {
+                        cells.push(`<td>${escapeHtml(q?.categoryName || '-')}</td>`);
+                    }
+
+                    cells.push(`<td>${pegawai}</td>`);
+                    cells.push(`<td><span class="inv2-badge ${statusClass}">${escapeHtml(status)}</span></td>`);
+                    cells.push('<td class="inv2-kebab">⋮</td>');
+
+                    return `<tr>${cells.join('')}</tr>`;
                 }).join('');
             }
 
