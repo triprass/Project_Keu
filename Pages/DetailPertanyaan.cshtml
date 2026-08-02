@@ -27,8 +27,6 @@
                 </span>
             </div>
 
-            @* Kembali ke daftar pertanyaan (PageQuestion) lewat POST, membawa kategori
-               pertanyaan ini supaya mendarat di daftar yang sama dan id tidak tampil di URL. *@
             <form method="post" asp-page="/PageQuestion" class="detail-back-form-v2">
                 @if (Model.CategoryId.HasValue)
                 {
