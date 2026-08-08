@@ -1,11 +1,15 @@
 @page
 @using Microsoft.AspNetCore.Authorization
+@using Project_Keu.Infrastructure
 @using Project_Keu.Infrastructure.Admin
 @model Project_Keu.Pages.Admin.IndexModel
 @inject IAuthorizationService Authorization
 @{
     ViewData["Title"] = "Beranda Administrasi";
     ViewData["Lead"] = $"Ringkasan layanan Pilar Keuangan · {Model.Today}";
+
+    // Nomor pertanyaan hanya bisa diklik oleh yang memang berhak menjawab.
+    var canAnswer = (await Authorization.AuthorizeAsync(User, AdminMenu.PolicyAnswer)).Succeeded;
 
     // Pintasan mengikuti menu, jadi master baru otomatis muncul di sini juga.
     var shortcuts = new List<AdminMenuItem>();
@@ -103,7 +107,16 @@
             <div class="adm-card-head">
                 <div>
                     <h2>Pertanyaan Terbaru</h2>
-                    <p>Enam pengajuan paling akhir dari pegawai.</p>
+                    <p>
+                        @if (canAnswer)
+                        {
+                            <text>Enam pengajuan paling akhir. Klik nomornya untuk menjawab atau mengubah jawaban.</text>
+                        }
+                        else
+                        {
+                            <text>Enam pengajuan paling akhir dari pegawai.</text>
+                        }
+                    </p>
                 </div>
                 <div class="adm-card-head-actions">
                     <a asp-page="/PageQuestion" class="adm-btn adm-btn-ghost adm-btn-sm">Lihat semua</a>
@@ -123,6 +136,13 @@
             }
             else
             {
+                @* Form terpisah di luar tabel; setiap baris mengirimkan id lewat
+                   atribut form="..." sehingga id tidak pernah masuk ke URL. *@
+                if (canAnswer)
+                {
+                    <form method="post" asp-page="/Admin/Answer" id="answerForm"></form>
+                }
+
                 <div class="adm-table-wrap">
                     <table class="adm-table">
                         <thead>
@@ -138,13 +158,53 @@
                             @foreach (var item in data.Recent)
                             {
                                 <tr>
-                                    <td data-label="Nomor"><span class="adm-code">@item.QuestionNo</span></td>
+                                    <td data-label="Nomor">
+                                        @if (canAnswer)
+                                        {
+                                            <button type="submit" form="answerForm" name="Id" value="@item.Id"
+                                                    class="adm-link-btn"
+                                                    title="@(item.HasAnswer ? "Ubah jawaban" : "Jawab pertanyaan") @item.QuestionNo">
+                                                <span class="adm-code">@item.QuestionNo</span>
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <span class="adm-code">@item.QuestionNo</span>
+                                        }
+                                    </td>
                                     <td data-label="Judul"><span class="adm-clamp adm-strong">@item.Title</span></td>
                                     <td data-label="Pegawai">@item.EmployeeName</td>
                                     <td data-label="Status">
-                                        <span class="adm-badge @(item.StatusName.Contains("jawab", StringComparison.OrdinalIgnoreCase) ? "adm-badge-on" : "adm-badge-warn")">
-                                            @item.StatusName
-                                        </span>
+                                        @{
+                                            // Warna mengikuti golongan yang ditentukan server, bukan
+                                            // pencocokan kata "jawab" yang dulu benar untuk "Telah
+                                            // Dijawab" maupun "Belum Dijawab" sekaligus.
+                                            var statusClass = item.StatusKind switch
+                                            {
+                                                QuestionStatusKind.Answered => "adm-badge-on",
+                                                QuestionStatusKind.Pending => "adm-badge-warn",
+                                                _ => "adm-badge-off"
+                                            };
+
+                                            var hasColor = QuestionStatusStyle.HasUsableColor(item.StatusColor);
+                                            var statusColor = QuestionStatusStyle.SafeColor(item.StatusColor);
+                                        }
+
+                                        @* Warna dari master dipakai pada titik dan garis tepi saja.
+                                           Dipakai sebagai warna teks, nilai semuda #BDBDBD akan
+                                           nyaris tak terbaca di atas latar putih. *@
+                                        @if (hasColor)
+                                        {
+                                            <span class="adm-badge adm-badge-custom" style="border-color:@statusColor;">
+                                                <span class="adm-badge-dot" style="background:@statusColor;"></span>@item.StatusName
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="adm-badge @statusClass">
+                                                <span class="adm-badge-dot"></span>@item.StatusName
+                                            </span>
+                                        }
                                     </td>
                                     <td data-label="Dibuat" class="adm-muted">@Model.FormatDate(item.CreatedAtUtc)</td>
                                 </tr>

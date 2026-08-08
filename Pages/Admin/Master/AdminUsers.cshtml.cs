@@ -26,11 +26,15 @@ public class AdminUsersModel : AdminPageModelBase
 
     public sealed record RoleOption(Guid Id, string Code, string Name, bool IsActive);
 
+    public sealed record EmployeeOption(Guid Id, string FullName, string? Nip);
+
     public sealed record Row(
         Guid Id,
         string Username,
         string FullName,
         string? Email,
+        Guid? EmployeeId,
+        string? EmployeeName,
         bool IsActive,
         DateTime? LastLoginAt,
         DateTime? LockedUntil,
@@ -41,13 +45,19 @@ public class AdminUsersModel : AdminPageModelBase
 
     public IReadOnlyList<RoleOption> Roles { get; private set; } = [];
 
+    /// <summary>Pilihan pegawai untuk menautkan akun; tautan inilah yang dipakai saat mencatat jawaban.</summary>
+    public IReadOnlyList<EmployeeOption> Employees { get; private set; } = [];
+
     /// <summary>Nama dialog yang harus terbuka kembali setelah validasi gagal.</summary>
     public string? ReopenDialogName { get; private set; }
 
-    [BindProperty]
+    // Kedua model ini TIDAK memakai [BindProperty], melainkan diterima sebagai
+    // parameter handler. Dengan [BindProperty], keduanya ikut terikat dan
+    // tervalidasi pada setiap POST: menyimpan akun akan gagal karena kolom wajib
+    // milik dialog ganti kata sandi kosong, dan sebaliknya. Sebagai parameter,
+    // masing-masing hanya divalidasi pada handler yang memang memakainya.
     public AccountInput Input { get; set; } = new();
 
-    [BindProperty]
     public PasswordInput Password { get; set; } = new();
 
     public Guid CurrentUserId =>
@@ -70,6 +80,12 @@ public class AdminUsersModel : AdminPageModelBase
         [EmailAddress(ErrorMessage = "Format surel tidak sesuai.")]
         [StringLength(150, ErrorMessage = "Surel maksimal 150 karakter.")]
         public string? Email { get; set; }
+
+        /// <summary>
+        /// Pegawai yang diwakili akun ini. Diperlukan agar pemiliknya bisa menjawab
+        /// pertanyaan, karena jawaban tercatat atas nama pegawai.
+        /// </summary>
+        public Guid? EmployeeId { get; set; }
 
         /// <summary>Wajib diisi saat membuat akun baru, diabaikan saat mengubah akun.</summary>
         [StringLength(200)]
@@ -100,8 +116,10 @@ public class AdminUsersModel : AdminPageModelBase
 
     // ------------------------------------------------------------- Simpan akun
 
-    public async Task<IActionResult> OnPostSaveAsync(CancellationToken cancellationToken)
+    public async Task<IActionResult> OnPostSaveAsync(AccountInput input, CancellationToken cancellationToken)
     {
+        Input = input;
+
         Input.Username = Input.Username?.Trim() ?? string.Empty;
         Input.FullName = Input.FullName?.Trim() ?? string.Empty;
         Input.Email = string.IsNullOrWhiteSpace(Input.Email) ? null : Input.Email.Trim();
@@ -121,6 +139,12 @@ public class AdminUsersModel : AdminPageModelBase
         if (isNew)
         {
             ValidatePassword(Input.NewPassword, Input.ConfirmPassword, "Input.NewPassword", "Input.ConfirmPassword");
+        }
+
+        if (Input.EmployeeId.HasValue &&
+            !await _context.Employees.AnyAsync(e => e.Id == Input.EmployeeId.Value && e.DeletedAt == null, cancellationToken))
+        {
+            ModelState.AddModelError("Input.EmployeeId", "Pegawai yang dipilih tidak ditemukan.");
         }
 
         // Akun yang sedang dipakai tidak boleh menonaktifkan dirinya sendiri; kalau
@@ -149,6 +173,7 @@ public class AdminUsersModel : AdminPageModelBase
                 PasswordHash = PasswordHasher.Hash(Input.NewPassword!),
                 FullName = Input.FullName,
                 Email = Input.Email,
+                EmployeeId = Input.EmployeeId,
                 IsActive = Input.IsActive,
                 CreatedBy = CurrentUserName,
                 CreatedAt = now
@@ -190,6 +215,7 @@ public class AdminUsersModel : AdminPageModelBase
             entity.Username = Input.Username;
             entity.FullName = Input.FullName;
             entity.Email = Input.Email;
+            entity.EmployeeId = Input.EmployeeId;
             entity.IsActive = Input.IsActive;
             entity.UpdatedBy = CurrentUserName;
             entity.UpdatedAt = now;
@@ -205,8 +231,10 @@ public class AdminUsersModel : AdminPageModelBase
 
     // -------------------------------------------------------- Ganti kata sandi
 
-    public async Task<IActionResult> OnPostResetPasswordAsync(CancellationToken cancellationToken)
+    public async Task<IActionResult> OnPostResetPasswordAsync(PasswordInput password, CancellationToken cancellationToken)
     {
+        Password = password;
+
         ValidatePassword(Password.NewPassword, Password.ConfirmPassword, "Password.NewPassword", "Password.ConfirmPassword");
 
         if (!ModelState.IsValid)
@@ -399,6 +427,13 @@ public class AdminUsersModel : AdminPageModelBase
             .Select(r => new RoleOption(r.Id, r.Code, r.Name, r.IsActive))
             .ToListAsync(cancellationToken);
 
+        Employees = await _context.Employees
+            .AsNoTracking()
+            .Where(e => e.DeletedAt == null && e.IsActive)
+            .OrderBy(e => e.FullName)
+            .Select(e => new EmployeeOption(e.Id, e.FullName, e.Nip))
+            .ToListAsync(cancellationToken);
+
         var query = _context.AdminUsers.AsNoTracking();
 
         TotalUnfiltered = await query.CountAsync(cancellationToken);
@@ -430,6 +465,8 @@ public class AdminUsersModel : AdminPageModelBase
                 x.Username,
                 x.FullName,
                 x.Email,
+                x.EmployeeId,
+                EmployeeName = x.Employee != null ? x.Employee.FullName : null,
                 x.IsActive,
                 x.LastLoginAt,
                 x.LockedUntil,
@@ -440,7 +477,7 @@ public class AdminUsersModel : AdminPageModelBase
 
         Items = rows
             .Select(x => new Row(
-                x.Id, x.Username, x.FullName, x.Email, x.IsActive,
+                x.Id, x.Username, x.FullName, x.Email, x.EmployeeId, x.EmployeeName, x.IsActive,
                 x.LastLoginAt, x.LockedUntil, x.RoleNames, x.RoleIds))
             .ToList();
     }

@@ -42,6 +42,12 @@ public sealed class PageQuestionQueryService
 
         /// <summary>Saringan khusus kolom "Judul"; hanya dipakai tampilan admin.</summary>
         public string? TitleKeyword { get; set; }
+
+        /// <summary>
+        /// Saringan kolom "Jawaban". Mencocokkan isi jawaban mana pun milik satu
+        /// pertanyaan, bukan hanya jawaban terakhir yang kebetulan ditampilkan.
+        /// </summary>
+        public string? AnswerKeyword { get; set; }
         public DateTime? CreatedDate { get; set; }
         public Guid? CategoryId { get; set; }
         public Guid? StatusId { get; set; }
@@ -60,8 +66,30 @@ public sealed class PageQuestionQueryService
         public string QuestionText { get; set; } = string.Empty;
         public string CategoryName { get; set; } = string.Empty;
         public string StatusName { get; set; } = string.Empty;
+
+        /// <summary>Kode status; dipakai menentukan warna lencana, bukan untuk ditampilkan.</summary>
+        public string StatusCode { get; set; } = string.Empty;
+
+        /// <summary>Warna dari master status, bila pengelola mengisinya.</summary>
+        public string? StatusColor { get; set; }
+
+        /// <summary>
+        /// Golongan status siap pakai: "answered", "pending", atau "neutral". Ditentukan
+        /// server supaya semua tampilan memakai aturan yang sama persis.
+        /// </summary>
+        public string StatusKind { get; set; } = "neutral";
         public string EmployeeName { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
+
+        /// <summary>
+        /// Isi jawaban terakhir, atau string kosong bila pertanyaan belum dijawab.
+        /// Yang diambil hanya satu jawaban terbaru: kolom pada tabel memang hanya
+        /// menampilkan ringkasan, dan riwayat lengkapnya ada di halaman detail.
+        /// </summary>
+        public string AnswerText { get; set; } = string.Empty;
+
+        /// <summary>Benar bila pertanyaan sudah punya jawaban tersimpan.</summary>
+        public bool HasAnswer => !string.IsNullOrWhiteSpace(AnswerText);
 
         /// <summary>
         /// Tanggal siap tampil dalam zona waktu aplikasi. Dikirim dari server supaya
@@ -156,6 +184,7 @@ public sealed class PageQuestionQueryService
         request.QuestionKeyword = NormalizeKeyword(request.QuestionKeyword);
         request.QuestionNoKeyword = NormalizeKeyword(request.QuestionNoKeyword);
         request.TitleKeyword = NormalizeKeyword(request.TitleKeyword);
+        request.AnswerKeyword = NormalizeKeyword(request.AnswerKeyword);
 
         if (request.DateFrom.HasValue && request.DateTo.HasValue && request.DateFrom > request.DateTo)
         {
@@ -264,6 +293,13 @@ public sealed class PageQuestionQueryService
             query = query.Where(x => x.Title != null && EF.Functions.ILike(x.Title, pattern, LikeEscape));
         }
 
+        if (request.AnswerKeyword is not null)
+        {
+            var pattern = ContainsPattern(request.AnswerKeyword);
+            query = query.Where(x => x.Answers.Any(a =>
+                a.AnswerText != null && EF.Functions.ILike(a.AnswerText, pattern, LikeEscape)));
+        }
+
         if (request.StatusId.HasValue)
         {
             query = query.Where(x => x.StatusId == request.StatusId.Value);
@@ -314,8 +350,21 @@ public sealed class PageQuestionQueryService
                 QuestionText = x.QuestionText ?? string.Empty,
                 CategoryName = x.Category != null ? (x.Category.Name ?? string.Empty) : string.Empty,
                 StatusName = x.Status != null ? (x.Status.Name ?? string.Empty) : string.Empty,
+                StatusCode = x.Status != null ? (x.Status.Code ?? string.Empty) : string.Empty,
+                StatusColor = x.Status != null ? x.Status.Color : null,
                 EmployeeName = x.CreatedByEmployeeNavigation != null ? (x.CreatedByEmployeeNavigation.FullName ?? string.Empty) : string.Empty,
-                CreatedAt = x.CreatedAt
+                CreatedAt = x.CreatedAt,
+
+                // Urutan sama dengan halaman detail dan halaman menjawab, supaya
+                // jawaban yang terbaca di tabel adalah jawaban yang sama dengan
+                // yang dibuka saat barisnya diklik. Jawaban tanpa tanggal ditaruh
+                // paling belakang tanpa nilai pengganti, karena DateTime.MinValue
+                // ditolak kolom timestamptz.
+                AnswerText = x.Answers
+                    .OrderByDescending(a => a.AnsweredAt.HasValue)
+                    .ThenByDescending(a => a.AnsweredAt)
+                    .Select(a => a.AnswerText)
+                    .FirstOrDefault() ?? string.Empty
             });
     }
 
@@ -324,6 +373,15 @@ public sealed class PageQuestionQueryService
         foreach (var row in rows)
         {
             row.CreatedAtDisplay = _appTimeZone.ToLocal(row.CreatedAt).ToString("dd-MM-yyyy");
+
+            // Penggolongan dikerjakan di sini, bukan di peramban, supaya daftar
+            // pertanyaan dan beranda administrasi tidak bisa berbeda aturannya.
+            row.StatusKind = QuestionStatusStyle.ClassifyToken(row.StatusCode, row.StatusName);
+
+            if (!QuestionStatusStyle.HasUsableColor(row.StatusColor))
+            {
+                row.StatusColor = null;
+            }
         }
     }
 

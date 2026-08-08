@@ -46,6 +46,9 @@ public class PageQuestionModel : PageModel
     public string? TitleKeyword { get; set; }
 
     [BindProperty]
+    public string? AnswerKeyword { get; set; }
+
+    [BindProperty]
     public DateTime? CreatedDate { get; set; }
 
     [BindProperty]
@@ -107,6 +110,7 @@ public class PageQuestionModel : PageModel
             QuestionKeyword = QuestionKeyword,
             QuestionNoKeyword = QuestionNoKeyword,
             TitleKeyword = TitleKeyword,
+            AnswerKeyword = AnswerKeyword,
             CreatedDate = CreatedDate,
             CategoryId = CategoryId,
             StatusId = StatusId,

@@ -29,7 +29,7 @@
             <button type="button" class="adm-btn adm-btn-primary"
                     data-modal-open="accountDialog" data-mode="create" data-title="Tambah Akun Admin"
                     data-field-id="" data-field-username="" data-field-fullname="" data-field-email=""
-                    data-field-isactive="true" data-checked="">
+                    data-field-employeeid="" data-field-isactive="true" data-checked="">
                 <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor"
                      stroke-width="2.4" stroke-linecap="round" aria-hidden="true">
                     <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
@@ -107,6 +107,17 @@
                                     <br />
                                     <span class="adm-muted">@item.Email</span>
                                 }
+                                <br />
+                                @if (string.IsNullOrWhiteSpace(item.EmployeeName))
+                                {
+                                    <span class="adm-badge adm-badge-warn" title="Akun ini belum dapat menjawab pertanyaan">
+                                        Belum tertaut pegawai
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="adm-muted">Pegawai: @item.EmployeeName</span>
+                                }
                             </td>
                             <td data-label="Peran">
                                 @if (item.RoleNames.Count == 0)
@@ -146,6 +157,7 @@
                                             data-field-username="@item.Username"
                                             data-field-fullname="@item.FullName"
                                             data-field-email="@item.Email"
+                                            data-field-employeeid="@item.EmployeeId"
                                             data-field-isactive="@item.IsActive.ToString().ToLowerInvariant()"
                                             data-checked="@string.Join(",", item.RoleIds)">
                                         <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor"
@@ -226,7 +238,7 @@
             </div>
 
             <div class="adm-modal-body">
-                <div asp-validation-summary="ModelOnly" class="adm-alert adm-alert-error adm-validation-summary"></div>
+                <div asp-validation-summary="All" class="adm-alert adm-alert-error adm-validation-summary"></div>
 
                 <div class="adm-form-grid">
                     <div class="adm-field">
@@ -245,11 +257,28 @@
                         <span asp-validation-for="Input.FullName" class="adm-validation"></span>
                     </div>
 
-                    <div class="adm-field adm-field-full">
+                    <div class="adm-field">
                         <label for="accEmail">Surel</label>
                         <input id="accEmail" type="email" name="Input.Email" data-name="email"
                                value="@Model.Input.Email" maxlength="150" autocomplete="off" />
                         <span asp-validation-for="Input.Email" class="adm-validation"></span>
+                    </div>
+
+                    @* Tautan ke data pegawai menentukan atas nama siapa jawaban dicatat;
+                       tanpa ini pemilik akun tidak bisa menjawab pertanyaan. *@
+                    <div class="adm-field">
+                        <label for="accEmployee">Pegawai terkait</label>
+                        <select id="accEmployee" name="Input.EmployeeId" data-name="employeeid">
+                            <option value="">— belum tertaut —</option>
+                            @foreach (var employee in Model.Employees)
+                            {
+                                <option value="@employee.Id" selected="@(Model.Input.EmployeeId == employee.Id)">
+                                    @employee.FullName@(string.IsNullOrWhiteSpace(employee.Nip) ? "" : $" · {employee.Nip}")
+                                </option>
+                            }
+                        </select>
+                        <span class="adm-hint">Wajib diisi bila akun ini akan dipakai menjawab pertanyaan.</span>
+                        <span asp-validation-for="Input.EmployeeId" class="adm-validation"></span>
                     </div>
                 </div>
 
@@ -339,7 +368,7 @@
             </div>
 
             <div class="adm-modal-body">
-                <div asp-validation-summary="ModelOnly" class="adm-alert adm-alert-error adm-validation-summary"></div>
+                <div asp-validation-summary="All" class="adm-alert adm-alert-error adm-validation-summary"></div>
 
                 <div class="adm-field" style="margin-bottom:15px;">
                     <label for="pwdAccount">Akun</label>

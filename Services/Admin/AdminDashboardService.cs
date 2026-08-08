@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Project_Keu.Data;
+using Project_Keu.Infrastructure;
 
 namespace Project_Keu.Services.Admin;
 
@@ -14,11 +15,19 @@ public sealed class AdminDashboardService
     }
 
     public sealed record RecentQuestion(
+        Guid Id,
         string QuestionNo,
         string Title,
         string EmployeeName,
         string StatusName,
-        DateTime CreatedAtUtc);
+        string StatusCode,
+        string? StatusColor,
+        bool HasAnswer,
+        DateTime CreatedAtUtc)
+    {
+        /// <summary>Golongan status untuk pewarnaan lencana, dengan aturan yang sama seperti daftar pertanyaan.</summary>
+        public QuestionStatusKind StatusKind => QuestionStatusStyle.Classify(StatusCode, StatusName);
+    }
 
     public sealed record StatusTally(string StatusName, int Total);
 
@@ -63,10 +72,14 @@ public sealed class AdminDashboardService
             .ThenByDescending(q => q.Id)
             .Take(6)
             .Select(q => new RecentQuestion(
+                q.Id,
                 q.QuestionNo ?? "-",
                 q.Title,
                 q.CreatedByEmployeeNavigation != null ? q.CreatedByEmployeeNavigation.FullName : "-",
                 q.Status != null ? q.Status.Name : "-",
+                q.Status != null ? (q.Status.Code ?? string.Empty) : string.Empty,
+                q.Status != null ? q.Status.Color : null,
+                q.Answers.Any(),
                 q.CreatedAt))
             .ToListAsync(cancellationToken);
 

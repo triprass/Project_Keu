@@ -1,0 +1,160 @@
+@page
+@model Project_Keu.Pages.Admin.AnswerModel
+@{
+    ViewData["Title"] = Model.IsEditing ? "Ubah Jawaban" : "Jawab Pertanyaan";
+    ViewData["Lead"] = Model.IsEditing
+        ? "Perbarui jawaban yang sudah tersimpan beserta status penanganannya."
+        : "Tuliskan jawaban untuk pertanyaan pegawai, lalu tentukan status penanganannya.";
+}
+
+@if (Model.SelectedQuestion is null)
+{
+    <div class="adm-alert adm-alert-error" role="alert">
+        <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="9" /><line x1="12" y1="7.5" x2="12" y2="12.5" />
+            <line x1="12" y1="16.5" x2="12" y2="16.5" />
+        </svg>
+        <span>Pertanyaan tidak ditemukan.</span>
+    </div>
+
+    <a asp-page="/Admin/Index" class="adm-btn adm-btn-ghost">Kembali ke beranda</a>
+}
+else
+{
+@* ------------------------------------------------------------- Isi pertanyaan
+   Hanya bagian ini yang dinaikkan ke atas: yang perlu dibaca utuh sebelum menulis
+   jawaban justru teksnya, bukan keterangan pendukungnya. *@
+<section class="adm-card" style="margin-bottom:18px;">
+    <div class="adm-card-head">
+        <div>
+            <h2>Isi Pertanyaan</h2>
+            <p>Pengajuan dari pegawai, ditampilkan apa adanya.</p>
+        </div>
+        <div class="adm-card-head-actions">
+            <span class="adm-code">@Model.QuestionNoDisplay</span>
+        </div>
+    </div>
+
+    <div class="adm-card-body">
+        <p class="adm-quote" style="margin-bottom:0;">@Model.SelectedQuestion.QuestionText</p>
+    </div>
+</section>
+
+<form method="post" asp-page-handler="Save">
+    <input type="hidden" name="Id" value="@Model.SelectedQuestion.Id" />
+
+    <div class="adm-grid-2">
+
+        @* ------------------------------------------------------ Formulir jawaban *@
+        <section class="adm-card">
+            <div class="adm-card-head">
+                <div>
+                    <h2>@(Model.IsEditing ? "Ubah Jawaban" : "Tulis Jawaban")</h2>
+                    <p>
+                        @if (Model.IsEditing)
+                        {
+                            <text>Jawaban terakhir oleh @Model.AnsweredByDisplay@(string.IsNullOrEmpty(Model.AnsweredAtDisplay) ? "" : $" · {Model.AnsweredAtDisplay}")</text>
+                        }
+                        else
+                        {
+                            <text>Pertanyaan ini belum pernah dijawab.</text>
+                        }
+                    </p>
+                </div>
+            </div>
+
+            <div class="adm-card-body">
+                <div asp-validation-summary="All" class="adm-alert adm-alert-error adm-validation-summary"></div>
+
+                @if (Model.CannotAnswer)
+                {
+                    <div class="adm-alert adm-alert-error" role="alert">
+                        <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor"
+                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <circle cx="12" cy="12" r="9" /><line x1="12" y1="7.5" x2="12" y2="12.5" />
+                            <line x1="12" y1="16.5" x2="12" y2="16.5" />
+                        </svg>
+                        <div>
+                            <strong>Akun Anda belum tertaut ke data pegawai.</strong>
+                            Jawaban dicatat atas nama pegawai, jadi tautan itu harus ada lebih dulu.
+                            Buka menu <strong>Akun Admin</strong>, ubah akun
+                            <span class="adm-mono">@Model.CurrentUserName</span>, lalu isi kolom <em>Pegawai terkait</em>.
+                        </div>
+                    </div>
+                }
+
+                <div class="adm-field adm-field-full" style="margin-bottom:15px;">
+                    <label for="answerText">Jawaban<span class="adm-req">*</span></label>
+                    <textarea id="answerText" name="Input.AnswerText" rows="10" maxlength="8000" required
+                              style="min-height:220px;"
+                              placeholder="Tuliskan jawaban selengkap mungkin, sertakan dasar aturannya bila ada.">@Model.Input.AnswerText</textarea>
+                    <span asp-validation-for="Input.AnswerText" class="adm-validation"></span>
+                </div>
+
+                <div class="adm-form-grid">
+                    @* Penjawab tidak dipilih: identitasnya diambil dari akun yang sedang
+                       masuk, karena hanya pengelola berakun yang boleh menjawab. *@
+                    <div class="adm-field">
+                        <label>Dijawab oleh</label>
+                        <div class="adm-readonly">
+                            @if (Model.CannotAnswer)
+                            {
+                                <span class="adm-muted">Belum tertaut ke data pegawai</span>
+                            }
+                            else
+                            {
+                                <span class="adm-strong">@Model.AnsweringEmployeeName</span>
+                            }
+                        </div>
+                        <span class="adm-hint">Diambil dari akun <span class="adm-mono">@Model.CurrentUserName</span> yang sedang masuk.</span>
+                    </div>
+
+                    <div class="adm-field">
+                        <label for="statusId">Status pertanyaan<span class="adm-req">*</span></label>
+                        <select id="statusId" name="Input.StatusId" required>
+                            <option value="">— pilih status —</option>
+                            @foreach (var status in Model.StatusOptions)
+                            {
+                                <option value="@status.Id" selected="@(Model.Input.StatusId == status.Id)">@status.Name</option>
+                            }
+                        </select>
+                        <span class="adm-hint">Status inilah yang tampil sebagai lencana pada daftar pertanyaan.</span>
+                        <span asp-validation-for="Input.StatusId" class="adm-validation"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="adm-modal-foot">
+                @* Tombol kembali memakai tautan biasa: tidak ada yang perlu dikirim. *@
+                <a asp-page="/Admin/Index" class="adm-btn adm-btn-ghost">Batal</a>
+                <button type="submit" class="adm-btn adm-btn-primary" disabled="@Model.CannotAnswer">
+                    @(Model.IsEditing ? "Simpan Perubahan" : "Simpan Jawaban")
+                </button>
+            </div>
+        </section>
+
+        @* -------------------------------------------------------- Konteks pertanyaan *@
+        <section class="adm-card">
+            <div class="adm-card-head">
+                <div>
+                    <h2>Pertanyaan</h2>
+                    <p>Isi pengajuan dari pegawai.</p>
+                </div>
+            </div>
+
+            <div class="adm-card-body">
+                <ul class="adm-mini-stats" style="margin-bottom:16px;">
+                    <li><span>Nomor</span><strong class="adm-mono">@Model.QuestionNoDisplay</strong></li>
+                    <li><span>Kategori</span><strong>@Model.CategoryNameDisplay</strong></li>
+                    <li><span>Pegawai</span><strong>@Model.EmployeeNameDisplay</strong></li>
+                    <li><span>Diajukan</span><strong>@Model.CreatedAtDisplay</strong></li>
+                </ul>
+
+                <p class="adm-section-label" style="margin-top:0;">Judul</p>
+                <p class="adm-quote">@Model.SelectedQuestion.Title</p>
+            </div>
+        </section>
+    </div>
+</form>
+}

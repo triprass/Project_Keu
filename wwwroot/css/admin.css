@@ -574,6 +574,11 @@
 
 .adm-badge-dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; flex: none; }
 
+/* Lencana yang warnanya datang dari master status. Warna itu hanya mengisi titik
+   dan garis tepi; teksnya tetap gelap agar terbaca berapa pun mudanya warna yang
+   dipilih pengelola. */
+.adm-badge-custom { background: var(--adm-surface); color: var(--adm-text); }
+
 /* Warna teks dan garis diatur sebaris dari data status; latarnya dibuat samar
    lewat currentColor agar kontras teks tetap terjaga apa pun warnanya. */
 .adm-badge-preview { background: color-mix(in srgb, currentColor 12%, #fff); }
@@ -733,6 +738,19 @@
 
 .adm-hint { font-size: .72rem; color: var(--adm-muted); line-height: 1.45; }
 
+/* Nilai yang ditentukan sistem, bukan diisi pengguna: tampil seperti kolom isian
+   agar sejajar dengan sekitarnya, tetapi jelas tidak bisa disunting. */
+.adm-readonly {
+    display: flex;
+    align-items: center;
+    min-height: 38px;
+    padding: 9px 12px;
+    border: 1px dashed var(--adm-border-strong);
+    border-radius: var(--adm-radius-sm);
+    background: #eef1f6;
+    font-size: .84rem;
+}
+
 .adm-check { display: flex; align-items: center; gap: 9px; font-size: .82rem; font-weight: 600; cursor: pointer; }
 .adm-check input { width: 17px; height: 17px; accent-color: var(--adm-navy); cursor: pointer; }
 
@@ -812,6 +830,41 @@
 .adm-mini-stats li:last-child { border-bottom: 0; }
 .adm-mini-stats span { color: var(--adm-muted); font-weight: 600; }
 .adm-mini-stats strong { color: var(--adm-navy); font-weight: 800; font-variant-numeric: tabular-nums; }
+
+/* Kutipan isi pertanyaan: teks apa adanya dari pengguna, jadi jeda barisnya
+   dipertahankan dan kata panjang dipaksa membungkus agar tidak menjebol kartu. */
+.adm-quote {
+    margin: 0 0 6px;
+    padding: 12px 14px;
+    border-left: 3px solid var(--adm-accent);
+    border-radius: 0 var(--adm-radius-sm) var(--adm-radius-sm) 0;
+    background: var(--adm-surface-2);
+    font-size: .85rem;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+/* Nomor pertanyaan yang bisa diklik untuk membuka layar jawaban. */
+.adm-link-btn {
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+    text-align: left;
+}
+
+.adm-link-btn .adm-code { transition: border-color .15s ease, color .15s ease, background .15s ease; }
+
+.adm-link-btn:hover .adm-code {
+    border-color: var(--adm-navy-400);
+    background: #e4ecf9;
+    color: var(--adm-navy);
+}
+
+.adm-link-btn:focus-visible { outline: 2px solid var(--adm-accent-600); outline-offset: 2px; border-radius: 6px; }
 
 .adm-shortcuts { display: grid; gap: 9px; }
 

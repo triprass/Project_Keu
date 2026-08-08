@@ -1456,6 +1456,13 @@ main[role="main"] {
     backdrop-filter: blur(10px);
 }
 
+/* Semua tombol dirapatkan ke kanan. Dipakai halaman daftar pertanyaan, di mana
+   jumlah tombolnya berubah menurut peran sehingga "space-between" akan membuat
+   satu tombol melompat ke kiri saat tombol lainnya tidak dirender. */
+.admin-navbar-end {
+    justify-content: flex-end;
+}
+
 .admin-navbar-menu {
     margin: 0;
     padding: 0;
@@ -2115,6 +2122,32 @@ main[role="main"] {
     border: 1px solid #f3a06f;
     color: #d66a2f;
     background: #fff1e9;
+}
+
+/* Status yang tidak tergolong "sudah" maupun "belum" dijawab, mis. status buatan
+   sendiri. Dibuat kelabu supaya tidak keliru dibaca sebagai salah satu dari keduanya. */
+.inv2-badge-neutral {
+    border: 1px solid #b9c5d3;
+    color: #55677d;
+    background: #f1f4f8;
+}
+
+/* Lencana yang warnanya datang dari master status. Warna itu hanya mengisi titik
+   dan garis tepi; teksnya tetap gelap agar terbaca berapa pun mudanya warna yang
+   dipilih pengelola. */
+.inv2-badge-custom {
+    gap: 6px;
+    border: 1px solid #b9c5d3;
+    color: #2b3a4d;
+    background: #ffffff;
+}
+
+.inv2-badge-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: currentColor;
+    flex: none;
 }
 
 .inv2-kebab {

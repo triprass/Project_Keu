@@ -20,6 +20,7 @@ public sealed class PageQuestionExportService
         "Tgl Dibuat",
         "Judul",
         "Pertanyaan",
+        "Jawaban",
         "Kategori",
         "Pegawai",
         "Status"
@@ -95,9 +96,10 @@ public sealed class PageQuestionExportService
 
             SetText(sheet.Cell(r, 4), row.Title);
             SetText(sheet.Cell(r, 5), row.QuestionText);
-            SetText(sheet.Cell(r, 6), row.CategoryName);
-            SetText(sheet.Cell(r, 7), row.EmployeeName);
-            SetText(sheet.Cell(r, 8), row.StatusName);
+            SetText(sheet.Cell(r, 6), row.AnswerText);
+            SetText(sheet.Cell(r, 7), row.CategoryName);
+            SetText(sheet.Cell(r, 8), row.EmployeeName);
+            SetText(sheet.Cell(r, 9), row.StatusName);
 
             sheet.Cell(r, 1).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
             sheet.Cell(r, 3).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
@@ -133,10 +135,11 @@ public sealed class PageQuestionExportService
         ClampWidth(sheet.Column(2), 14, 22);
         ClampWidth(sheet.Column(3), 16, 20);
         ClampWidth(sheet.Column(4), 18, 34);
-        ClampWidth(sheet.Column(5), 30, 70);
-        ClampWidth(sheet.Column(6), 18, 30);
+        ClampWidth(sheet.Column(5), 30, 60);
+        ClampWidth(sheet.Column(6), 30, 60);
         ClampWidth(sheet.Column(7), 18, 30);
-        ClampWidth(sheet.Column(8), 14, 20);
+        ClampWidth(sheet.Column(8), 18, 30);
+        ClampWidth(sheet.Column(9), 14, 20);
 
         sheet.PageSetup.PageOrientation = XLPageOrientation.Landscape;
         sheet.PageSetup.SetRowsToRepeatAtTop(1, 1);

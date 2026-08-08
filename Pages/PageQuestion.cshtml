@@ -19,22 +19,17 @@
         </a>
     </header>
 
-    @* Tautan "Questions" dihapus karena tujuannya sama dengan tombol Kembali.
-       Tombol memakai .app-btn agar seragam dengan tombol di halaman lain. *@
-    <nav class="admin-navbar" aria-label="Navigasi halaman daftar pertanyaan">
-        <a asp-page="/Pertanyaan" class="app-btn app-btn-sm" aria-label="Kembali ke daftar pertanyaan">
-            <svg class="app-btn-icon" viewBox="0 0 24 24" width="16" height="16"
-                 fill="none" stroke="currentColor" stroke-width="2"
-                 stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-                <line x1="19" y1="12" x2="5" y2="12" />
-                <polyline points="12 19 5 12 12 5" />
-            </svg>
-            <span>Kembali</span>
-        </a>
+    @{
+        // "Kembali" berarti kembali ke kartu kategori di /Pertanyaan. Pengelola yang
+        // masuk lewat menu panel administrasi tidak datang dari sana, jadi tombol itu
+        // tidak akan mengembalikannya ke mana pun — cukup tombol Dashboard.
+        var arrivedFromCategoryCards = !Model.IsAdmin || Model.CategoryId.HasValue;
+    }
 
+    <nav class="admin-navbar admin-navbar-end" aria-label="Navigasi halaman daftar pertanyaan">
         @* Halaman ini tetap terbuka untuk umum. Jalan pintas ke panel administrasi
            hanya muncul bagi yang sudah masuk, sehingga tampilan publik tidak berubah. *@
-        @if (User.Identity?.IsAuthenticated == true)
+        @if (Model.IsAdmin)
         {
             <a asp-page="/Admin/Index" class="app-btn app-btn-sm" aria-label="Buka panel administrasi">
                 <svg class="app-btn-icon" viewBox="0 0 24 24" width="16" height="16"
@@ -46,6 +41,19 @@
                     <rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5" />
                 </svg>
                 <span>Dashboard</span>
+            </a>
+        }
+
+        @if (arrivedFromCategoryCards)
+        {
+            <a asp-page="/Pertanyaan" class="app-btn app-btn-sm" aria-label="Kembali ke daftar pertanyaan">
+                <svg class="app-btn-icon" viewBox="0 0 24 24" width="16" height="16"
+                     fill="none" stroke="currentColor" stroke-width="2"
+                     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                    <line x1="19" y1="12" x2="5" y2="12" />
+                    <polyline points="12 19 5 12 12 5" />
+                </svg>
+                <span>Kembali</span>
             </a>
         }
     </nav>
@@ -131,34 +139,39 @@
                         <input type="hidden" name="CreatedByEmployee" data-filter="hidden" value="@Model.CreatedByEmployee" />
 
                         <div class="inv2-table-wrap">
-                            <table class="inv2-table">
+                            @* Kolom pengelola bertambah banyak, jadi lebar minimumnya
+                               dinaikkan lewat kelas tersendiri; tanpa itu kolom
+                               Pertanyaan dan Jawaban saling berebut ruang. *@
+                            <table class="inv2-table@(Model.IsAdmin ? " inv2-table-admin" : string.Empty)">
                                 @* Susunan kolom mengikuti peran pembaca. Pengelola melihat
                                    kolom lengkap seperti pada berkas unduhan; pengunjung
                                    umum melihat susunan ringkas yang sudah ada. *@
                                 <thead>
                                     <tr class="inv2-head-label">
-                                        <th style="width:38px;"></th>
-                                        <th style="width:60px;">No</th>
+                                        <th style="width:52px;">No</th>
                                         @if (Model.IsAdmin)
                                         {
-                                            <th style="width:130px;">No. Pertanyaan</th>
+                                            <th style="width:126px;">No. Pertanyaan</th>
                                         }
-                                        <th style="width:120px;">Tgl Dibuat</th>
+                                        <th style="width:106px;">Tgl Dibuat</th>
                                         @if (Model.IsAdmin)
                                         {
-                                            <th style="width:240px;">Judul</th>
+                                            <th style="width:150px;">Judul</th>
                                         }
-                                        <th style="width:@(Model.IsAdmin ? "340px" : "560px");">Pertanyaan</th>
+                                        @* Pertanyaan dan jawaban diberi lebar yang sama supaya
+                                           terbaca sebagai sepasang kolom, bukan satu kolom
+                                           utama dengan keterangan tambahan di sebelahnya. *@
+                                        <th style="width:@(Model.IsAdmin ? "290px" : "400px");">Pertanyaan</th>
+                                        <th style="width:@(Model.IsAdmin ? "290px" : "400px");">Jawaban</th>
                                         @if (Model.IsAdmin)
                                         {
-                                            <th style="width:180px;">Kategori</th>
+                                            <th style="width:160px;">Kategori</th>
                                         }
-                                        <th style="width:200px;">Pegawai</th>
-                                        <th style="width:130px;">Status</th>
+                                        <th style="width:@(Model.IsAdmin ? "170px" : "190px");">Pegawai</th>
+                                        <th style="width:140px;">Status</th>
                                         <th style="width:46px;"></th>
                                     </tr>
                                     <tr class="inv2-head-filter">
-                                        <th><input type="checkbox" aria-label="Pilih semua baris" /></th>
                                         <th></th>
 
                                         @if (Model.IsAdmin)
@@ -166,7 +179,7 @@
                                             <th>
                                                 <input type="text" name="QuestionNoKeyword" data-filter="text"
                                                        value="@Model.QuestionNoKeyword" placeholder="Cari nomor"
-                                                       maxlength="200" autocomplete="off" aria-label="Filter nomor pertanyaan" />
+                                                       autocomplete="off" aria-label="Filter nomor pertanyaan" />
                                             </th>
                                         }
 
@@ -196,6 +209,12 @@
                                             <input type="text" name="QuestionKeyword" data-filter="text"
                                                    value="@Model.QuestionKeyword" placeholder="Cari pertanyaan"
                                                    maxlength="200" autocomplete="off" aria-label="Filter pertanyaan" />
+                                        </th>
+
+                                        <th>
+                                            <input type="text" name="AnswerKeyword" data-filter="text"
+                                                   value="@Model.AnswerKeyword" placeholder="Cari jawaban"
+                                                   maxlength="200" autocomplete="off" aria-label="Filter jawaban" />
                                         </th>
 
                                         @if (Model.IsAdmin)
@@ -238,7 +257,7 @@
 
                                 <tbody id="questionsTbody" aria-busy="true" aria-live="polite">
                                     <tr>
-                                        <td colspan="@(Model.IsAdmin ? 10 : 7)" class="inv2-empty">Memuat data...</td>
+                                        <td colspan="@(Model.IsAdmin ? 9 : 6)" class="inv2-empty">Memuat data...</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -388,10 +407,48 @@
                     const rowNumber = offset + index + 1;
 
                     const status = q?.statusName ?? '-';
-                    const statusClass = String(status).toLowerCase().includes('jawab')
-                        ? 'inv2-badge-success'
-                        : 'inv2-badge-warn';
+
+                    // Golongan ditentukan server. Aturan lama memeriksa apakah nama
+                    // status mengandung "jawab", dan itu benar untuk "Telah Dijawab"
+                    // maupun "Belum Dijawab" sehingga keduanya berwarna sama.
+                    const statusKind = q?.statusKind ?? 'neutral';
+                    const kindClass = {
+                        answered: 'inv2-badge-success',
+                        pending: 'inv2-badge-warn'
+                    }[statusKind] ?? '';
+
+                    // Server sudah menyaring nilai warnanya, sehingga aman ditulis ke
+                    // atribut style.
+                    const statusColor = q?.statusColor ? escapeHtml(q.statusColor) : '';
+
+                    // Sudah dijawab vs belum dijawab harus selalu berbeda warna, jadi
+                    // hijau/jingga itu yang menentukan tampilan lencana. Warna pilihan
+                    // pengelola tetap terpakai sebagai titik penanda — sebelumnya warna
+                    // itu mengambil alih seluruh lencana, dan nilai semuda #BDBDBD
+                    // membuat kedua status nyaris seragam kelabu. Status di luar kedua
+                    // golongan itulah yang seluruh lencananya mengikuti warna master.
+                    let statusBadge;
+
+                    if (kindClass) {
+                        const dot = statusColor
+                            ? `<span class="inv2-badge-dot" style="background:${statusColor};"></span>`
+                            : '<span class="inv2-badge-dot"></span>';
+                        statusBadge = `<span class="inv2-badge ${kindClass}">${dot}${escapeHtml(status)}</span>`;
+                    } else if (statusColor) {
+                        statusBadge = `<span class="inv2-badge inv2-badge-custom" style="border-color:${statusColor};"><span class="inv2-badge-dot" style="background:${statusColor};"></span>${escapeHtml(status)}</span>`;
+                    } else {
+                        statusBadge = `<span class="inv2-badge inv2-badge-neutral"><span class="inv2-badge-dot"></span>${escapeHtml(status)}</span>`;
+                    }
+
                     const pertanyaan = escapeHtml(q?.questionText ?? '-');
+
+                    // Kolom jawaban dibedakan dari "jawabannya kebetulan kosong":
+                    // baris yang belum dijawab diberi teks penanda, bukan sel kosong
+                    // yang menyisakan lubang di tengah tabel.
+                    const jawabanRaw = String(q?.answerText ?? '').trim();
+                    const jawaban = jawabanRaw
+                        ? `<span title="${escapeHtml(jawabanRaw)}">${escapeHtml(jawabanRaw)}</span>`
+                        : '<span class="inv2-answer-empty">Belum ada jawaban</span>';
                     // Tanggal diformat server pada zona waktu aplikasi, sehingga sama
                     // dengan tanggal yang dipakai filter apa pun zona waktu browser.
                     const tglDibuat = escapeHtml(q?.createdAtDisplay || '-');
@@ -405,7 +462,6 @@
                     // Sel disusun sebagai daftar supaya urutannya tidak bisa melenceng
                     // dari <thead>; jumlahnya selalu sama dengan COLUMN_COUNT.
                     const cells = [
-                        `<td><input type="checkbox" aria-label="Pilih baris ${rowNumber}" /></td>`,
                         `<td>${rowNumber}</td>`
                     ];
 
@@ -421,16 +477,19 @@
                     }
 
                     cells.push(`<td class="inv2-question">${detailLink}</td>`);
+                    cells.push(`<td class="inv2-answer">${jawaban}</td>`);
 
                     if (IS_ADMIN) {
                         cells.push(`<td>${escapeHtml(q?.categoryName || '-')}</td>`);
                     }
 
                     cells.push(`<td>${pegawai}</td>`);
-                    cells.push(`<td><span class="inv2-badge ${statusClass}">${escapeHtml(status)}</span></td>`);
+                    cells.push(`<td>${statusBadge}</td>`);
                     cells.push('<td class="inv2-kebab">⋮</td>');
 
-                    return `<tr>${cells.join('')}</tr>`;
+                    // Garis warna tipis di tepi kiri baris: pembeda status yang masih
+                    // terbaca meski kolom Status tergulir keluar layar.
+                    return `<tr data-status-kind="${escapeHtml(statusKind)}">${cells.join('')}</tr>`;
                 }).join('');
             }
 

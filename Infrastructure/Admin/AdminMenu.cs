@@ -25,6 +25,7 @@ public static class AdminMenu
 {
     // Kode izin ini sama persis dengan isi kolom code pada tb_m_permission.
     public const string PolicyQuestionsView = "questions.view";
+    public const string PolicyAnswer = "questions.answer";
     public const string PolicyCategories = "categories.manage";
     public const string PolicyStatuses = "statuses.manage";
     public const string PolicyEmployees = "employees.view";

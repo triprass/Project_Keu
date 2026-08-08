@@ -1,16 +1,16 @@
 using System.ComponentModel.DataAnnotations;
-using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Project_Keu.Data;
+using Project_Keu.Infrastructure;
 using Project_Keu.Infrastructure.Admin;
 using Project_Keu.Models;
 
 namespace Project_Keu.Pages.Admin.Master;
 
 [Authorize(Policy = AdminMenu.PolicyStatuses)]
-public partial class QuestionStatusesModel : AdminPageModelBase
+public class QuestionStatusesModel : AdminPageModelBase
 {
     private readonly AppDbContext _context;
 
@@ -44,18 +44,11 @@ public partial class QuestionStatusesModel : AdminPageModelBase
         public bool IsActive { get; set; } = true;
     }
 
-    /// <summary>Hanya kode heksadesimal atau nama warna CSS yang diterima.</summary>
-    [GeneratedRegex("^(#[0-9a-fA-F]{3,8}|[a-zA-Z]{3,20})$")]
-    private static partial Regex ColorPattern();
-
     /// <summary>
-    /// Warna yang aman dipakai pada atribut style. Nilai yang tidak dikenali diganti
-    /// warna netral, sehingga isi kolom tidak bisa menyelipkan properti CSS lain.
+    /// Warna yang aman dipakai pada atribut style. Penyaringnya dipakai bersama
+    /// dengan pewarnaan lencana di daftar pertanyaan, jadi satu aturan saja.
     /// </summary>
-    public static string SafeColor(string? value) =>
-        !string.IsNullOrWhiteSpace(value) && ColorPattern().IsMatch(value.Trim())
-            ? value.Trim()
-            : "#64748b";
+    public static string SafeColor(string? value) => QuestionStatusStyle.SafeColor(value);
 
     public async Task OnGetAsync(CancellationToken cancellationToken) => await LoadAsync(cancellationToken);
 
@@ -65,7 +58,7 @@ public partial class QuestionStatusesModel : AdminPageModelBase
         Input.Name = Input.Name?.Trim() ?? string.Empty;
         Input.Color = string.IsNullOrWhiteSpace(Input.Color) ? null : Input.Color.Trim();
 
-        if (Input.Color is not null && !ColorPattern().IsMatch(Input.Color))
+        if (Input.Color is not null && !QuestionStatusStyle.HasUsableColor(Input.Color))
         {
             ModelState.AddModelError("Input.Color", "Isi dengan kode heksadesimal seperti #16a34a atau nama warna seperti green.");
         }
