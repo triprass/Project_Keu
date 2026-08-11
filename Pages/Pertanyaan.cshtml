@@ -23,11 +23,12 @@
     </header>
 
     <section class="question-search-wrap" aria-label="Pencarian pertanyaan">
-        <div class="search-box">
+        <form method="get" asp-page="/Pertanyaan" class="search-box" role="search">
             <span class="search-icon">🔍</span>
-            <input type="text" placeholder="Cari pertanyaan..." aria-label="Cari pertanyaan">
-            <button type="button" class="search-close" aria-label="Bersihkan pencarian">✕</button>
-        </div>
+            <input name="q" type="text" placeholder="Cari pertanyaan..." aria-label="Cari pertanyaan" value="@Model.SearchQuery" />
+            <button type="submit" class="search-submit" aria-label="Cari">🔎</button>
+            <a asp-page="/Pertanyaan" class="search-close" aria-label="Bersihkan pencarian">✕</a>
+        </form>
     </section>
 
     <section class="akun-grid" aria-label="Daftar kategori akun">

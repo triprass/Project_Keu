@@ -29,20 +29,36 @@ public class PertanyaanModel : PageModel
 
     public List<QuestionGroupViewModel> QuestionGroups { get; private set; } = new();
 
+    // Kata kunci pencarian yang diambil dari query string (?q=...)
+    public string? SearchQuery { get; private set; }
+
     /// <summary>Jumlah pertanyaan yang ditampilkan per kartu kategori sebelum "Tampilkan lebih banyak".</summary>
     private const int PreviewPerCategory = 5;
 
-    public Task OnGetAsync(CancellationToken cancellationToken)
+    public Task OnGetAsync(string? q, CancellationToken cancellationToken)
     {
-        return LoadQuestionGroupsAsync(cancellationToken);
+        SearchQuery = string.IsNullOrWhiteSpace(q) ? null : q;
+        return LoadQuestionGroupsAsync(SearchQuery, cancellationToken);
     }
 
-    private async Task LoadQuestionGroupsAsync(CancellationToken cancellationToken)
+    private async Task LoadQuestionGroupsAsync(string? searchQuery, CancellationToken cancellationToken)
     {
         // Hanya beberapa pertanyaan terbaru per kategori yang dirender di kartu;
         // sebelumnya seluruh isi tabel ditarik ke memori setiap halaman dibuka.
-        QuestionGroups = await _context.Questions
+        var query = _context.Questions
             .AsNoTracking()
+            .Include(x => x.Category)
+            .AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(searchQuery))
+        {
+            // Filter pertanyaan berdasarkan teks pertanyaan atau nama kategori (case-insensitive)
+            var pattern = $"%{searchQuery}%";
+            query = query.Where(x => EF.Functions.Like(x.QuestionText, pattern)
+                                      || (x.Category != null && EF.Functions.Like(x.Category.Name, pattern)));
+        }
+
+        QuestionGroups = await query
             .GroupBy(q => new
             {
                 q.CategoryId,
