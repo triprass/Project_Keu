@@ -19,13 +19,14 @@
         </a>
 
         <div class="detail-header-actions-v2">
-            <div class="topic-status-wrap topic-status-wrap-v2">
+            @* Status Topik *@
+            @* <div class="topic-status-wrap topic-status-wrap-v2">
                 <span class="topic-status-label topic-status-label-v2">Status Topik</span>
                 <span class="topic-status-pill @(Model.IsClosed ? "topic-status-pill-close" : "topic-status-pill-open")">
                     <span class="topic-status-dot" aria-hidden="true"></span>
                     @(Model.IsClosed ? "Close" : "Open")
                 </span>
-            </div>
+            </div> *@
 
             <form method="post" asp-page="/PageQuestion" class="detail-back-form-v2">
                 @if (Model.CategoryId.HasValue)
@@ -51,7 +52,7 @@
     <section class="detail-hero-v2" aria-label="QnA hero">
         <img src="~/images/logoQA.png" alt="" class="detail-hero-logo-v2" aria-hidden="true">
         <h1 class="detail-title-v2">Q&amp;A Session</h1>
-        <p class="detail-subtitle-v2">Pusat Konsultasi Interaktif</p>
+        @* <p class="detail-subtitle-v2">Pusat Konsultasi Interaktif</p> *@
     </section>
 
     <main class="detail-content-v2">
