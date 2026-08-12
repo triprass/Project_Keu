@@ -64,28 +64,30 @@
         <div class="admin-table-title admin-table-title-v2">
             @if (!string.IsNullOrWhiteSpace(Model.CategoryName))
             {
-                <text>Daftar Pertanyaan Kategori @Model.CategoryName</text>
+            <text>Daftar Pertanyaan Kategori </text>
+            <text>@Model.CategoryName</text>
 
-                @* Pengelola perlu jalan keluar dari lingkup kategori: konteks halaman
-                   sengaja tidak ikut dibersihkan tombol reset filter. *@
+            @* Pengelola perlu jalan keluar dari lingkup kategori: konteks halaman
+        sengaja tidak ikut dibersihkan tombol reset filter. *@
                 if (Model.IsAdmin)
                 {
-                    <a asp-page="/PageQuestion" class="inv2-scope-reset" title="Tampilkan pertanyaan dari semua kategori">
-                        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor"
-                             stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <line x1="6" y1="6" x2="18" y2="18" /><line x1="18" y1="6" x2="6" y2="18" />
-                        </svg>
-                        Lihat semua kategori
-                    </a>
+            <a asp-page="/PageQuestion" class="inv2-scope-reset" title="Tampilkan pertanyaan dari semua kategori">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor"
+                     stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                </svg>
+                Lihat semua kategori
+            </a>
                 }
             }
             else if (Model.IsAdmin)
             {
-                <text>Daftar Seluruh Pertanyaan</text>
+            <text>Daftar Seluruh Pertanyaan</text>
             }
             else
             {
-                <text>Daftar Pertanyaan</text>
+            <text>Daftar Pertanyaan</text>
             }
         </div>
 
