@@ -1,7 +1,10 @@
 @page
 @model Project_Keu.Pages.PageQuestionModel
 @{
-    ViewData["Title"] = "Admin Dashboard V2";
+    // Tampilkan nama kategori di judul jika tersedia, jika tidak tampilkan judul umum
+    ViewData["Title"] = string.IsNullOrWhiteSpace(Model?.CategoryName)
+        ? "Daftar Pertanyaan"
+        : $"Daftar Pertanyaan Kategori [{Model.CategoryName}]";
 }
 
 @section Styles {
@@ -64,11 +67,11 @@
         <div class="admin-table-title admin-table-title-v2">
             @if (!string.IsNullOrWhiteSpace(Model.CategoryName))
             {
-            <text>Daftar Pertanyaan Kategori </text>
-            <text>@Model.CategoryName</text>
+                <div>Daftar Pertanyaan Kategori</div>
+                <div class="inv2-category-name">@Model.CategoryName</div>
 
-            @* Pengelola perlu jalan keluar dari lingkup kategori: konteks halaman
-        sengaja tidak ikut dibersihkan tombol reset filter. *@
+                @* Pengelola perlu jalan keluar dari lingkup kategori: konteks halaman
+                   sengaja tidak ikut dibersihkan tombol reset filter. *@
                 if (Model.IsAdmin)
                 {
             <a asp-page="/PageQuestion" class="inv2-scope-reset" title="Tampilkan pertanyaan dari semua kategori">
