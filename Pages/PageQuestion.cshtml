@@ -173,11 +173,13 @@
                                         {
                                             <th style="width:160px;">Kategori</th>
                                         }
-                                        <th style="width:@(Model.IsAdmin ? "170px" : "190px");">Pegawai</th>
+                                        <th style="width:@(Model.IsAdmin ? "170px" : "190px");">Pembuat Pertanyaan</th>
                                         <th style="width:140px;">Status</th>
                                         <th style="width:46px;"></th>
                                     </tr>
-                                    <tr class="inv2-head-filter">
+                                    
+                                    @* Filter Label *@
+                                    @* <tr class="inv2-head-filter">
                                         <th></th>
 
                                         @if (Model.IsAdmin)
@@ -190,15 +192,10 @@
                                         }
 
                                         <th>
-                                            @* Rentang tanggal: DateFrom/DateTo sudah didukung server tetapi
-                                               sebelumnya hanya ada sebagai hidden field tanpa kontrol. *@
                                             <div class="inv2-date-grid">
                                                 <input type="date" name="DateFrom" data-filter="instant"
                                                        value="@Model.DateFrom?.ToString("yyyy-MM-dd")"
                                                        aria-label="Tanggal dibuat dari" title="Dari tanggal" />
-                                                <input type="date" name="DateTo" data-filter="instant"
-                                                       value="@Model.DateTo?.ToString("yyyy-MM-dd")"
-                                                       aria-label="Tanggal dibuat sampai" title="Sampai tanggal" />
                                             </div>
                                         </th>
 
@@ -258,7 +255,7 @@
                                                 <button type="button" id="resetFilterButton" title="Bersihkan semua filter" aria-label="Bersihkan semua filter" disabled>✕</button>
                                             </div>
                                         </th>
-                                    </tr>
+                                    </tr> *@
                                 </thead>
 
                                 <tbody id="questionsTbody" aria-busy="true" aria-live="polite">
