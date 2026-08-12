@@ -2396,8 +2396,12 @@ main[role="main"] {
     max-width: 1240px;
     margin: 0 auto;
     display: grid;
-    grid-template-columns: 1.3fr 1.3fr 1fr 1.2fr;
+    /* Make footer columns responsive: each column will be at least 220px
+       and will grow to fill available space. On narrow screens columns
+       will wrap automatically. */
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 16px;
+    align-items: start;
 }
 
 .site-footer-column {
