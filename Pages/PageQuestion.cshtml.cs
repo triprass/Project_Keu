@@ -51,7 +51,10 @@ public class PageQuestionModel : PageModel
     [BindProperty]
     public DateTime? CreatedDate { get; set; }
 
-    [BindProperty]
+    // CategoryId adalah konteks halaman: bisa dikirim lewat query string saat
+    // membuka halaman (GET). Agar nilai itu tersedia di OnGet, aktifkan
+    // binding untuk GET requests.
+    [BindProperty(SupportsGet = true)]
     public Guid? CategoryId { get; set; }
 
     [BindProperty]
