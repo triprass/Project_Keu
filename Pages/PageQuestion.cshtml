@@ -300,8 +300,10 @@
 
             function updateResetButton() {
                 const active = hasActiveFilter();
-                resetFilterButton.disabled = !active;
-                resetFilterButton.classList.toggle('is-active', active);
+                if (resetFilterButton) {
+                    resetFilterButton.disabled = !active;
+                    resetFilterButton.classList.toggle('is-active', active);
+                }
             }
 
             function showTableMessage(message, actionLabel) {
@@ -576,7 +578,9 @@
                     });
                 });
 
-            resetFilterButton.addEventListener('click', resetFilters);
+            if (resetFilterButton) {
+                resetFilterButton.addEventListener('click', resetFilters);
+            }
 
             pageSizeSelect.addEventListener('change', applyFilters);
 
