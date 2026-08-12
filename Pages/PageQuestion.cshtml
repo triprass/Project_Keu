@@ -168,7 +168,7 @@
                                            terbaca sebagai sepasang kolom, bukan satu kolom
                                            utama dengan keterangan tambahan di sebelahnya. *@
                                         <th style="width:@(Model.IsAdmin ? "290px" : "400px");">Pertanyaan</th>
-                                        <th style="width:@(Model.IsAdmin ? "290px" : "400px");">Jawaban</th>
+                                        @* Kolom Jawaban dihapus sesuai permintaan *@
                                         @if (Model.IsAdmin)
                                         {
                                             <th style="width:160px;">Kategori</th>
@@ -214,11 +214,7 @@
                                                    maxlength="200" autocomplete="off" aria-label="Filter pertanyaan" />
                                         </th>
 
-                                        <th>
-                                            <input type="text" name="AnswerKeyword" data-filter="text"
-                                                   value="@Model.AnswerKeyword" placeholder="Cari jawaban"
-                                                   maxlength="200" autocomplete="off" aria-label="Filter jawaban" />
-                                        </th>
+                                        @* Kolom filter Jawaban dihapus *@
 
                                         @if (Model.IsAdmin)
                                         {
@@ -260,7 +256,7 @@
 
                                 <tbody id="questionsTbody" aria-busy="true" aria-live="polite">
                                     <tr>
-                                        <td colspan="@(Model.IsAdmin ? 9 : 6)" class="inv2-empty">Memuat data...</td>
+                                        <td colspan="@(Model.IsAdmin ? 8 : 5)" class="inv2-empty">Memuat data...</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -311,7 +307,7 @@
             // Pengelola melihat kolom lengkap; pengunjung umum melihat susunan ringkas.
             // Nilainya ditentukan server agar sama persis dengan <thead> yang dirender.
             const IS_ADMIN = @(Model.IsAdmin ? "true" : "false");
-            const COLUMN_COUNT = IS_ADMIN ? 10 : 7;
+            const COLUMN_COUNT = IS_ADMIN ? 9 : 6;
             const DEBOUNCE_MS = 400;
 
             const numberFields = ['Page', 'PageSize'];
@@ -445,13 +441,6 @@
 
                     const pertanyaan = escapeHtml(q?.questionText ?? '-');
 
-                    // Kolom jawaban dibedakan dari "jawabannya kebetulan kosong":
-                    // baris yang belum dijawab diberi teks penanda, bukan sel kosong
-                    // yang menyisakan lubang di tengah tabel.
-                    const jawabanRaw = String(q?.answerText ?? '').trim();
-                    const jawaban = jawabanRaw
-                        ? `<span title="${escapeHtml(jawabanRaw)}">${escapeHtml(jawabanRaw)}</span>`
-                        : '<span class="inv2-answer-empty">Belum ada jawaban</span>';
                     // Tanggal diformat server pada zona waktu aplikasi, sehingga sama
                     // dengan tanggal yang dipakai filter apa pun zona waktu browser.
                     const tglDibuat = escapeHtml(q?.createdAtDisplay || '-');
@@ -480,7 +469,7 @@
                     }
 
                     cells.push(`<td class="inv2-question">${detailLink}</td>`);
-                    cells.push(`<td class="inv2-answer">${jawaban}</td>`);
+                    // Kolom Jawaban telah dihapus.
 
                     if (IS_ADMIN) {
                         cells.push(`<td>${escapeHtml(q?.categoryName || '-')}</td>`);
