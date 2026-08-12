@@ -275,8 +275,58 @@ main[role="main"] {
 }
 
 .search-icon {
-    font-size: 1.4rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #0f2444;
     line-height: 1;
+}
+
+.search-icon svg {
+    width: 20px;
+    height: 20px;
+}
+
+.search-submit {
+    border: none;
+    background: linear-gradient(135deg, #2d83ff, #685dff);
+    color: #fff;
+    padding: 8px 10px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.search-submit svg {
+    width: 16px;
+    height: 16px;
+    stroke: #fff;
+}
+
+.search-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    text-decoration: none;
+    padding: 6px;
+    border-radius: 8px;
+    color: #0f2444;
+    cursor: pointer;
+}
+
+.search-close svg {
+    width: 16px;
+    height: 16px;
+    stroke: rgba(255,255,255,0.9);
+}
+
+.search-close:hover {
+    background: rgba(18,40,76,0.06);
+}
 }
 
 .search-box input {
