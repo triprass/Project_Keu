@@ -406,7 +406,7 @@ main[role="main"] {
 
 .title-pill {
     display: inline-block;
-    background: #07a66a; /* green pill */
+    background: linear-gradient(135deg, #2d83ff, #685dff); /* green pill */
     color: #fff;
     padding: 8px 18px;
     border-radius: 8px;
