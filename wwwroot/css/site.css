@@ -204,7 +204,7 @@ main[role="main"] {
     font-weight: 700;
     line-height: 1;
     white-space: nowrap;
-    color: #ffffff;
+    color: #12284C !important;
     background: linear-gradient(135deg, #0dcaf0, #ffc1078c);
     box-shadow: 0 10px 24px rgba(79, 59, 245, 0.3);
     cursor: pointer;

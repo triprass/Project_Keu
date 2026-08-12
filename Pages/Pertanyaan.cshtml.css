@@ -11,6 +11,19 @@
     gap: 8px;
 }
 
+/* When the search box is replaced by the create button, align it to the
+   right side of the container and keep spacing consistent with previous layout. */
+.question-search-wrap .search-replacement {
+    display: flex;
+    justify-content: flex-end;
+    padding: 8px 0 18px;
+}
+
+.question-search-wrap .search-replacement .btn-buat-pertanyaan {
+    /* make button slightly larger in the search area to match original visual weight */
+    padding: 12px 22px;
+}
+
 /* Make header content align like footer (centered container) */
 .question-header {
     padding: 18px 0;

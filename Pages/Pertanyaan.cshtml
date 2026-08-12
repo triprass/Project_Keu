@@ -19,7 +19,7 @@
         <a asp-page="/Index" class="question-logo-link" aria-label="Kembali ke halaman utama">
             <img src="~/images/logo.png" alt="Logo Tanya Subbag Keuangan" class="question-logo">
         </a>
-            <a asp-page="/FormPertanyaan" class="btn-buat-pertanyaan">Buat Pertanyaan</a>
+        @* Tombol 'Buat Pertanyaan' dipindahkan ke area pencarian (di bawah). *@
         </div>
     </header>
 
@@ -28,15 +28,10 @@
     <div class="page-container">
 
     <section class="question-search-wrap" aria-label="Pencarian pertanyaan">
-        <form method="get" asp-page="/Pertanyaan" class="search-box" role="search">
-            <input style="width: 100%" name="q" type="text" placeholder="Cari pertanyaan..." aria-label="Cari pertanyaan" value="@Model.SearchQuery" />
-            <button type="submit" class="search-submit" aria-label="Cari">
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false" aria-hidden="true">
-                    <circle cx="11" cy="11" r="7"></circle>
-                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                </svg>
-            </button>
-        </form>
+        @* Search box removed; place 'Buat Pertanyaan' button here instead. *@
+        <div class="search-replacement">
+            <a asp-page="/FormPertanyaan" class="btn-buat-pertanyaan">Buat Pertanyaan Baru</a>
+        </div>
     </section>
     </div>
 
