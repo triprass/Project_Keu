@@ -342,13 +342,13 @@
 
                     if (kindClass) {
                         const dot = statusColor
-                            ? `<span class="inv2-badge-dot" style="background:${statusColor};"></span>`
-                            : '<span class="inv2-badge-dot"></span>';
+                            ? `<span class="" style="background:${statusColor};"></span>`
+                            : '<span class=""></span>';
                         statusBadge = `<span class="inv2-badge ${kindClass}">${dot}${escapeHtml(status)}</span>`;
                     } else if (statusColor) {
-                        statusBadge = `<span class="inv2-badge inv2-badge-custom" style="border-color:${statusColor};"><span class="inv2-badge-dot" style="background:${statusColor};"></span>${escapeHtml(status)}</span>`;
+                        statusBadge = `<span class="inv2-badge inv2-badge-custom" style="border-color:${statusColor};"><span class="" style="background:${statusColor};"></span>${escapeHtml(status)}</span>`;
                     } else {
-                        statusBadge = `<span class="inv2-badge inv2-badge-neutral"><span class="inv2-badge-dot"></span>${escapeHtml(status)}</span>`;
+                        statusBadge = `<span class="inv2-badge inv2-badge-neutral"><span class=""></span>${escapeHtml(status)}</span>`;
                     }
 
                     const pertanyaan = escapeHtml(q?.questionText ?? '-');
