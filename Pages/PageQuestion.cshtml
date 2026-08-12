@@ -103,7 +103,7 @@
                     <form method="post" class="inv2-toolbar-left" id="toolbarForm">
                         <div class="inv2-search-wrap">
                             <input type="text" id="globalSearchInput" name="Q" value="@Model.Q"
-                                   placeholder="Cari question no, title, atau pertanyaan"
+                                   placeholder="Cari Pertanyaan"
                                    maxlength="200" autocomplete="off" aria-label="Pencarian global" />
                             <button type="submit" aria-label="Cari">⌕</button>
                         </div>
@@ -159,7 +159,7 @@
                                         {
                                             <th style="width:126px;">No. Pertanyaan</th>
                                         }
-                                        <th style="width:106px;">Tgl Dibuat</th>
+                                        <th style="width:106px;">Tanggal</th>
                                         @if (Model.IsAdmin)
                                         {
                                             <th style="width:150px;">Judul</th>
@@ -175,7 +175,6 @@
                                         }
                                         <th style="width:@(Model.IsAdmin ? "170px" : "190px");">Pembuat Pertanyaan</th>
                                         <th style="width:140px;">Status</th>
-                                        <th style="width:46px;"></th>
                                     </tr>
                                     
                                     @* Baris filter per-kolom dihapus; hanya pencarian global tetap aktif *@
@@ -183,7 +182,7 @@
 
                                 <tbody id="questionsTbody" aria-busy="true" aria-live="polite">
                                     <tr>
-                                        <td colspan="@(Model.IsAdmin ? 9 : 6)" class="inv2-empty">Memuat data...</td>
+                                        <td colspan="@(Model.IsAdmin ? 8 : 5)" class="inv2-empty">Memuat data...</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -234,7 +233,7 @@
             // Pengelola melihat kolom lengkap; pengunjung umum melihat susunan ringkas.
             // Nilainya ditentukan server agar sama persis dengan <thead> yang dirender.
             const IS_ADMIN = @(Model.IsAdmin ? "true" : "false");
-            const COLUMN_COUNT = IS_ADMIN ? 9 : 6;
+            const COLUMN_COUNT = IS_ADMIN ? 8 : 5;
             const DEBOUNCE_MS = 400;
 
             const numberFields = ['Page', 'PageSize'];
