@@ -332,7 +332,9 @@ main[role="main"] {
 .search-box input {
     border: none;
     outline: none;
-    width: 100%;
+    /* allow input to flex and shrink correctly inside the search box */
+    flex: 1 1 auto;
+    min-width: 0;
     font-size: 1rem;
     font-family: 'Montserrat', sans-serif;
     color: #12284C;
