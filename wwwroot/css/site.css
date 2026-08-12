@@ -2192,10 +2192,12 @@ main[role="main"] {
 }
 
 .inv2-question {
-    max-width: 520px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    /* Allow question text to wrap and limit its width for readability */
+    max-width: 420px;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    word-break: break-word;
 }
 
 /* Keep title and question link truncated to preserve layout. Other cells will
@@ -2301,9 +2303,9 @@ main[role="main"] {
     font: inherit;
     text-align: left;
     color: #0a58ca;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    /* Allow the clickable question link to wrap along with the cell */
+    white-space: normal;
+    overflow: visible;
 }
 
     .inv2-question-link:hover {
