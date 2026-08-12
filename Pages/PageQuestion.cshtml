@@ -4,7 +4,7 @@
     // Tampilkan nama kategori di judul jika tersedia, jika tidak tampilkan judul umum
     ViewData["Title"] = string.IsNullOrWhiteSpace(Model?.CategoryName)
         ? "Daftar Pertanyaan"
-        : $"Daftar Pertanyaan Kategori [{Model.CategoryName}]";
+        : $"Daftar Pertanyaan {Model.CategoryName}";
 }
 
 @section Styles {
