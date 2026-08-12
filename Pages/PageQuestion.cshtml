@@ -178,85 +178,12 @@
                                         <th style="width:46px;"></th>
                                     </tr>
                                     
-                                    @* Filter Labels *@
-                                    <tr class="inv2-head-filter">
-                                        <th></th>
-
-                                        @if (Model.IsAdmin)
-                                        {
-                                            <th>
-                                                <input type="text" name="QuestionNoKeyword" data-filter="text"
-                                                       value="@Model.QuestionNoKeyword" placeholder="Cari nomor"
-                                                       autocomplete="off" aria-label="Filter nomor pertanyaan" />
-                                            </th>
-                                        }
-
-                                        <th>
-                                            <div class="inv2-date-grid">
-                                                <input type="date" name="DateFrom" data-filter="instant"
-                                                       value="@Model.DateFrom?.ToString("yyyy-MM-dd")"
-                                                       aria-label="Tanggal dibuat dari" title="Dari tanggal" />
-                                            </div>
-                                        </th>
-
-                                        @if (Model.IsAdmin)
-                                        {
-                                            <th>
-                                                <input type="text" name="TitleKeyword" data-filter="text"
-                                                       value="@Model.TitleKeyword" placeholder="Cari judul"
-                                                       maxlength="200" autocomplete="off" aria-label="Filter judul" />
-                                            </th>
-                                        }
-
-                                        <th>
-                                            <input type="text" name="QuestionKeyword" data-filter="text"
-                                                   value="@Model.QuestionKeyword" placeholder="Cari pertanyaan"
-                                                   maxlength="200" autocomplete="off" aria-label="Filter pertanyaan" />
-                                        </th>
-
-                                        @* Kolom filter Jawaban dihapus *@
-
-                                        @if (Model.IsAdmin)
-                                        {
-                                            <th>
-                                                <input type="text" name="CategoryKeyword" data-filter="text"
-                                                       value="@Model.CategoryKeyword" placeholder="Cari kategori"
-                                                       maxlength="200" autocomplete="off" aria-label="Filter kategori" />
-                                            </th>
-                                        }
-
-                                        <th>
-                                            <input type="text" name="EmployeeKeyword" data-filter="text"
-                                                   value="@Model.EmployeeKeyword" placeholder="Cari pegawai / NIP"
-                                                   maxlength="200" autocomplete="off" aria-label="Filter pegawai atau NIP" />
-                                        </th>
-                                        <th>
-                                            <select name="StatusId" data-filter="instant" aria-label="Filter status">
-                                                <option value="">Semua status</option>
-                                                @foreach (var status in Model.StatusOptions)
-                                                {
-                                                    if (Model.StatusId?.ToString() == status.Value)
-                                                    {
-                                                        <option value="@status.Value" selected>@status.Text</option>
-                                                    }
-                                                    else
-                                                    {
-                                                        <option value="@status.Value">@status.Text</option>
-                                                    }
-                                                }
-                                            </select>
-                                        </th>
-                                        <th class="inv2-filter-actions">
-                                            <div class="inv2-filter-btns">
-                                                <button type="button" id="resetFilterButton" title="Bersihkan semua filter" aria-label="Bersihkan semua filter" disabled>✕</button>
-                                            </div>
-                                        </th>
-                                    </tr> 
+                                    @* Baris filter per-kolom dihapus; hanya pencarian global tetap aktif *@
                                 </thead>
 
                                 <tbody id="questionsTbody" aria-busy="true" aria-live="polite">
                                     <tr>
-                                        <td colspan="@(Model.IsAdmin ? 8 : 5)" class="inv2-empty">Memuat data...</td>
+                                        <td colspan="@(Model.IsAdmin ? 9 : 6)" class="inv2-empty">Memuat data...</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -477,6 +404,7 @@
 
                     cells.push(`<td>${pegawai}</td>`);
                     cells.push(`<td>${statusBadge}</td>`);
+                    // Kembali tambahkan kolom aksi (kebab) sehingga jumlah sel sama dengan <thead>.
                     cells.push('<td class="inv2-kebab">⋮</td>');
 
                     // Garis warna tipis di tepi kiri baris: pembeda status yang masih
