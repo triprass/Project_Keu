@@ -154,27 +154,24 @@
                                    umum melihat susunan ringkas yang sudah ada. *@
                                 <thead>
                                     <tr class="inv2-head-label">
-                                        <th style="width:52px;">No</th>
+                                        <th class="col-no">No</th>
                                         @if (Model.IsAdmin)
                                         {
-                                            <th style="width:126px;">No. Pertanyaan</th>
+                                            <th class="col-question-no">No. Pertanyaan</th>
                                         }
-                                        <th style="width:106px;">Tanggal</th>
+                                        <th class="col-date">Tanggal</th>
                                         @if (Model.IsAdmin)
                                         {
-                                            <th style="width:150px;">Judul</th>
+                                            <th class="col-title">Judul</th>
                                         }
-                                        @* Pertanyaan dan jawaban diberi lebar yang sama supaya
-                                           terbaca sebagai sepasang kolom, bukan satu kolom
-                                           utama dengan keterangan tambahan di sebelahnya. *@
-                                        <th style="width:@(Model.IsAdmin ? "290px" : "400px");">Pertanyaan</th>
-                                        @* Kolom Jawaban dihapus sesuai permintaan *@
+                                        @* Pertanyaan tetap memiliki lebar tetap; kolom lain dibuat dinamis *@
+                                        <th class="col-pertanyaan" style="width:@(Model.IsAdmin ? "290px" : "400px");">Pertanyaan</th>
                                         @if (Model.IsAdmin)
                                         {
-                                            <th style="width:160px;">Kategori</th>
+                                            <th class="col-category">Kategori</th>
                                         }
-                                        <th style="width:@(Model.IsAdmin ? "170px" : "190px");">Pembuat Pertanyaan</th>
-                                        <th style="width:140px;">Status</th>
+                                        <th class="col-employee">Pembuat Pertanyaan</th>
+                                        <th class="col-status">Status</th>
                                     </tr>
                                     
                                     @* Baris filter per-kolom dihapus; hanya pencarian global tetap aktif *@
@@ -382,29 +379,29 @@
                     // Sel disusun sebagai daftar supaya urutannya tidak bisa melenceng
                     // dari <thead>; jumlahnya selalu sama dengan COLUMN_COUNT.
                     const cells = [
-                        `<td>${rowNumber}</td>`
+                        `<td class="col-no">${rowNumber}</td>`
                     ];
 
                     if (IS_ADMIN) {
-                        cells.push(`<td>${escapeHtml(q?.questionNo || '-')}</td>`);
+                        cells.push(`<td class="col-question-no">${escapeHtml(q?.questionNo || '-')}</td>`);
                     }
 
-                    cells.push(`<td>${tglDibuat}</td>`);
+                    cells.push(`<td class="col-date">${tglDibuat}</td>`);
 
                     if (IS_ADMIN) {
                         const judul = escapeHtml(q?.title || '-');
-                        cells.push(`<td class="inv2-title" title="${judul}">${judul}</td>`);
+                        cells.push(`<td class="col-title inv2-title" title="${judul}">${judul}</td>`);
                     }
 
-                    cells.push(`<td class="inv2-question">${detailLink}</td>`);
+                    cells.push(`<td class="col-pertanyaan inv2-question">${detailLink}</td>`);
                     // Kolom Jawaban telah dihapus.
 
                     if (IS_ADMIN) {
-                        cells.push(`<td>${escapeHtml(q?.categoryName || '-')}</td>`);
+                        cells.push(`<td class="col-category">${escapeHtml(q?.categoryName || '-')}</td>`);
                     }
 
-                    cells.push(`<td>${pegawai}</td>`);
-                    cells.push(`<td>${statusBadge}</td>`);
+                    cells.push(`<td class="col-employee">${pegawai}</td>`);
+                    cells.push(`<td class="col-status">${statusBadge}</td>`);
                     // Kembali tambahkan kolom aksi (kebab) sehingga jumlah sel sama dengan <thead>.
                     // cells.push('<td class="inv2-kebab">⋮</td>');
 

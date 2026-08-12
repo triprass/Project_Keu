@@ -2099,7 +2099,12 @@ main[role="main"] {
 .inv2-table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 1400px;
+    /* Allow table columns to size based on their content so non-"Pertanyaan"
+       columns become dynamic. Min-width is removed so layout can shrink on
+       small screens; horizontal scrolling is still provided by the wrapper
+       (."inv2-table-wrap"). */
+    table-layout: auto;
+    min-width: 0;
 }
 
     .inv2-table thead tr.inv2-head-label th {
@@ -2167,6 +2172,11 @@ main[role="main"] {
     padding: 8px 10px;
     border-bottom: 1px solid #e3ebf4;
     vertical-align: middle;
+    /* Allow cell content to wrap by default so column width is driven by
+       content. Specific columns keep nowrap via their classes (.inv2-question,
+       .inv2-title, .inv2-question-link). */
+    white-space: normal;
+    word-break: break-word;
 }
 
 .inv2-primary {
@@ -2186,6 +2196,62 @@ main[role="main"] {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+/* Keep title and question link truncated to preserve layout. Other cells will
+   expand/shrink to fit their content. */
+.inv2-title,
+.inv2-question-link {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Minimum/priority sizing for table columns. Columns without a fixed width
+   will grow/shrink based on content, but these min-widths ensure readability
+   and prevent extremely narrow columns. */
+.inv2-table thead th.col-no { min-width: 48px; }
+.inv2-table thead th.col-question-no { min-width: 120px; }
+.inv2-table thead th.col-date { min-width: 100px; }
+.inv2-table thead th.col-title { min-width: 140px; }
+.inv2-table thead th.col-pertanyaan { min-width: 240px; }
+.inv2-table thead th.col-category { min-width: 120px; }
+.inv2-table thead th.col-employee { min-width: 140px; }
+.inv2-table thead th.col-status { min-width: 100px; }
+
+@media (max-width: 1024px) {
+    .inv2-table thead th.col-pertanyaan { min-width: 200px; }
+    .inv2-table thead th.col-title { min-width: 100px; }
+    .inv2-table thead th.col-employee { min-width: 110px; }
+}
+
+@media (max-width: 640px) {
+    /* On narrow screens push to wrapping / scrolling earlier */
+    .inv2-table thead th.col-pertanyaan { min-width: 180px; }
+}
+
+/* Responsive behaviour requested: when width < 900px truncate Judul and Pembuat,
+   but keep Pertanyaan visible (allow wrapping). */
+@media (max-width: 900px) {
+    .inv2-table td.col-title,
+    .inv2-table td.col-employee {
+        max-width: 120px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    /* Make Pertanyaan column wrap so longer questions remain readable. */
+    .inv2-table td.col-pertanyaan,
+    .inv2-table td.col-pertanyaan .inv2-question-link {
+        white-space: normal !important;
+        overflow: visible !important;
+    }
+
+    /* Reduce padding slightly to fit more content on small screens */
+    .inv2-table tbody td {
+        padding: 6px 8px;
+    }
 }
 
 /* Jalan keluar dari lingkup kategori, hanya tampil bagi pengelola. */
