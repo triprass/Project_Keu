@@ -1278,12 +1278,28 @@ main[role="main"] {
 }
 
 .detail-hero-logo-v2 {
-    /* Prominent hero logo with responsive sizing */
-    width: clamp(64px, 8vw, 140px);
+    /* Prominent hero logo (SVG) with responsive sizing. Using clamp keeps the
+       logo proportional across viewports. SVG ensures crisp rendering. */
+    width: clamp(88px, 10vw, 220px);
     height: auto;
     object-fit: contain;
-    border-radius: 12px; /* softer rounded shape */
-    filter: drop-shadow(0 10px 22px rgba(13, 71, 135, 0.22));
+    border-radius: 0; /* keep original shape for SVG; remove mask */
+    filter: drop-shadow(0 12px 28px rgba(13, 71, 135, 0.22));
+    /* Smoothly animate size/visual changes (e.g. when viewport changes or
+       when hovering). Respects user preference for reduced motion below. */
+    transition: width 260ms ease, filter 260ms ease, transform 260ms ease;
+}
+
+/* Subtle scale on hover/focus to give a tactile feel on pointer devices */
+.detail-hero-logo-v2:hover,
+.detail-hero-logo-v2:focus {
+    transform: scale(1.03);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .detail-hero-logo-v2 {
+        transition: none !important;
+    }
 }
 
 /* Header layout adjustments for smaller screens so logo and actions stack */
