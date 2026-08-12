@@ -363,6 +363,80 @@ main[role="main"] {
     gap: 24px;
 }
 
+/* New category card layout used on Pertanyaan page */
+.kategori-judul {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #12284C;
+    margin: 0 0 18px 6px;
+}
+
+.category-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(280px, 1fr));
+    gap: 18px 24px;
+}
+
+.category-card {
+    background: rgba(255,255,255,0.98);
+    border: 1px solid rgba(18, 40, 76, 0.06);
+    border-radius: 8px;
+    padding: 14px;
+    box-shadow: 0 6px 14px rgba(18, 40, 76, 0.04);
+}
+
+.category-card .card-inner {
+    display: flex;
+    gap: 18px;
+    align-items: center;
+}
+
+.category-card .card-icon {
+    flex: 0 0 84px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.category-card .card-icon svg { display: block; }
+
+.category-card .card-body {
+    flex: 1 1 auto;
+}
+
+.title-pill {
+    display: inline-block;
+    background: #07a66a; /* green pill */
+    color: #fff;
+    padding: 8px 18px;
+    border-radius: 8px;
+    font-weight: 800;
+    font-size: 0.95rem;
+    margin-bottom: 10px;
+}
+
+.card-desc {
+    margin: 0 0 8px 0;
+    color: #23436f;
+    font-size: 0.95rem;
+    line-height: 1.4;
+}
+
+.category-card .btn-lebih-banyak {
+    margin: 6px 0 0 0;
+    color: #0b7bd6;
+    font-weight: 700;
+    text-decoration: none;
+    background: transparent;
+    border: 0;
+    padding: 0;
+}
+
+@media (max-width: 900px) {
+    .category-grid { grid-template-columns: 1fr; }
+    .question-logo { width: 30%; }
+}
+
 .akun-card {
     background: rgba(255, 255, 255, 0.92);
     border: 1px solid rgba(18, 40, 76, 0.1);
