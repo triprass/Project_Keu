@@ -1,0 +1,12 @@
+/* Container to align page sections with the footer width */
+.page-container {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 0 20px; /* keep some horizontal breathing room on small screens */
+}
+
+/* Optional: make search box stretch to full width of the container */
+.page-container .search-box {
+    display: flex;
+    gap: 8px;
+}

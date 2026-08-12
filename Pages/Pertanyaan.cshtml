@@ -22,6 +22,8 @@
         <a asp-page="/FormPertanyaan" class="btn-buat-pertanyaan">Buat Pertanyaan</a>
     </header>
 
+    <div class="page-container">
+
     <section class="question-search-wrap" aria-label="Pencarian pertanyaan">
         <form method="get" asp-page="/Pertanyaan" class="search-box" role="search">
             <input style="width: 100%" name="q" type="text" placeholder="Cari pertanyaan..." aria-label="Cari pertanyaan" value="@Model.SearchQuery" />
@@ -34,6 +36,9 @@
         </form>
     </section>
 
+    </div>
+
+    <div class="page-container">
     <section aria-label="Daftar kategori akun">
         <h2 class="kategori-judul">Jelajahi Semua Kategori</h2>
 
@@ -56,7 +61,7 @@
 
                             <div class="card-body">
                                 <div class="title-pill">@group.CategoryName</div>
-                                <p class="card-desc">Informasi umum seputar akun @group.CategoryName</p>
+                                <p class="card-desc">Informasi umum seputar @group.CategoryName</p>
 
                                 @* <form method="post" asp-page="/PageQuestion" class="akun-card-more-form">
                                     <input type="hidden" name="CategoryId" value="@group.CategoryId" />
@@ -88,6 +93,7 @@
             }
         </div>
     </section>
+    </div>
  
 @*     <a asp-page="/Index" class="badge-hexagon">Main Page</a> *@
 </div>
