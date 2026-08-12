@@ -329,12 +329,19 @@ main[role="main"] {
 }
 }
 
-.search-box input {
+.search-box > input,
+.search-box input[type="text"],
+.search-box input[name="q"] {
+    /* make the input fill remaining space of the search box */
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
     border: none;
     outline: none;
     /* allow input to flex and shrink correctly inside the search box */
     flex: 1 1 auto;
     min-width: 0;
+    padding: 8px 0; /* keep vertical padding but remove inner horizontal padding so it aligns with search-box gap */
     font-size: 1rem;
     font-family: 'Montserrat', sans-serif;
     color: #12284C;
