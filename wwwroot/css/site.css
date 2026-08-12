@@ -406,13 +406,24 @@ main[role="main"] {
 
 .title-pill {
     display: inline-block;
-    background: linear-gradient(135deg, #2d83ff, #685dff); /* green pill */
+    background: #07a66a; /* green pill */
     color: #fff;
     padding: 8px 18px;
     border-radius: 8px;
     font-weight: 800;
     font-size: 0.95rem;
     margin-bottom: 10px;
+}
+
+.category-card-link {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+}
+
+.category-card-link:focus {
+    outline: 3px solid rgba(7,166,106,0.18);
+    outline-offset: 3px;
 }
 
 .card-desc {
