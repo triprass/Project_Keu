@@ -10,3 +10,34 @@
     display: flex;
     gap: 8px;
 }
+
+/* Make header content align like footer (centered container) */
+.question-header {
+    padding: 18px 0;
+}
+
+.question-header .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.question-logo {
+    width: 160px;
+    max-width: 100%;
+    height: auto;
+}
+
+@media (max-width: 768px) {
+    .question-header .header-inner {
+        gap: 12px;
+        align-items: center;
+    }
+    .btn-buat-pertanyaan {
+        padding: 8px 12px;
+        font-size: 0.95rem;
+    }
+}

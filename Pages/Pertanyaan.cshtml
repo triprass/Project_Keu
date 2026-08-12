@@ -15,12 +15,15 @@
     <div class="question-overlay"></div>
 
     <header class="question-header">
+        <div class="page-container header-inner">
         <a asp-page="/Index" class="question-logo-link" aria-label="Kembali ke halaman utama">
             <img src="~/images/logo.png" alt="Logo Tanya Subbag Keuangan" class="question-logo">
         </a>
-
-        <a asp-page="/FormPertanyaan" class="btn-buat-pertanyaan">Buat Pertanyaan</a>
+            <a asp-page="/FormPertanyaan" class="btn-buat-pertanyaan">Buat Pertanyaan</a>
+        </div>
     </header>
+
+    
 
     <div class="page-container">
 
@@ -35,7 +38,10 @@
             </button>
         </form>
     </section>
+    </div>
 
+    <div class="page-container">
+        <a asp-page="/FormPertanyaan" class="btn-buat-pertanyaan">Buat Pertanyaan</a>
     </div>
 
     <div class="page-container">
@@ -62,13 +68,6 @@
                             <div class="card-body">
                                 <div class="title-pill">@group.CategoryName</div>
                                 <p class="card-desc">Informasi umum seputar @group.CategoryName</p>
-
-                                @* <form method="post" asp-page="/PageQuestion" class="akun-card-more-form">
-                                    <input type="hidden" name="CategoryId" value="@group.CategoryId" />
-                                    <input type="hidden" name="PageSize" value="10" />
-                                    <input type="hidden" name="Page" value="1" />
-                                    <button type="submit" class="btn-lebih-banyak">Tampilkan lebih banyak</button>
-                                </form> *@
                             </div>
                         </div>
                         </a>
