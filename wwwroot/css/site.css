@@ -1206,9 +1206,13 @@ main[role="main"] {
 }
 
 .detail-logo-v2 {
-    width: 168px;
+    /* Larger, responsive header logo:
+       - Use clamp to allow fluid sizing between a minimum and maximum.
+       - Keep max-width:100% to avoid overflow inside small containers. */
+    width: clamp(120px, 12vw, 260px);
+    height: auto;
     max-width: 100%;
-    filter: drop-shadow(0 8px 14px rgba(16, 57, 101, 0.2));
+    filter: drop-shadow(0 8px 18px rgba(16, 57, 101, 0.22));
 }
 
 .topic-status-wrap-v2 {
@@ -1274,11 +1278,39 @@ main[role="main"] {
 }
 
 .detail-hero-logo-v2 {
-    width: 76px;
-    height: 76px;
-    object-fit: cover;
-    border-radius: 50%;
-    filter: drop-shadow(0 10px 18px rgba(13, 71, 135, 0.22));
+    /* Prominent hero logo with responsive sizing */
+    width: clamp(64px, 8vw, 140px);
+    height: auto;
+    object-fit: contain;
+    border-radius: 12px; /* softer rounded shape */
+    filter: drop-shadow(0 10px 22px rgba(13, 71, 135, 0.22));
+}
+
+/* Header layout adjustments for smaller screens so logo and actions stack */
+@media (max-width: 860px) {
+    .detail-header-v2 {
+        flex-wrap: wrap;
+        gap: 12px;
+        padding: 12px 8px;
+    }
+
+    .detail-logo-link-v2 {
+        flex: 0 0 auto;
+        margin-right: auto;
+    }
+
+    .detail-header-actions-v2 {
+        width: 100%;
+        justify-content: flex-end;
+    }
+}
+
+@media (max-width: 480px) {
+    .detail-header-v2 {
+        align-items: center;
+    }
+
+    .detail-title-v2 { font-size: 1.6rem; }
 }
 
 .detail-title-v2 {
