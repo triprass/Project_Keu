@@ -155,21 +155,8 @@
                                 <thead>
                                     <tr class="inv2-head-label">
                                         <th class="col-no">No</th>
-                                        @if (Model.IsAdmin)
-                                        {
-                                            <th class="col-question-no">No. Pertanyaan</th>
-                                        }
                                         <th class="col-date">Tanggal</th>
-                                        @if (Model.IsAdmin)
-                                        {
-                                            <th class="col-title">Judul</th>
-                                        }
-                                        @* Pertanyaan tetap memiliki lebar tetap; kolom lain dibuat dinamis *@
-                                        <th class="col-pertanyaan" style="width:@(Model.IsAdmin ? "290px" : "400px");">Pertanyaan</th>
-                                        @if (Model.IsAdmin)
-                                        {
-                                            <th class="col-category">Kategori</th>
-                                        }
+                                        <th class="col-pertanyaan");">Pertanyaan</th>
                                         <th class="col-employee">Pembuat Pertanyaan</th>
                                         <th class="col-status">Status</th>
                                     </tr>
