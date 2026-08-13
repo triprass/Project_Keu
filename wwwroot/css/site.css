@@ -1334,8 +1334,8 @@ main[role="main"] {
 .detail-hero-logo-v2 {
     /* Prominent hero logo (SVG) with responsive sizing. Using clamp keeps the
        logo proportional across viewports. SVG ensures crisp rendering. */
-    width: clamp(88px, 10vw, 220px);
-    height: auto;
+    width: 30%;
+    height: 50%;
     object-fit: contain;
     border-radius: 0; /* keep original shape for SVG; remove mask */
     filter: drop-shadow(0 12px 28px rgba(13, 71, 135, 0.22));
@@ -1345,7 +1345,7 @@ main[role="main"] {
 }
 
 /* Subtle scale on hover/focus to give a tactile feel on pointer devices */
-.detail-hero-logo-v2:hover,
+/*.detail-hero-logo-v2:hover,
 .detail-hero-logo-v2:focus {
     transform: scale(1.03);
 }
@@ -1354,10 +1354,10 @@ main[role="main"] {
     .detail-hero-logo-v2 {
         transition: none !important;
     }
-}
+}*/
 
 /* Header layout adjustments for smaller screens so logo and actions stack */
-@media (max-width: 860px) {
+/*@media (max-width: 860px) {
     .detail-header-v2 {
         flex-wrap: wrap;
         gap: 12px;
@@ -1373,9 +1373,9 @@ main[role="main"] {
         width: 100%;
         justify-content: flex-end;
     }
-}
+}*/
 
-@media (max-width: 480px) {
+/*@media (max-width: 480px) {
     .detail-header-v2 {
         align-items: center;
     }
@@ -1390,7 +1390,7 @@ main[role="main"] {
     color: #0a2f59;
     letter-spacing: -0.01em;
     line-height: 1.1;
-}
+}*/
 
 .detail-subtitle-v2 {
     margin: 0;
