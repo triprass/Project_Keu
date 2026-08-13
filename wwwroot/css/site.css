@@ -763,11 +763,28 @@ main[role="main"] {
 
 .form-layout {
     display: grid;
-    grid-template-columns: auto minmax(420px, 560px) minmax(210px, 240px);
+    /* Single centered column for the form card. Keep a max width so the
+       card remains centered on wide screens. */
+    grid-template-columns: minmax(420px, 560px);
+    justify-content: center;
     gap: 24px;
     align-items: start;
     max-width: 1120px;
     margin: 0 auto;
+}
+
+@media (max-width: 720px) {
+    .form-layout {
+        grid-template-columns: minmax(320px, 92%);
+    }
+}
+
+@media (max-width: 420px) {
+    .form-layout {
+        grid-template-columns: 94%;
+        padding: 0 8px;
+    }
+    .form-card { padding: 18px; }
 }
 
 .form-logo-link {
