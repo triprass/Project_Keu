@@ -67,9 +67,40 @@
         <div class="admin-table-title admin-table-title-v2">
             @if (!string.IsNullOrWhiteSpace(Model.CategoryName))
             {
-                <div>Daftar Pertanyaan</div>
-                <div>Kategori @Model.CategoryName</div>
-                @* <div class="inv2-category-name">Kategori @Model.CategoryName</div> *@
+                <div class="admin-title-inner">
+                    <div class="admin-title-icon-wrap" aria-hidden="true">
+                        @* pilih icon sesuai kategori dari wwwroot/images/icon/ *@
+                        @if (string.Equals(Model.CategoryName, "Akun Belanja Modal", System.StringComparison.OrdinalIgnoreCase))
+                        {
+                            <img src="~/images/icon/kategori_bm.png" alt="" class="admin-title-icon" />
+                        }
+                        else if (string.Equals(Model.CategoryName, "Akun Belanja Barang dan Jasa", System.StringComparison.OrdinalIgnoreCase))
+                        {
+                            <img src="~/images/icon/kategori_barjas.png" alt="" class="admin-title-icon" />
+                        }
+                        else if (string.Equals(Model.CategoryName, "Akun Belanja Perjalanan Dinas", System.StringComparison.OrdinalIgnoreCase))
+                        {
+                            <img src="~/images/icon/kategori_perjadin.png" alt="" class="admin-title-icon" />
+                        }
+                        else if (string.Equals(Model.CategoryName, "Akun Belanja Pegawai", System.StringComparison.OrdinalIgnoreCase))
+                        {
+                            <img src="~/images/icon/kategori_pegawai.png" alt="" class="admin-title-icon" />
+                        }
+                        else if (string.Equals(Model.CategoryName, "Pertanyaan Lainnya", System.StringComparison.OrdinalIgnoreCase))
+                        {
+                            <img src="~/images/icon/kategori_lainnya.png" alt="" class="admin-title-icon" />
+                        }
+                        else
+                        {
+                            <img src="~/images/icon/kategori_bm.png" alt="" class="admin-title-icon" />
+                        }
+                    </div>
+
+                    <div class="admin-title-texts">
+                        <div>Daftar Pertanyaan</div>
+                        <div class="inv2-category-name">Kategori @Model.CategoryName</div>
+                    </div>
+                </div>
 
                 @* Pengelola perlu jalan keluar dari lingkup kategori: konteks halaman
                    sengaja tidak ikut dibersihkan tombol reset filter. *@

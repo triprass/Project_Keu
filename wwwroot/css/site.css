@@ -35,7 +35,7 @@ html {
     .admin-table-title-v2 .admin-title-icon { width: 48px; height: 48px; }
     .admin-table-title-v2 > div:first-child { font-size: 1.25rem; }
 }
-/* end oflayout for title with icon */
+/* end of layout for title with icon */
 
 @media (min-width: 768px) {
     html {
