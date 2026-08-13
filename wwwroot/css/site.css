@@ -2,6 +2,41 @@ html {
     font-size: 14px;
 }
 
+/* layout for title with icon */
+.admin-table-title-v2 .admin-title-inner {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.admin-table-title-v2 .admin-title-icon-wrap {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.admin-table-title-v2 .admin-title-icon {
+    width: 64px;
+    height: 64px;
+    object-fit: contain;
+    filter: drop-shadow(0 6px 10px rgba(2,20,50,0.12));
+}
+
+.admin-table-title-v2 .admin-title-texts {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: center;
+}
+
+@media (max-width: 768px) {
+    .admin-table-title-v2 .admin-title-inner { flex-direction: column; gap: 8px; }
+    .admin-table-title-v2 .admin-title-icon { width: 48px; height: 48px; }
+    .admin-table-title-v2 > div:first-child { font-size: 1.25rem; }
+}
+/* end oflayout for title with icon */
+
 @media (min-width: 768px) {
     html {
         font-size: 16px;
