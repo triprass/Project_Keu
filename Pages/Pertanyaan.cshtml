@@ -46,12 +46,36 @@
                         <a asp-page="/PageQuestion" asp-route-CategoryId="@group.CategoryId" asp-route-PageSize="10" asp-route-Page="1" class="category-card-link">
                             <div class="card-inner">
                             <div class="card-icon" aria-hidden="true">
-                                @* Placeholder SVG icon; replace with per-category image if available *@
-                                <svg width="84" height="84" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <rect x="2" y="10" width="60" height="44" rx="6" stroke="#1AA76E" stroke-width="2" fill="rgba(26,167,110,0.06)" />
-                                    <path d="M18 24h28" stroke="#1AA76E" stroke-width="2" stroke-linecap="round" />
-                                    <path d="M18 32h18" stroke="#1AA76E" stroke-width="2" stroke-linecap="round" />
-                                </svg>
+                                @* Per-kategori: tampilkan gambar sesuai nama kategori. Pastikan file gambar ada di wwwroot/images/ *@
+                                @if (string.Equals(group.CategoryName, "Akun Belanja Modal", System.StringComparison.OrdinalIgnoreCase))
+                                {
+                                    <img src="~/images/icon/kategori_bm.png" alt="@group.CategoryName" class="card-icon-img" />
+                                }
+                                else if (string.Equals(group.CategoryName, "Akun Belanja Barang dan Jasa", System.StringComparison.OrdinalIgnoreCase))
+                                {
+                                    <img src="~/images/icon/kategori_barjas.png" alt="@group.CategoryName" class="card-icon-img" />
+                                }
+                                else if (string.Equals(group.CategoryName, "Akun Belanja Perjalanan Dinas", System.StringComparison.OrdinalIgnoreCase))
+                                {
+                                    <img src="~/images/icon/kategori_perjadin.png" alt="@group.CategoryName" class="card-icon-img" />
+                                }
+                                else if (string.Equals(group.CategoryName, "Akun Belanja Pegawai", System.StringComparison.OrdinalIgnoreCase))
+                                {
+                                    <img src="~/images/icon/kategori_pegawai.png" alt="@group.CategoryName" class="card-icon-img" />
+                                }
+                                else if (string.Equals(group.CategoryName, "Pertanyaan Lainnya", System.StringComparison.OrdinalIgnoreCase))
+                                {
+                                    <img src="~/images/icon/kategori_lainnya.png" alt="@group.CategoryName" class="card-icon-img" />
+                                }
+                                else
+                                {
+                                    @* Fallback: original SVG placeholder *@
+                                    <svg width="84" height="84" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <rect x="2" y="10" width="60" height="44" rx="6" stroke="#1AA76E" stroke-width="2" fill="rgba(26,167,110,0.06)" />
+                                        <path d="M18 24h28" stroke="#1AA76E" stroke-width="2" stroke-linecap="round" />
+                                        <path d="M18 32h18" stroke="#1AA76E" stroke-width="2" stroke-linecap="round" />
+                                    </svg>
+                                }
                             </div>
 
                             <div class="card-body">

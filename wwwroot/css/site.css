@@ -454,6 +454,14 @@ main[role="main"] {
 
 .category-card .card-icon svg { display: block; }
 
+.category-card .card-icon img,
+.card-icon-img {
+    width: 84px;
+    height: 84px;
+    object-fit: contain;
+    display: block;
+}
+
 .category-card .card-body {
     flex: 1 1 auto;
 }
