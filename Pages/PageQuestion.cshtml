@@ -13,25 +13,33 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
 }
 
+<div class="form-back-wrap">
+    <button type="button" class="form-back-btn" onclick="(function(){ if (history.length>1) { history.back(); } else { window.location.href='@Url.Page("/Pertanyaan")'; } })()" aria-label="Kembali">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        <span>Kembali</span>
+    </button>
+</div>
+
 <div class="admin-page admin-page-v2">
-    <div class="admin-page-overlay"></div>
+    @* <div class="admin-page-overlay"></div>
 
     <header class="admin-header admin-header-v2">
         <a asp-page="/Index" class="admin-logo-link" aria-label="Kembali ke halaman utama">
             <img src="~/images/logo.png" alt="Logo Tanya Subbag Keuangan" class="admin-logo">
         </a>
-    </header>
+    </header> *@
 
     @{
         // "Kembali" berarti kembali ke kartu kategori di /Pertanyaan. Pengelola yang
         // masuk lewat menu panel administrasi tidak datang dari sana, jadi tombol itu
         // tidak akan mengembalikannya ke mana pun — cukup tombol Dashboard.
-        var arrivedFromCategoryCards = !Model.IsAdmin || Model.CategoryId.HasValue;
+        // var arrivedFromCategoryCards = !Model.IsAdmin || Model.CategoryId.HasValue;
     }
 
-    <nav class="admin-navbar admin-navbar-end" aria-label="Navigasi halaman daftar pertanyaan">
-        @* Halaman ini tetap terbuka untuk umum. Jalan pintas ke panel administrasi
-           hanya muncul bagi yang sudah masuk, sehingga tampilan publik tidak berubah. *@
+    @* <nav class="admin-navbar admin-navbar-end" aria-label="Navigasi halaman daftar pertanyaan">
         @if (Model.IsAdmin)
         {
             <a asp-page="/Admin/Index" class="app-btn app-btn-sm" aria-label="Buka panel administrasi">
@@ -59,7 +67,7 @@
                 <span>Kembali</span>
             </a>
         }
-    </nav>
+    </nav> *@
 
     <section class="admin-table-wrap admin-table-wrap-v2">
         @* Judul mengikuti lingkup daftarnya, bukan peran pembacanya: ada kategori

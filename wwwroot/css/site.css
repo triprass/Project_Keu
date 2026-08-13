@@ -385,7 +385,7 @@ main[role="main"] {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 8px 12px;
+    padding: 8px 15px;
     border-radius: 999px;
     border: 1px solid #3fb38a;
     background: linear-gradient(180deg, #f3fff8 0%, #e6fff0 100%);
