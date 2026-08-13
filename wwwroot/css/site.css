@@ -402,6 +402,30 @@ main[role="main"] {
     .admin-title-main { font-size: 1.25rem; }
     .admin-banner-right .inv2-category-name { padding: 6px 12px; font-size: 0.95rem; }
 }
+
+/* Make banner responsive on narrow screens: stack elements and allow the
+   category pill to wrap under the title. */
+@media (max-width: 520px) {
+    .admin-table-title-v2 { padding: 12px 14px; }
+    .admin-banner { flex-direction: column; align-items: center; text-align: center; gap: 10px; }
+    .admin-banner-left { order: 0; }
+    .admin-banner-center { order: 1; }
+    .admin-banner-right { order: 2; }
+
+    .admin-title-icon { width: 48px; height: 48px; }
+    .admin-title-main { font-size: 1.1rem; }
+
+    .admin-banner-right .inv2-category-name {
+        display: inline-block;
+        margin: 0 auto;
+        padding: 6px 10px;
+        font-size: 0.9rem;
+        white-space: normal;
+    }
+
+    /* Ensure banner doesn't overflow small screens */
+    .admin-table-title-v2 { border-radius: 16px; }
+}
 /* End Of Improve admin title/banner aesthetics for PageQuestion */
 
 .search-box {
