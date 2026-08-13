@@ -61,23 +61,23 @@
         }
     </nav> *@
 
-    <div class="form-back-wrap" style="margin-bottom:12px;">
-        <button type="button" class="form-back-btn" onclick="(function(){ if (history.length>1) { history.back(); } else { window.location.href='@Url.Page("/Pertanyaan")'; } })()" aria-label="Kembali">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-                <line x1="19" y1="12" x2="5" y2="12" />
-                <polyline points="12 19 5 12 12 5" />
-            </svg>
-            <span>Kembali</span>
-        </button>
-    </div>
-
     <section class="admin-table-wrap admin-table-wrap-v2">
         @* Judul mengikuti lingkup daftarnya, bukan peran pembacanya: ada kategori
            berarti daftarnya dibatasi kategori itu, siapa pun yang membuka. *@
         <div class="admin-table-title admin-table-title-v2">
+
             @if (!string.IsNullOrWhiteSpace(Model.CategoryName))
             {
                 <div class="admin-banner">
+                    <div class="form-back-wrap" style="margin-bottom:0;">
+                        <button type="button" class="form-back-btn" onclick="(function(){ if (history.length>1) { history.back(); } else { window.location.href='@Url.Page("/Pertanyaan")'; } })()" aria-label="Kembali">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <line x1="19" y1="12" x2="5" y2="12" />
+                                <polyline points="12 19 5 12 12 5" />
+                            </svg>
+                            <span>Kembali</span>
+                        </button>
+                    </div>
                     <div class="admin-banner-left" aria-hidden="true">
                         @* category icon *@
                         @if (string.Equals(Model.CategoryName, "Akun Belanja Modal", System.StringComparison.OrdinalIgnoreCase))
@@ -118,6 +118,15 @@
             else if (Model.IsAdmin)
             {
                 <div class="admin-banner">
+                    <div class="form-back-wrap" style="margin-bottom:0;">
+                        <button type="button" class="form-back-btn" onclick="(function(){ if (history.length>1) { history.back(); } else { window.location.href='@Url.Page("/Pertanyaan")'; } })()" aria-label="Kembali">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <line x1="19" y1="12" x2="5" y2="12" />
+                                <polyline points="12 19 5 12 12 5" />
+                            </svg>
+                            <span>Kembali</span>
+                        </button>
+                    </div>
                     <div class="admin-banner-center">
                         <div class="admin-title-main">Daftar Seluruh Pertanyaan</div>
                     </div>
@@ -126,6 +135,15 @@
             else
             {
                 <div class="admin-banner">
+                    <div class="form-back-wrap" style="margin-bottom:0;">
+                        <button type="button" class="form-back-btn" onclick="(function(){ if (history.length>1) { history.back(); } else { window.location.href='@Url.Page("/Pertanyaan")'; } })()" aria-label="Kembali">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <line x1="19" y1="12" x2="5" y2="12" />
+                                <polyline points="12 19 5 12 12 5" />
+                            </svg>
+                            <span>Kembali</span>
+                        </button>
+                    </div>
                     <div class="admin-banner-center">
                         <div class="admin-title-main">Daftar Pertanyaan</div>
                     </div>
