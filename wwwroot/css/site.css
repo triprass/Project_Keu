@@ -354,56 +354,50 @@ main[role="main"] {
 /* Improve admin title/banner aesthetics for PageQuestion */
 .admin-table-title-v2 {
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    padding: 22px 20px;
-    background: linear-gradient(90deg, #09a6ff 0%, #2d83ff 100%);
+    padding: 18px 22px;
+    background: linear-gradient(90deg, #0b95ff 0%, #1976ff 100%);
     color: #ffffff;
-    border-radius: 10px;
+    border-radius: 28px;
     box-shadow: 0 10px 30px rgba(13,34,64,0.12);
     margin-bottom: 20px;
 }
 
-.admin-table-title-v2 > div:first-child {
-    font-size: 1.6rem;
-    font-weight: 800;
-    letter-spacing: -0.6px;
-    text-align: center;
-}
-
-.admin-table-title-v2 .inv2-category-name {
-    font-size: 1.15rem;
-    font-weight: 700;
-    text-align: center;
-    padding: 6px 14px;
-    border-radius: 999px;
-    background: rgba(255,255,255,0.08);
-    color: #ffffff;
-}
-
-.admin-table-title-v2 .inv2-scope-reset {
-    color: rgba(255,255,255,0.92);
-    font-weight: 700;
-    display: inline-flex;
-    gap: 8px;
+/* Banner layout: left icon, center title, right category pill */
+.admin-banner {
+    display: flex;
     align-items: center;
-    text-decoration: none;
-    padding: 6px 8px;
-    border-radius: 8px;
+    width: 100%;
+    gap: 20px;
 }
 
-.admin-table-title-v2 .inv2-scope-reset svg {
-    stroke: rgba(255,255,255,0.95);
+.admin-banner-left { flex: 0 0 auto; }
+.admin-title-icon { width: 68px; height: 68px; object-fit: contain; }
+
+.admin-banner-center { flex: 1 1 auto; display:flex; justify-content:center; }
+.admin-title-main { font-size: 2rem; font-weight: 800; letter-spacing: -0.6px; }
+
+.admin-banner-right { flex: 0 0 auto; }
+.admin-banner-right .inv2-category-name {
+    display: inline-block;
+    background: #ffffff;
+    color: #0b66bf;
+    padding: 8px 18px;
+    border-radius: 999px;
+    font-weight: 800;
+    box-shadow: 0 6px 18px rgba(11,102,191,0.12);
 }
 
-@media (max-width: 768px) {
-    .admin-table-title-v2 {
-        padding: 18px 14px;
-    }
-    .admin-table-title-v2 > div:first-child { font-size: 1.25rem; }
-    .admin-table-title-v2 .inv2-category-name { font-size: 1rem; padding: 5px 10px; }
+@media (max-width: 1024px) {
+    .admin-title-main { font-size: 1.6rem; }
+    .admin-title-icon { width: 56px; height: 56px; }
+}
+
+@media (max-width: 720px) {
+    .admin-banner { gap: 12px; }
+    .admin-title-main { font-size: 1.25rem; }
+    .admin-banner-right .inv2-category-name { padding: 6px 12px; font-size: 0.95rem; }
 }
 /* End Of Improve admin title/banner aesthetics for PageQuestion */
 
