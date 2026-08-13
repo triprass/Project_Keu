@@ -364,6 +364,22 @@ main[role="main"] {
     margin-bottom: 20px;
 }
 
+/* Position back button above banner (PageQuestion) to match design */
+.admin-table-wrap-v2 {
+    position: relative;
+}
+
+.admin-table-wrap-v2 .form-back-wrap {
+    position: absolute;
+    top: -20px;
+    left: 14px;
+    z-index: 6;
+}
+
+@media (max-width: 520px) {
+    .admin-table-wrap-v2 .form-back-wrap { top: -12px; left: 8px; }
+}
+
 /* Banner layout: left icon, center title, right category pill */
 .admin-banner {
     display: flex;
