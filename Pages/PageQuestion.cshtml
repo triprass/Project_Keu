@@ -68,8 +68,8 @@
             @if (!string.IsNullOrWhiteSpace(Model.CategoryName))
             {
                 <div>Daftar Pertanyaan</div>
-
-                <div class="inv2-category-name">Kategori @Model.CategoryName</div>
+                <div>Kategori @Model.CategoryName</div>
+                @* <div class="inv2-category-name">Kategori @Model.CategoryName</div> *@
 
                 @* Pengelola perlu jalan keluar dari lingkup kategori: konteks halaman
                    sengaja tidak ikut dibersihkan tombol reset filter. *@
