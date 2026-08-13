@@ -2159,7 +2159,7 @@ main[role="main"] {
 
 /* Admin Dashboard V2 - Enterprise Compact (override) */
 .inv2-page {
-    min-height: 100vh;
+    min-height: auto;
     background: #f5f8fc;
     padding: 18px 18px 26px;
 }
