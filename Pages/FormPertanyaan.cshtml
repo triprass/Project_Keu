@@ -14,6 +14,16 @@
     <div class="form-page-overlay"></div>
 
     <div class="form-layout">
+        <div class="form-back-wrap">
+            <button type="button" class="form-back-btn" onclick="(function(){ if (history.length>1) { history.back(); } else { window.location.href='@Url.Page("/Pertanyaan")'; } })()" aria-label="Kembali">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                <span>Kembali</span>
+            </button>
+        </div>
+
         <section class="form-card" aria-label="Formulir pertanyaan">
             <h1>Formulir Pertanyaan</h1>
 
@@ -55,7 +65,7 @@
                     <small id="nipWarning" class="form-warning" style="display:none;">NIP tidak ditemukan. Silakan cek kembali NIP yang dimasukkan.</small>
                 </div>
 
-                <button type="submit" class="form-submit-btn">Submit</button>
+                <button type="submit" class="form-submit-btn">Kirim</button>
                 @*<p class="form-footnote">Data akan diproses secara aman. Hindari mengisi informasi sensitif seperti password.</p>*@
             </form>
         </section>
