@@ -1345,7 +1345,7 @@ main[role="main"] {
 }
 
 /* Subtle scale on hover/focus to give a tactile feel on pointer devices */
-/*.detail-hero-logo-v2:hover,
+.detail-hero-logo-v2:hover,
 .detail-hero-logo-v2:focus {
     transform: scale(1.03);
 }
@@ -1354,7 +1354,7 @@ main[role="main"] {
     .detail-hero-logo-v2 {
         transition: none !important;
     }
-}*/
+}
 
 /* Header layout adjustments for smaller screens so logo and actions stack */
 /*@media (max-width: 860px) {
@@ -1606,10 +1606,10 @@ main[role="main"] {
         margin: 10px auto 18px;
     }
 
-    .detail-hero-logo-v2 {
+/*    .detail-hero-logo-v2 {
         width: 60px;
         height: 60px;
-    }
+    }*/
 
     .detail-title-v2 {
         font-size: 1.55rem;
