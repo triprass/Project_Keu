@@ -370,6 +370,9 @@ main[role="main"] {
     align-items: center;
     width: 100%;
     gap: 20px;
+    /* Limit banner width and center it in the page */
+    max-width: 980px;
+    margin: 0 auto;
 }
 
 .admin-banner-left { flex: 0 0 auto; }
