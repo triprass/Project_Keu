@@ -1440,8 +1440,12 @@ main[role="main"] {
     margin: 0 auto;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
     gap: 20px;
+}
+
+.detail-header-v2 .detail-logo-link-v2 {
+    display: none;
 }
 
 .detail-header-actions-v2 {
