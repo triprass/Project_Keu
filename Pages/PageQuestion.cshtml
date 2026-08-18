@@ -32,7 +32,7 @@
         var arrivedFromCategoryCards = !Model.IsAdmin || Model.CategoryId.HasValue;
     }
 
-    <nav class="admin-navbar admin-navbar-end" aria-label="Navigasi halaman daftar pertanyaan">
+    <nav class="admin-navbar admin-navbar-left" aria-label="Navigasi halaman daftar pertanyaan">
         @if (Model.IsAdmin)
         {
             <a asp-page="/Admin/Index" class="app-btn app-btn-sm" aria-label="Buka panel administrasi">
