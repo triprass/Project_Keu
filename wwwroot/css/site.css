@@ -420,10 +420,19 @@ main[role="main"] {
 }
 
 .admin-banner-left { flex: 0 0 auto; }
-.admin-title-icon { width: 68px; height: 68px; object-fit: contain; }
+.admin-title-icon { 
+    width: clamp(48px, 8vw, 68px); 
+    height: clamp(48px, 8vw, 68px); 
+    object-fit: contain;
+    display: block;
+}
 
 .admin-banner-center { flex: 1 1 auto; display:flex; justify-content:center; }
-.admin-title-main { font-size: 2rem; font-weight: 800; letter-spacing: -0.6px; }
+.admin-title-main { 
+    font-size: clamp(1.1rem, 5vw, 2rem); 
+    font-weight: 800; 
+    letter-spacing: -0.6px; 
+}
 
 /* Back button positioned relative to the banner - sits just outside left edge */
 .admin-banner .form-back-wrap {
@@ -455,8 +464,8 @@ main[role="main"] {
 }
 
 @media (max-width: 1024px) {
-    .admin-title-main { font-size: 1.6rem; }
-    .admin-title-icon { width: 56px; height: 56px; }
+    .admin-title-main { font-size: clamp(1.1rem, 5vw, 1.8rem); }
+    .admin-title-icon { width: clamp(48px, 7vw, 60px); height: clamp(48px, 7vw, 60px); }
 }
 
 @media (max-width: 720px) {
@@ -474,8 +483,8 @@ main[role="main"] {
     .admin-banner-center { order: 1; }
     .admin-banner-right { order: 2; }
 
-    .admin-title-icon { width: 48px; height: 48px; }
-    .admin-title-main { font-size: 1.1rem; }
+    .admin-title-icon { width: clamp(44px, 6vw, 52px); height: clamp(44px, 6vw, 52px); }
+    .admin-title-main { font-size: clamp(1rem, 4vw, 1.25rem); }
 
     .admin-banner-right .inv2-category-name {
         display: inline-block;

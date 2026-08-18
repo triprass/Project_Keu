@@ -151,10 +151,18 @@
                        diduplikasi di sini; sumber tunggalnya adalah #filterForm. *@
                     <form method="post" class="inv2-toolbar-left" id="toolbarForm">
                         <div class="inv2-search-wrap">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                                 stroke-width="2" stroke-linecap="round" aria-hidden="true">
+                                <circle cx="11" cy="11" r="7" />
+                                <line x1="16.5" y1="16.5" x2="21" y2="21" />
+                            </svg>
+
                             <input type="text" id="globalSearchInput" name="Q" value="@Model.Q"
                                    placeholder="Cari Pertanyaan"
                                    maxlength="200" autocomplete="off" aria-label="Pencarian global" />
-                            <button type="submit" aria-label="Cari">⌕</button>
+
+                            @* <button type="submit" aria-label="Cari">⌕</button> *@
+
                         </div>
                         <input type="hidden" name="CategoryId" value="@Model.CategoryId" />
                         <input type="hidden" name="PageSize" value="@Model.PageSize" />
