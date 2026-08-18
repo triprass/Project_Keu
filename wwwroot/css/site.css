@@ -77,7 +77,7 @@ body {
 
 main[role="main"] {
     width: 100%;
-    min-height: auto;
+    min-height: 100vh;
 }
 
 .landing-container {
