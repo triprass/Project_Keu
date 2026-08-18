@@ -474,6 +474,7 @@ main[role="main"] {
     .admin-banner-right .inv2-category-name { padding: 6px 12px; font-size: 0.95rem; }
 }
 
+
 /* Make banner responsive on narrow screens: stack elements and allow the
    category pill to wrap under the title. */
 @media (max-width: 520px) {
