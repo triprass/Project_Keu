@@ -37,7 +37,8 @@ public sealed class EmployeeService
             {
                 e.Id,
                 e.Nip,
-                FullName = e.FullName
+                FullName = e.FullName,
+                e.Branch
             })
             .FirstOrDefaultAsync();
     }
