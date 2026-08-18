@@ -390,9 +390,9 @@ main[role="main"] {
     gap: 5px;
     padding: 8px 20px;
     border-radius: 999px;
-    border: 1px solid #3fb38a;
-    background: linear-gradient(180deg, #f3fff8 0%, #e6fff0 100%);
-    color: #0b6650;
+    border: 1px solid rgba(18, 40, 76, 0.08);
+    background: linear-gradient(135deg, #7edbb0, #00ff778c);
+    color: #12284C;
     font-weight: 700;
     font-family: inherit;
     cursor: pointer;
@@ -402,20 +402,20 @@ main[role="main"] {
 .form-back-btn svg {
     width: 16px;
     height: 16px;
-    stroke: #0b6650;
+    stroke: #12284C;
 }
 
 .form-back-btn:hover {
     transform: translateY(-1px);
-    box-shadow: 0 8px 18px rgba(11,102,80,0.08);
-    background: linear-gradient(135deg, #2fb36e 0%, #0b8650 100%);
+    box-shadow: 0 8px 18px rgba(126, 219, 176, 0.15);
+    background: linear-gradient(135deg, #6ad49e, #00ff668c);
     color: #ffffff;
 }
 
 .form-back-btn:hover svg { stroke: #ffffff; }
 
 .form-back-btn:focus-visible {
-    outline: 3px solid rgba(11,102,80,0.18);
+    outline: 3px solid rgba(126, 219, 176, 0.25);
     outline-offset: 3px;
 }
 
