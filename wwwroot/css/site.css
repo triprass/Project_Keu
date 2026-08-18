@@ -809,7 +809,7 @@ main[role="main"] {
 /* Halaman Form Pertanyaan */
 .form-page {
     position: relative;
-    min-height: 100vh;
+    min-height: auto;
     width: 100%;
     background-image: url('/images/background.png');
     background-size: cover;
