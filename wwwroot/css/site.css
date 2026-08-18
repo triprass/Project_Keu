@@ -3201,7 +3201,7 @@ main[role="main"] {
 }
 
 .login-brand-logo {
-    width: 150px;
+    width: 330px;
     max-width: 100%;
     filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.35));
 }
@@ -3510,7 +3510,7 @@ main[role="main"] {
     }
 
     .login-brand-logo {
-        width: 118px;
+        width: 200px;
     }
 
     .login-brand-title {
