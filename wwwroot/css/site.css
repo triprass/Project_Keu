@@ -1547,7 +1547,7 @@ main[role="main"] {
 .detail-hero-logo-v2 {
     /* Prominent hero logo (SVG) with responsive sizing. Using clamp keeps the
        logo proportional across viewports. SVG ensures crisp rendering. */
-    width: 40%;
+    width: 30%;
     height: 50%;
     object-fit: contain;
     border-radius: 0; /* keep original shape for SVG; remove mask */
