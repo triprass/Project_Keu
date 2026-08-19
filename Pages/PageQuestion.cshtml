@@ -36,7 +36,7 @@
         @if (Model.IsAdmin)
         {
 
-            @if (arrivedFromCategoryCards)
+            @* @if (arrivedFromCategoryCards)
             {
                 <a asp-page="/Pertanyaan" class="app-btn app-btn-sm" aria-label="Kembali ke daftar pertanyaan">
                     <svg class="app-btn-icon" viewBox="0 0 24 24" width="16" height="16"
@@ -47,11 +47,7 @@
                     </svg>
                     <span>Kembali</span>
                 </a>
-            }
-            else
-            {
-                <a asp-page="/Pertanyaan" class="btn-kembali">Kembali</a>
-            }
+            } *@
 
             <a asp-page="/Admin/Index" class="app-btn app-btn-sm" aria-label="Buka panel administrasi">
                 <svg class="app-btn-icon" viewBox="0 0 24 24" width="16" height="16"
@@ -64,6 +60,10 @@
                 </svg>
                 <span>Dashboard </span>
             </a>
+        }
+        else
+        {
+            <a asp-page="/Pertanyaan" class="btn-kembali">Kembali</a>
         }
 
 
