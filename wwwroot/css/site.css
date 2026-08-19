@@ -156,8 +156,8 @@ main[role="main"] {
     }
 
 .btn-kembali {
-    background: linear-gradient(135deg, #0dcaf0, #e8c678) !important;
-    color: #12284C !important;
+    background: linear-gradient(135deg, #f1c171, #fbdba6) !important;
+    color: #4c3812 !important;
     border: 1px solid rgba(18, 40, 76, 0.08) !important;
     outline: none !important;
     padding: 10px 35px;
@@ -173,7 +173,8 @@ main[role="main"] {
 }
 
     .btn-kembali:hover {
-        background: linear-gradient(135deg, #ebcb80, #ddb96a) !important;
+        background: linear-gradient(135deg, #ffaf2b, #ffaf00) !important;
+        color: #ffffff !important;
         transform: translateY(-2px);
         box-shadow: 0 14px 28px rgba(18, 40, 76, 0.22);
     }
