@@ -59,13 +59,16 @@ public static class AdminMenu
     private const string IconIdCard =
         """<rect x="2.5" y="5" width="19" height="14" rx="2" /><circle cx="8.5" cy="11" r="2.2" /><path d="M5 16.4a3.6 3.6 0 0 1 7 0" /><line x1="15" y1="10" x2="19" y2="10" /><line x1="15" y1="13.5" x2="19" y2="13.5" />""";
 
+    private const string IconCalendarSync =
+    """<path d="M11 10v4h4"/><path d="m11 14 1.535-1.605a5 5 0 018 1.5"/><path d="M16 2v3"/><path d="m21 18-1.535 1.605a5 5 0 01-8-1.5"/><path d="M21 22v-4h-4"/><path d="M21 8.517V5a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2h3.517"/><path d="M3 9h4"/><path d="M8 2v3"/>""";
+
     public static IReadOnlyList<AdminMenuSection> Sections { get; } =
     [
         new("Utama",
         [
             new AdminMenuItem("Beranda", "/Admin/Index", IconHome,
                 Description: "Ringkasan layanan konsultasi keuangan."),
-            new AdminMenuItem("Daftar Pertanyaan", "/PageQuestion", IconInbox, PolicyQuestionsView,
+            new AdminMenuItem("Jawab Pertanyaan", "/PageQuestion", IconCalendarSync, PolicyQuestionsView,
                 Description: "Telusuri, jawab, dan unduh rekap pertanyaan."),
         ]),
 
