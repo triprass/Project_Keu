@@ -197,6 +197,10 @@
                                 <thead>
                                     <tr class="inv2-head-label">
                                         <th class="col-no">No</th>
+                                        @if (Model.IsAdmin)
+                                        {
+                                            <th class="col-question-no">Tiket</th>
+                                        }
                                         <th class="col-date">Tanggal</th>
                                         <th class="col-pertanyaan");">Pertanyaan</th>
                                         <th class="col-employee">Pembuat Pertanyaan</th>
@@ -412,26 +416,33 @@
                         `<td class="col-no">${rowNumber}</td>`
                     ];
 
+                    // Data [Question No]
                     if (IS_ADMIN) {
                         cells.push(`<td class="col-question-no">${escapeHtml(q?.questionNo || '-')}</td>`);
                     }
 
+                    // Data [Tgl Dibuat]
                     cells.push(`<td class="col-date">${tglDibuat}</td>`);
 
-                    if (IS_ADMIN) {
-                        const judul = escapeHtml(q?.title || '-');
-                        cells.push(`<td class="col-title inv2-title" title="${judul}">${judul}</td>`);
-                    }
+                    // Data [Kategori]
+                    // if (IS_ADMIN) {
+                    //     const judul = escapeHtml(q?.title || '-');
+                    //     cells.push(`<td class="col-title inv2-title" title="${judul}">${judul}</td>`);
+                    // }
 
+                    // Data [Pertanyaan]
                     cells.push(`<td class="col-pertanyaan inv2-question">${detailLink}</td>`);
-                    // Kolom Jawaban telah dihapus.
 
-                    if (IS_ADMIN) {
-                        cells.push(`<td class="col-category">${escapeHtml(q?.categoryName || '-')}</td>`);
-                    }
+                    // Data [Kategori]
+                    // if (IS_ADMIN) {
+                    //     cells.push(`<td class="col-category">${escapeHtml(q?.categoryName || '-')}</td>`);
+                    // }
 
+                    // Data [Pembuat Pertanyaan]
                     cells.push(`<td class="col-employee">${pegawai}</td>`);
-                    cells.push(`<td class="col-status">${statusBadge}</td>`);
+
+                    // Data [Status]
+                    // cells.push(`<td class="col-status">${statusBadge}</td>`);
                     // Kembali tambahkan kolom aksi (kebab) sehingga jumlah sel sama dengan <thead>.
                     // cells.push('<td class="inv2-kebab">⋮</td>');
 
