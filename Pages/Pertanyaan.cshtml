@@ -22,20 +22,14 @@
         </div>
     </header>
 
-    
 
-    <div class="page-container">
-
-    <section class="question-search-wrap" aria-label="Pencarian pertanyaan">
-        <div class="search-replacement">
-                <a asp-page="/FormPertanyaan" class="btn-mulai">Buat Pertanyaan Baru</a>
-        </div>
-    </section>
-    </div>
 
     <div class="page-container">
     <section aria-label="Daftar kategori akun">
-        <h2 class="kategori-judul">Jelajahi Semua Kategori</h2>
+        <div class="kategori-header">
+            <h2 class="kategori-judul">Jelajahi Semua Kategori</h2>
+            <a asp-page="/FormPertanyaan" class="btn-mulai">Buat Pertanyaan Baru</a>
+        </div>
 
         <div class="category-grid">
             @if (Model.QuestionGroups.Any())

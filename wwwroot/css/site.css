@@ -602,11 +602,22 @@ main[role="main"] {
 }
 
 /* New category card layout used on Pertanyaan page */
+.kategori-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+}
+
 .kategori-judul {
     font-size: 1.25rem;
     font-weight: 800;
     color: #12284C;
-    margin: 0 0 18px 6px;
+    margin: 0;
+    flex: 1 1 auto;
+    min-width: 200px;
 }
 
 .category-grid {
@@ -692,6 +703,13 @@ main[role="main"] {
 @media (max-width: 900px) {
     .category-grid { grid-template-columns: 1fr; }
     .question-logo { width: 30%; }
+    .kategori-header { flex-direction: column; align-items: flex-start; }
+}
+
+@media (max-width: 640px) {
+    .kategori-header { flex-direction: column; align-items: stretch; }
+    .kategori-judul { font-size: 1.1rem; }
+    .kategori-header .btn-mulai { width: 100%; text-align: center; }
 }
 
 .akun-card {
