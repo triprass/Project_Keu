@@ -133,8 +133,8 @@ main[role="main"] {
     color: #12284C !important;
     border: 1px solid rgba(18, 40, 76, 0.08) !important;
     outline: none !important;
-    padding: 16px 55px;
-    font-size: 1.1rem;
+    padding: 10px 35px;
+    font-size: 1rem;
     font-weight: 700;
     border-radius: 12px;
     cursor: pointer;
