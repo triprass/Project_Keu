@@ -19,11 +19,11 @@
 <div class="admin-page admin-page-v2">
     <div class="admin-page-overlay"></div>
 
-    <header class="admin-header admin-header-v2">
+    @* <header class="admin-header admin-header-v2">
         <a asp-page="/Index" class="admin-logo-link" aria-label="Kembali ke halaman utama">
             <img src="~/images/logo.png" alt="Logo Tanya Subbag Keuangan" class="admin-logo">
         </a>
-    </header>
+    </header> *@
 
     @{
         // "Kembali" berarti kembali ke kartu kategori di /Pertanyaan. Pengelola yang
@@ -48,7 +48,7 @@
             </a>
         }
 
-        @if (arrivedFromCategoryCards)
+        @* @if (arrivedFromCategoryCards)
         {
             <a asp-page="/Pertanyaan" class="app-btn app-btn-sm" aria-label="Kembali ke daftar pertanyaan">
                 <svg class="app-btn-icon" viewBox="0 0 24 24" width="16" height="16"
@@ -59,7 +59,7 @@
                 </svg>
                 <span>Kembali</span>
             </a>
-        }
+        } *@
     </nav>
 
     <section class="admin-table-wrap admin-table-wrap-v2">
