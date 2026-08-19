@@ -600,46 +600,11 @@ main[role="main"] {
 }
 
 /* New category card layout used on Pertanyaan page */
-/* Header with logo and title/button - responsive layout */
-.kategori-header-with-logo {
-    display: flex;
-    align-items: flex-start;
-    gap: 24px;
-    margin-bottom: 32px;
-}
-
-.kategori-logo-link {
-    display: inline-flex;
-    align-items: center;
-    text-decoration: none;
-    flex: 0 0 auto;
-}
-
-.kategori-logo {
-    width: clamp(100px, 12vw, 180px);
-    height: auto;
-    max-width: 100%;
-    display: block;
-    filter: drop-shadow(0 6px 12px rgba(18, 40, 76, 0.08));
-}
-
-.kategori-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 20px;
-    flex-wrap: wrap;
-    flex: 1 1 auto;
-    width: 100%;
-}
-
 .kategori-judul {
     font-size: 1.25rem;
     font-weight: 800;
     color: #12284C;
-    margin: 0;
-    flex: 1 1 auto;
-    min-width: 200px;
+    margin: 0 0 18px 6px;
 }
 
 .category-grid {
@@ -725,16 +690,6 @@ main[role="main"] {
 @media (max-width: 900px) {
     .category-grid { grid-template-columns: 1fr; }
     .question-logo { width: 30%; }
-    .kategori-header { flex-direction: column; align-items: flex-start; }
-    .kategori-header-with-logo { flex-direction: column; align-items: center; text-align: center; gap: 16px; }
-}
-
-@media (max-width: 640px) {
-    .kategori-header-with-logo { flex-direction: column; align-items: center; gap: 14px; }
-    .kategori-header { flex-direction: column; align-items: stretch; width: 100%; }
-    .kategori-judul { font-size: 1.1rem; }
-    .kategori-header .btn-mulai { width: 100%; text-align: center; }
-    .kategori-logo { width: clamp(80px, 20vw, 140px); }
 }
 
 .akun-card {

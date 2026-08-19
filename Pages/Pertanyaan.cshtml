@@ -14,22 +14,28 @@
 <div class="question-page">
     <div class="question-overlay"></div>
 
+    <header class="question-header">
+        <div class="page-container header-inner">
+        <a asp-page="/Index" class="question-logo-link" aria-label="Kembali ke halaman utama">
+            <img src="~/images/logo.png" alt="Logo Tanya Subbag Keuangan" class="question-logo">
+        </a>
+        </div>
+    </header>
+
+
+
     <div class="page-container">
 
-
+    <section class="question-search-wrap" aria-label="Pencarian pertanyaan">
+        <div class="search-replacement">
+                <a asp-page="/FormPertanyaan" class="btn-mulai">Buat Pertanyaan Baru</a>
+        </div>
+    </section>
+    </div>
 
     <div class="page-container">
     <section aria-label="Daftar kategori akun">
-        <div class="kategori-header-with-logo">
-            <a asp-page="/Index" class="question-logo-link kategori-logo-link" aria-label="Kembali ke halaman utama">
-                <img src="~/images/logo.png" alt="Logo Tanya Subbag Keuangan" class="question-logo kategori-logo">
-            </a>
-
-            <div class="kategori-header">
-                <h2 class="kategori-judul">Jelajahi Semua Kategori</h2>
-                <a asp-page="/FormPertanyaan" class="btn-mulai">Buat Pertanyaan</a>
-            </div>
-        </div>
+        <h2 class="kategori-judul">Jelajahi Semua Kategori</h2>
 
         <div class="category-grid">
             @if (Model.QuestionGroups.Any())
