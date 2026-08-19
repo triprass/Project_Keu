@@ -71,20 +71,20 @@ public static class AdminMenu
 
         new("Master Data",
         [
-            new AdminMenuItem("Kategori", "/Admin/Master/Categories", IconLayers, PolicyCategories,
-                Description: "Kelompok besar topik pada halaman utama."),
+            //new AdminMenuItem("Kategori", "/Admin/Master/Categories", IconLayers, PolicyCategories,
+            //    Description: "Kelompok besar topik pada halaman utama."),
             new AdminMenuItem("Kategori Pertanyaan", "/Admin/Master/QuestionCategories", IconTag, PolicyCategories,
                 Description: "Kategori yang dipilih pegawai saat bertanya."),
-            new AdminMenuItem("Status Pertanyaan", "/Admin/Master/QuestionStatuses", IconFlag, PolicyStatuses,
-                Description: "Tahapan penanganan beserta warna lencananya."),
+            //new AdminMenuItem("Status Pertanyaan", "/Admin/Master/QuestionStatuses", IconFlag, PolicyStatuses,
+            //    Description: "Tahapan penanganan beserta warna lencananya."),
             new AdminMenuItem("Pegawai", "/Admin/Master/Employees", IconIdCard, PolicyEmployees,
                 Description: "Data pegawai yang berhak mengajukan pertanyaan."),
             new AdminMenuItem("Akun Admin", "/Admin/Master/AdminUsers", IconUsers, PolicyAdminUsers,
                 Description: "Akun pengelola aplikasi beserta perannya."),
             new AdminMenuItem("Peran", "/Admin/Master/Roles", IconShield, PolicyRoles,
                 Description: "Kumpulan izin yang diberikan bersama-sama."),
-            new AdminMenuItem("Izin", "/Admin/Master/Permissions", IconKey, PolicyRoles,
-                Description: "Satuan hak akses yang dipakai kode program."),
+            //new AdminMenuItem("Izin", "/Admin/Master/Permissions", IconKey, PolicyRoles,
+            //    Description: "Satuan hak akses yang dipakai kode program."),
         ]),
     ];
 
