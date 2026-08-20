@@ -80,15 +80,85 @@ Kunci bawaan `waha-dev-local` hanya untuk mesin pengembang. Ganti lewat berkas
 lain: siapa saja yang memegang kunci itu bisa mengirim WhatsApp atas nama nomor
 yang tertaut.
 
-### Catatan untuk produksi
+### Menyiapkan WAHA di server
 
-`docker-compose.waha.yml` dan `tools/qr_server.py` adalah alat penyiapan
-pengembangan, bukan bagian aplikasi. Di server, jalankan **satu** WAHA yang
-ditautkan ke **nomor resmi**, lalu arahkan aplikasi ke sana lewat
-`Notifications__Waha__BaseUrl`.
+Satu WAHA, satu nomor resmi, dipindai sekali. Semua aplikasi mengarah ke sana,
+sehingga nomor pengirim yang dilihat pegawai selalu sama. Kalau tiap orang
+menjalankan WAHA sendiri, pegawai menerima pesan dari nomor pribadi siapa pun
+yang kebetulan menjalankan aplikasi.
 
-Kalau tiap orang menjalankan WAHA sendiri di produksi, pegawai akan menerima
-pesan dari nomor pribadi siapa pun yang kebetulan menjalankan aplikasi.
+**1. Siapkan rahasianya** di direktori compose pada VPS (`/docker/project_keu`):
+
+```
+cp .env.waha.example .env
+openssl rand -hex 32        # isikan sebagai WAHA_API_KEY
+```
+
+`.env` tidak boleh ikut ter-commit; `.gitignore` sudah menolaknya.
+
+**2. Hidupkan WAHA** berdampingan dengan aplikasi:
+
+```
+docker compose -f docker-compose.yml -f docker-compose.waha.prod.yml up -d
+```
+
+`.env.waha.example` memuat baris `COMPOSE_FILE=...` yang membuat perintah
+`docker compose` polos ikut membaca kedua berkas. Itu diperlukan karena skrip
+deploy di `.github/workflows/docker-image.yml` menjalankan `docker compose pull`
+dan `up -d` tanpa flag `-f`; tanpa baris tersebut, WAHA tidak ikut terkelola
+oleh deploy otomatis.
+
+Port WAHA sengaja hanya terbuka ke `127.0.0.1`. Aplikasi menghubunginya lewat
+jaringan compose, bukan lewat port itu.
+
+**3. Tambahkan environment berikut pada layanan aplikasi** di compose yang sudah
+ada di VPS:
+
+```yaml
+    environment:
+      Notifications__Enabled: "true"
+      Notifications__Waha__BaseUrl: "http://waha:3000"
+      Notifications__Waha__ApiKey: ${WAHA_API_KEY:?WAHA_API_KEY belum diisi di .env}
+      Notifications__Waha__Session: ${WAHA_SESSION:-default}
+      Notifications__PortalUrl: ${PORTAL_URL:-}
+```
+
+`http://waha:3000` adalah nama layanan di jaringan compose, bukan alamat publik.
+Aplikasi tidak perlu menunggu WAHA siap: pemberitahuan berjalan di antrean, jadi
+WAHA yang mati tidak menghalangi aplikasi hidup.
+
+**4. Pindai QR sekali** dari komputer Anda, lewat terowongan SSH - tidak ada port
+yang perlu dibuka ke internet:
+
+```
+ssh -L 3000:127.0.0.1:3000 pengguna@server        # biarkan terbuka
+```
+
+Lalu di komputer Anda, pada salinan repositori ini:
+
+```
+WAHA_BASE_URL=http://127.0.0.1:3000 WAHA_API_KEY=<isi WAHA_API_KEY>   python tools/qr_server.py
+```
+
+Buka `http://localhost:8808` dan pindai dari ponsel bernomor resmi. Begitu
+halaman menampilkan panel "Info Tersambung", terowongan SSH boleh ditutup.
+
+Tautannya tersimpan di volume `waha_sessions`, jadi penarikan image baru maupun
+restart server tidak meminta pemindaian ulang.
+
+**5. Isi nomor telepon pengelola** lewat menu Master -> Pegawai. Tanpa itu,
+pemberitahuan pertanyaan baru tidak punya penerima.
+
+### Memeriksa keadaan WAHA di server
+
+```
+docker compose ps waha
+docker compose logs -f waha
+curl -H "X-Api-Key: $WAHA_API_KEY" http://127.0.0.1:3000/api/sessions
+```
+
+Sesi yang sehat berstatus `WORKING`. `SCAN_QR_CODE` berarti tautannya lepas dan
+perlu dipindai ulang lewat langkah 4.
 
 ## Akun administrator (halaman `/Login`)
 

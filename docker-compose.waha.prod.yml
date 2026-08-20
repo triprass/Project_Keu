@@ -1,0 +1,76 @@
+# WAHA untuk server produksi.
+#
+# Satu WAHA, satu nomor resmi, dipindai sekali. Semua aplikasi mengarah ke sini,
+# sehingga nomor pengirim yang dilihat pegawai selalu sama.
+#
+# Berkas ini digabungkan ke compose yang sudah ada di VPS (/docker/project_keu).
+# Yang didefinisikan hanya layanan waha; environment untuk layanan aplikasi
+# ditambahkan ke definisi yang sudah ada di sana - lihat TODO.md, bagian
+# "Menyiapkan WAHA di server".
+#
+#   docker compose -f docker-compose.yml -f docker-compose.waha.prod.yml up -d
+#
+# Perbedaan pokok dengan docker-compose.waha.yml (untuk pengembangan):
+#   - kunci API dan kata sandi dasbor WAJIB diisi, tidak ada nilai bawaan
+#   - port hanya dibuka ke loopback, tidak ke internet
+
+services:
+  waha:
+    image: devlikeapro/waha:latest
+    container_name: waha
+    restart: unless-stopped
+
+    ports:
+      # Terikat ke 127.0.0.1, bukan 0.0.0.0. WAHA tidak boleh terjangkau dari
+      # internet: siapa pun yang memegang kunci API bisa mengirim WhatsApp atas
+      # nama nomor yang tertaut, dan dasbornya bisa dipakai memutus tautan.
+      #
+      # Aplikasi tidak lewat sini melainkan lewat jaringan compose
+      # (http://waha:3000). Port ini hanya pintu untuk terowongan SSH saat
+      # pemindaian QR yang cuma sekali itu.
+      - "127.0.0.1:${WAHA_PORT:-3000}:3000"
+
+    environment:
+      # Tanda "?" membuat compose berhenti dengan pesan jelas bila nilainya
+      # belum ada di .env - lebih baik gagal saat deploy daripada diam-diam
+      # berjalan dengan kunci bawaan yang sudah tertulis di repositori publik.
+      WHATSAPP_API_KEY: ${WAHA_API_KEY:?WAHA_API_KEY belum diisi di .env}
+      WAHA_DASHBOARD_USERNAME: ${WAHA_DASHBOARD_USER:?WAHA_DASHBOARD_USER belum diisi di .env}
+      WAHA_DASHBOARD_PASSWORD: ${WAHA_DASHBOARD_PASSWORD:?WAHA_DASHBOARD_PASSWORD belum diisi di .env}
+      WHATSAPP_SWAGGER_USERNAME: ${WAHA_DASHBOARD_USER}
+      WHATSAPP_SWAGGER_PASSWORD: ${WAHA_DASHBOARD_PASSWORD}
+
+      # Sesi dipulihkan sendiri setelah container atau server di-restart,
+      # sehingga QR tidak perlu dipindai ulang.
+      WHATSAPP_START_SESSION: ${WAHA_SESSION:-default}
+      WHATSAPP_RESTART_ALL_SESSIONS: "true"
+
+      # QR dibaca lewat tools/qr_server.py, bukan dari log container.
+      WAHA_PRINT_QR: "false"
+
+      TZ: ${TZ:-Asia/Jayapura}
+
+    volumes:
+      # Tautan WhatsApp tersimpan di sini. Tanpa volume, setiap penarikan image
+      # baru memutus tautan dan nomor resmi harus dipindai ulang.
+      - waha_sessions:/app/.sessions
+
+    healthcheck:
+      # Ditulis dalam gaya flow dan dikutip penuh: titik dua pada "X-Api-Key: ..."
+      # akan dibaca YAML sebagai pasangan kunci-nilai bila dibiarkan telanjang.
+      # $$ menjadi $ di dalam container, sehingga kuncinya dibaca dari environment
+      # dan tidak ikut tercetak oleh "docker compose config".
+      test: ["CMD-SHELL", "wget -qO- --header=\"X-Api-Key: $$WHATSAPP_API_KEY\" http://127.0.0.1:3000/api/sessions || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  waha_sessions:

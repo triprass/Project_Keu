@@ -362,3 +362,11 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 
+
+# Berkas rahasia untuk docker compose (kunci API WAHA, kata sandi dasbor).
+# Contoh isinya ada di .env.waha.example; yang berisi nilai sungguhan tidak
+# boleh ikut ter-commit.
+.env
+.env.*
+!.env.example
+!.env.waha.example
