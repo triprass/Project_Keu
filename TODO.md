@@ -51,6 +51,45 @@ Pengiriman berjalan di antrean latar belakang. WAHA yang lambat atau mati tidak
 menahan request dan tidak membatalkan pertanyaan atau jawaban yang sudah
 tersimpan; kegagalannya tercatat di log.
 
+### Menyiapkan WAHA di mesin pengembang
+
+```
+docker compose -f docker-compose.waha.yml up -d
+python tools/qr_server.py
+```
+
+Buka `http://localhost:8808`, lalu pindai kodenya dari WhatsApp
+(**Perangkat Tertaut** -> **Tautkan Perangkat**). Halamannya menarik QR baru
+tiap 3 detik - QR dari WhatsApp sendiri berganti tiap ~20 detik, jadi tanpa itu
+kodenya kerap sudah kedaluwarsa saat dipindai. Begitu tertaut, halaman berganti
+menjadi panel info berisi nomor dan akun yang dipakai.
+
+Tautannya tersimpan di volume `waha_sessions`, jadi cukup dipindai sekali;
+container yang di-restart tidak meminta pemindaian ulang.
+
+Setelah itu arahkan aplikasi ke WAHA tersebut:
+
+```
+dotnet user-secrets set "Notifications:Enabled" "true"
+dotnet user-secrets set "Notifications:Waha:BaseUrl" "http://127.0.0.1:3000"
+dotnet user-secrets set "Notifications:Waha:ApiKey" "waha-dev-local"
+```
+
+Kunci bawaan `waha-dev-local` hanya untuk mesin pengembang. Ganti lewat berkas
+`.env` (`WAHA_API_KEY=...`) di lingkungan mana pun yang bisa dijangkau orang
+lain: siapa saja yang memegang kunci itu bisa mengirim WhatsApp atas nama nomor
+yang tertaut.
+
+### Catatan untuk produksi
+
+`docker-compose.waha.yml` dan `tools/qr_server.py` adalah alat penyiapan
+pengembangan, bukan bagian aplikasi. Di server, jalankan **satu** WAHA yang
+ditautkan ke **nomor resmi**, lalu arahkan aplikasi ke sana lewat
+`Notifications__Waha__BaseUrl`.
+
+Kalau tiap orang menjalankan WAHA sendiri di produksi, pegawai akan menerima
+pesan dari nomor pribadi siapa pun yang kebetulan menjalankan aplikasi.
+
 ## Akun administrator (halaman `/Login`)
 
 Kredensial disimpan di database, bukan di konfigurasi.
