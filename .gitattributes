@@ -61,3 +61,12 @@
 #*.PDF   diff=astextplain
 #*.rtf   diff=astextplain
 #*.RTF   diff=astextplain
+
+###############################################################################
+# Skrip shell selalu berakhir baris LF, apa pun sistem yang meng-checkout.
+#
+# Berkas ini di-scp dari mesin Windows lalu dijalankan di server Linux. Dengan
+# normalisasi bawaan (* text=auto) isinya menjadi CRLF saat checkout di Windows,
+# dan bash di server menolaknya dengan ": command not found".
+###############################################################################
+*.sh text eol=lf

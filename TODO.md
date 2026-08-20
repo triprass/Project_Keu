@@ -87,6 +87,21 @@ sehingga nomor pengirim yang dilihat pegawai selalu sama. Kalau tiap orang
 menjalankan WAHA sendiri, pegawai menerima pesan dari nomor pribadi siapa pun
 yang kebetulan menjalankan aplikasi.
 
+Cara tercepat: jalankan `tools/setup-waha-server.sh` di server. Skrip itu
+mengerjakan langkah 1-3 sekaligus - membuat `.env` berisi kunci acak, menyalakan
+WAHA, menunggu sesinya siap, lalu mencetak perintah terowongan SSH yang sudah
+terisi. Aman diulang: nilai yang sudah ada tidak pernah ditimpa, sehingga
+menjalankannya lagi tidak memutus tautan WhatsApp yang sedang hidup.
+
+```
+scp docker-compose.waha.prod.yml tools/setup-waha-server.sh pengguna@server:/docker/project_keu/
+ssh pengguna@server
+cd /docker/project_keu && bash setup-waha-server.sh
+```
+
+Langkah 1-3 di bawah ini adalah rincian yang dikerjakan skrip itu, untuk kalau
+ada yang perlu disesuaikan sendiri.
+
 **1. Salin berkasnya ke server.** Direktori compose di VPS bukan salinan
 repositori ini, jadi kedua berkas berikut perlu dikirim ke sana:
 
