@@ -433,14 +433,14 @@
                         `<td class="col-no">${rowNumber}</td>`
                     ];
 
-
+                     // let hasanswer = q?.hasAnswer ?? false;
                      let hasanswer = escapeHtml(q?.hasAnswer ?? '-');
 
                     // Data [Question No]
                     if (IS_ADMIN) {
                         console.log(hasanswer)
                         // cells.push(`<td class="col-question-no">${escapeHtml(q?.questionNo || '-')}</td>`);
-                        if(hasanswer){
+                        if(hasanswer == "true"){
                             // jika jawaban ingin diperbarui
                             cells.push(`<td class="col-question-no">
                             <button class="btn-secondary" type="submit" form="answerForm" name="Id" value="${escapeHtml(q?.id ?? '')}"
