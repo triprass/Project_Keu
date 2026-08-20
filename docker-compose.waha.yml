@@ -1,0 +1,49 @@
+# WAHA (WhatsApp HTTP API) untuk pengembangan lokal.
+#
+#   docker compose -f docker-compose.waha.yml up -d
+#   python tools/qr_server.py          # buka http://localhost:8808, pindai QR
+#
+# Berkas ini TIDAK dipakai untuk produksi. Di server, WAHA dijalankan sekali
+# dengan nomor resmi, lalu semua aplikasi mengarah ke sana - bukan satu WAHA
+# per orang. Lihat bagian "Pemberitahuan WhatsApp" di TODO.md.
+
+services:
+  waha:
+    image: devlikeapro/waha:latest
+    container_name: waha
+    restart: unless-stopped
+    ports:
+      - "${WAHA_PORT:-3000}:3000"
+    environment:
+      # Nilai bawaan hanya untuk mesin pengembang. Di lingkungan yang bisa
+      # dijangkau orang lain, WAJIB diganti lewat berkas .env - siapa pun yang
+      # memegang kunci ini bisa mengirim WhatsApp atas nama nomor yang tertaut.
+      WHATSAPP_API_KEY: ${WAHA_API_KEY:-waha-dev-local}
+
+      WAHA_DASHBOARD_USERNAME: ${WAHA_DASHBOARD_USER:-admin}
+      WAHA_DASHBOARD_PASSWORD: ${WAHA_DASHBOARD_PASSWORD:-waha-dev-local}
+      WHATSAPP_SWAGGER_USERNAME: ${WAHA_DASHBOARD_USER:-admin}
+      WHATSAPP_SWAGGER_PASSWORD: ${WAHA_DASHBOARD_PASSWORD:-waha-dev-local}
+
+      # Sesi dihidupkan kembali sendiri setelah container di-restart, sehingga
+      # QR tidak perlu dipindai ulang setiap kali.
+      WHATSAPP_START_SESSION: ${WAHA_SESSION:-default}
+      WHATSAPP_RESTART_ALL_SESSIONS: "true"
+
+      # QR dibaca lewat halaman tools/qr_server.py, bukan dari log container.
+      WAHA_PRINT_QR: "false"
+
+    volumes:
+      # Tautan WhatsApp disimpan di sini. Tanpa volume, setiap container baru
+      # meminta pemindaian QR lagi.
+      - waha_sessions:/app/.sessions
+
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- --header=\"X-Api-Key: ${WAHA_API_KEY:-waha-dev-local}\" http://127.0.0.1:3000/api/sessions || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+
+volumes:
+  waha_sessions:
