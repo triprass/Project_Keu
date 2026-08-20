@@ -29,11 +29,11 @@ else
     <div class="adm-card-head">
         <div>
             <h2>Isi Pertanyaan</h2>
-            <p>Pengajuan dari pegawai, ditampilkan apa adanya.</p>
+            @* <p>Pengajuan dari pegawai, ditampilkan apa adanya.</p> *@
         </div>
-        <div class="adm-card-head-actions">
+        @* <div class="adm-card-head-actions">
             <span class="adm-code">@Model.QuestionNoDisplay</span>
-        </div>
+        </div> *@
     </div>
 
     <div class="adm-card-body">
@@ -88,7 +88,7 @@ else
                     <label for="answerText">Jawaban<span class="adm-req">*</span></label>
                     <textarea id="answerText" name="Input.AnswerText" rows="10" maxlength="8000" required
                               style="min-height:220px;"
-                              placeholder="Tuliskan jawaban selengkap mungkin, sertakan dasar aturannya bila ada.">@Model.Input.AnswerText</textarea>
+                              placeholder="Tuliskan jawaban selengkap mungkin.">@Model.Input.AnswerText</textarea>
                     <span asp-validation-for="Input.AnswerText" class="adm-validation"></span>
                 </div>
 
@@ -107,7 +107,7 @@ else
                                 <span class="adm-strong">@Model.AnsweringEmployeeName</span>
                             }
                         </div>
-                        <span class="adm-hint">Diambil dari akun <span class="adm-mono">@Model.CurrentUserName</span> yang sedang masuk.</span>
+                        @* <span class="adm-hint">Diambil dari akun <span class="adm-mono">@Model.CurrentUserName</span> yang sedang masuk.</span> *@
                     </div>
 
                     <div class="adm-field">
@@ -119,7 +119,7 @@ else
                                 <option value="@status.Id" selected="@(Model.Input.StatusId == status.Id)">@status.Name</option>
                             }
                         </select>
-                        <span class="adm-hint">Status inilah yang tampil sebagai lencana pada daftar pertanyaan.</span>
+                        @* <span class="adm-hint">Status inilah yang tampil sebagai lencana pada daftar pertanyaan.</span> *@
                         <span asp-validation-for="Input.StatusId" class="adm-validation"></span>
                     </div>
                 </div>
@@ -139,7 +139,7 @@ else
             <div class="adm-card-head">
                 <div>
                     <h2>Pertanyaan</h2>
-                    <p>Isi pengajuan dari pegawai.</p>
+                    @* <p>Isi pengajuan dari pegawai.</p> *@
                 </div>
             </div>
 
@@ -151,8 +151,8 @@ else
                     <li><span>Diajukan</span><strong>@Model.CreatedAtDisplay</strong></li>
                 </ul>
 
-                <p class="adm-section-label" style="margin-top:0;">Judul</p>
-                <p class="adm-quote">@Model.SelectedQuestion.Title</p>
+                @* <p class="adm-section-label" style="margin-top:0;">Judul</p>
+                <p class="adm-quote">@Model.SelectedQuestion.Title</p> *@
             </div>
         </section>
     </div>
