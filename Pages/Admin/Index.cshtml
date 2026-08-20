@@ -214,13 +214,15 @@
                                         @if (item.HasAnswer)
                                         {
                                             <span class="adm-badge adm-badge-custom" style="border-color: #28A745;">
-                                                <span class="adm-badge-dot" style="background: #28A745;">@item.StatusName</span>
+                                                <span class="adm-badge-dot" style="background: #28A745;"></span>
+
                                             </span>
                                         }
                                         else
                                         {
-                                            <span class="adm-badge adm-badge-custom" style="border-color: #d66a2f;">
-                                                <span class="adm-badge-dot" style="background: #d66a2f;">@item.StatusName</span>
+                                            <span class="adm-badge adm-badge-custom" style="border-color: #d66a2f; color: #d66a2f;">
+                                                <span class="adm-badge-dot" style="background: #d66a2f;"></span>
+                                                @item.StatusName
                                             </span>
                                         }
 
