@@ -196,20 +196,33 @@
                                         @* Warna dari master dipakai pada titik dan garis tepi saja.
                                            Dipakai sebagai warna teks, nilai semuda #BDBDBD akan
                                            nyaris tak terbaca di atas latar putih. *@
-                                        @if (hasColor)
+                                        @* @if (hasColor)
                                         {
-                                            <p>test1</p>
+
                                             <span class="adm-badge adm-badge-custom" style="border-color:@statusColor;">
                                                 <span class="adm-badge-dot" style="background:@statusColor;"></span>@item.StatusName
                                             </span>
                                         }
                                         else
                                         {
-                                            <p>test2</p>
                                             <span class="adm-badge @statusClass">
                                                 <span class="adm-badge-dot"></span>@item.StatusName
                                             </span>
+                                        } *@
+
+                                        @if (item.HasAnswer)
+                                        {
+                                            <span class="adm-badge adm-badge-custom" style="border-color: #28A745;">
+                                                <span class="adm-badge-dot" style="background: #28A745;"></span>@item.StatusName
+                                            </span>
                                         }
+                                        else
+                                        {
+                                            <span class="adm-badge adm-badge-custom" style="border-color: #ff0000;">
+                                                <span class="adm-badge-dot" style="background: #ff0000;"></span>@item.StatusName
+                                            </span>
+                                        }
+
                                     </td>
                                     
                                 </tr>
