@@ -424,7 +424,7 @@
 
                     // Data [Question No]
                     if (IS_ADMIN) {
-                        cells.push(`<td class="col-question-no">${escapeHtml(q?.questionNo || '-')}</td>`);
+                        // cells.push(`<td class="col-question-no">${escapeHtml(q?.questionNo || '-')}</td>`);
                         cells.push(`<button type="submit" form="answerForm" name="Id" value="${escapeHtml(q?.id ?? '')}" class="adm-link-btn" title="Jawab")> <span class="adm-code">questionNo</span></button>`);
                     }
 
