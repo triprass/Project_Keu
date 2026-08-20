@@ -51,7 +51,8 @@
      </header> *@
 
     <nav class="admin-navbar admin-navbar-left" aria-label="Navigasi halaman daftar pertanyaan">
-        <a asp-page="/Pertanyaan" class="btn-kembali">Kembali</a>
+        @* <a asp-page="/Pertanyaan" class="btn-kembali">Kembali</a> *@
+        <a href="javascript:history.back()" class="btn-kembali">Kembali</a>
     </nav>
 
     <section class="detail-hero-v2" aria-label="QnA hero" style="margin-top:60px">
