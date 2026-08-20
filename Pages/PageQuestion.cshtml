@@ -181,7 +181,7 @@
 
                 @* Form terpisah untuk navigasi ke detail. Tombol pada setiap baris
                    memakai atribut form="detailForm" karena form tidak boleh bersarang. *@
-                @* <form method="post" asp-page="/DetailPertanyaan" id="detailForm"></form> *@
+                <form method="post" asp-page="/DetailPertanyaan" id="detailForm"></form>
 
                 <div class="inv2-table-card">
                     <form method="post" id="filterForm">
@@ -424,8 +424,10 @@
 
                     // Data [Question No]
                     if (IS_ADMIN) {
-                        cells.push(`<td class="col-question-no">${escapeHtml(q?.questionNo || '-')}</td>`);
-                        // cells.push(`<button type="submit" form="answerForm" name="Id" value="${escapeHtml(q?.id ?? '')}" class="adm-link-btn" title="Jawab"> <span class="adm-code">${questionNo}</span></button>`);
+                        // cells.push(`<td class="col-question-no">${escapeHtml(q?.questionNo || '-')}</td>`);
+                        cells.push(`<td class="col-question-no"> 
+                            <button type="submit" form="answerForm" name="Id" value="${escapeHtml(q?.id ?? '')}" 
+                            title="Jawab"> Jawab </button></td>`);
                     }
 
                     // Data [Tgl Dibuat]
