@@ -147,11 +147,11 @@
                     <table class="adm-table">
                         <thead>
                             <tr>
-                                <th>Nomor</th>
-                                <th>Judul</th>
+                                <th>Feedback</th>
+                                <th>Dibuat</th>
+                                <th>Kategori</th>
                                 <th>Pegawai</th>
                                 <th>Status</th>
-                                <th>Dibuat</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -172,6 +172,7 @@
                                             <span class="adm-code">@item.QuestionNo</span>
                                         }
                                     </td>
+                                    <td data-label="Dibuat" class="adm-muted">@Model.FormatDate(item.CreatedAtUtc)</td>
                                     <td data-label="Judul"><span class="adm-clamp adm-strong">@item.Title</span></td>
                                     <td data-label="Pegawai">@item.EmployeeName</td>
                                     <td data-label="Status">
@@ -206,7 +207,7 @@
                                             </span>
                                         }
                                     </td>
-                                    <td data-label="Dibuat" class="adm-muted">@Model.FormatDate(item.CreatedAtUtc)</td>
+                                    
                                 </tr>
                             }
                         </tbody>
