@@ -363,7 +363,7 @@
             function renderRows(result) {
                 const questions = result?.questions ?? [];
 
-                // console.log(result.questions)
+                console.log(result.questions)
 
                 if (!questions.length) {
                     // Bedakan "memang belum ada isinya" dari "filter tidak menemukan apa pun",
@@ -436,16 +436,17 @@
                     // Data [Question No]
                     if (IS_ADMIN) {
                         // cells.push(`<td class="col-question-no">${escapeHtml(q?.questionNo || '-')}</td>`);
-                        if(HasAnswer){
-                            cells.push(`<td class="col-question-no">
+                        cells.push(`<td class="col-question-no">
                             <button class="btn-primary" type="submit" form="answerForm" name="Id" value="${escapeHtml(q?.id ?? '')}"
                             title="Perbarui">Perbarui</button></td>`);
-                        }
-                        else{
-                            cells.push(`<td class="col-question-no">
-                            <button class="btn-sucess" type="submit" form="answerForm" name="Id" value="${escapeHtml(q?.id ?? '')}"
-                            title="Jawab">Jawab</button></td>`);
-                        }
+                        // if(HasAnswer){
+                            
+                        // }
+                        // else{
+                        //     cells.push(`<td class="col-question-no">
+                        //     <button class="btn-sucess" type="submit" form="answerForm" name="Id" value="${escapeHtml(q?.id ?? '')}"
+                        //     title="Jawab">Jawab</button></td>`);
+                        // }
                     }
 
                     // Data [Tgl Dibuat]
