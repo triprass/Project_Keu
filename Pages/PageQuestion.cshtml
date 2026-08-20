@@ -182,6 +182,7 @@
                 @* Form terpisah untuk navigasi ke detail. Tombol pada setiap baris
                    memakai atribut form="detailForm" karena form tidak boleh bersarang. *@
                 <form method="post" asp-page="/DetailPertanyaan" id="detailForm"></form>
+                <form method="post" asp-page="/Admin/Answer" id="answerForm"></form>
 
                 <div class="inv2-table-card">
                     <form method="post" id="filterForm">
@@ -190,7 +191,7 @@
                            oleh tombol reset. Kosong berarti daftarnya lintas kategori. *@
                         <input type="hidden" name="CategoryId" value="@Model.CategoryId" />
                         <input type="hidden" name="CreatedByEmployee" data-filter="hidden" value="@Model.CreatedByEmployee" />
-                        <form method="post" asp-page="/Admin/Answer" id="answerForm"></form>
+                        
 
                         <div class="inv2-table-wrap">
                             @* Kolom pengelola bertambah banyak, jadi lebar minimumnya
