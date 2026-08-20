@@ -15,20 +15,19 @@
 <div class="detail-page detail-question-v2">
     <div class="detail-page-overlay"></div>
 
-    <header class="detail-header-v2">
+    @* <header class="detail-header-v2">
         <a asp-page="/Index" class="detail-logo-link detail-logo-link-v2" aria-label="Kembali ke halaman utama">
             <img src="~/images/logo.png" alt="Logo Tanya Subbag Keuangan" class="detail-logo detail-logo-v2">
         </a>
 
         <div class="detail-header-actions-v2">
-            @* Status Topik *@
-            @* <div class="topic-status-wrap topic-status-wrap-v2">
+            <div class="topic-status-wrap topic-status-wrap-v2">
                 <span class="topic-status-label topic-status-label-v2">Status Topik</span>
                 <span class="topic-status-pill @(Model.IsClosed ? "topic-status-pill-close" : "topic-status-pill-open")">
                     <span class="topic-status-dot" aria-hidden="true"></span>
                     @(Model.IsClosed ? "Close" : "Open")
                 </span>
-            </div> *@
+            </div>
 
             <form method="post" asp-page="/PageQuestion" class="detail-back-form-v2">
                 @if (Model.CategoryId.HasValue)
@@ -38,7 +37,7 @@
                 <input type="hidden" name="PageSize" value="10" />
                 <input type="hidden" name="Page" value="1" />
 
-                @* <button type="submit" class="app-btn app-btn-sm">
+                <button type="submit" class="app-btn app-btn-sm">
                     <svg class="app-btn-icon" viewBox="0 0 24 24" width="16" height="16"
                          fill="none" stroke="currentColor" stroke-width="2"
                          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
@@ -46,11 +45,10 @@
                         <polyline points="12 19 5 12 12 5" />
                     </svg>
                     <span>Kembali</span>
-                </button> *@
-                <a asp-page="/PertanyaanQuestion" class="btn-kembali">Kembali</a>
+                </button>
             </form>
         </div>
-     </header>
+     </header> *@
 
     <section class="detail-hero-v2" aria-label="QnA hero">
         <img src="~/images/logoQA2.svg" alt="Logo Q&A" class="detail-hero-logo-v2" aria-hidden="true">
