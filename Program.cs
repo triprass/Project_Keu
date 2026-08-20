@@ -5,13 +5,16 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Project_Keu.Data;
 using Project_Keu.Infrastructure;
 using Project_Keu.Infrastructure.Authorization;
+using Project_Keu.Infrastructure.Notifications;
 using Project_Keu.Services.Admin;
 using Project_Keu.Services.Answers;
 using Project_Keu.Services.Categories;
 using Project_Keu.Services.Employees;
+using Project_Keu.Services.Notifications;
 using Project_Keu.Services.PageQuestion;
 using Project_Keu.Services.QuestionCategories;
 using Project_Keu.Services.Questions;
@@ -172,6 +175,41 @@ builder.Services.AddSingleton<AppTimeZone>();
 // [Authorize(Policy = "questions.export")] langsung berlaku tanpa pendaftaran manual.
 builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
 builder.Services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
+
+// ---------------------------------------------------------------------------
+// Pemberitahuan WhatsApp (WAHA)
+// ---------------------------------------------------------------------------
+
+builder.Services.Configure<NotificationOptions>(
+    builder.Configuration.GetSection(NotificationOptions.SectionName));
+
+builder.Services.AddSingleton<NotificationQueue>();
+builder.Services.AddScoped<NotificationDispatcher>();
+builder.Services.AddHostedService<NotificationWorker>();
+
+builder.Services.AddHttpClient<IWhatsAppSender, WahaWhatsAppSender>((serviceProvider, client) =>
+{
+    var options = serviceProvider.GetRequiredService<IOptions<NotificationOptions>>().Value;
+
+    // BaseUrl bisa saja belum diisi (pemberitahuan dimatikan). Uri("") melempar galat
+    // saat klien dibuat, jadi alamatnya hanya dipasang bila memang sah; pengirimnya
+    // sendiri sudah menolak bekerja saat konfigurasinya belum lengkap.
+    if (Uri.TryCreate(options.Waha.BaseUrl, UriKind.Absolute, out var baseAddress))
+    {
+        // Garis miring penutup wajib: tanpa itu segmen terakhir path akan tergantikan
+        // oleh alamat relatif "api/sendText".
+        client.BaseAddress = baseAddress.AbsoluteUri.EndsWith('/')
+            ? baseAddress
+            : new Uri(baseAddress.AbsoluteUri + "/");
+    }
+
+    if (!string.IsNullOrWhiteSpace(options.Waha.ApiKey))
+    {
+        client.DefaultRequestHeaders.Add("X-Api-Key", options.Waha.ApiKey);
+    }
+
+    client.Timeout = TimeSpan.FromSeconds(Math.Clamp(options.Waha.TimeoutSeconds, 5, 120));
+});
 
 builder.Services.AddScoped<AdminAccountService>();
 builder.Services.AddScoped<AdminDashboardService>();

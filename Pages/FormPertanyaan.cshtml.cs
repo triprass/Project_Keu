@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Project_Keu.Data;
 using Project_Keu.Models;
+using Project_Keu.Services.Notifications;
 
 namespace Project_Keu.Pages;
 
@@ -16,11 +17,16 @@ public class FormPertanyaanModel : PageModel
     private static readonly Guid DefaultStatusId = Guid.Parse("589362d4-83e4-457f-af89-dad137b68845");
 
     private readonly AppDbContext _context;
+    private readonly NotificationQueue _notifications;
     private readonly ILogger<FormPertanyaanModel> _logger;
 
-    public FormPertanyaanModel(AppDbContext context, ILogger<FormPertanyaanModel> logger)
+    public FormPertanyaanModel(
+        AppDbContext context,
+        NotificationQueue notifications,
+        ILogger<FormPertanyaanModel> logger)
     {
         _context = context;
+        _notifications = notifications;
         _logger = logger;
     }
 
@@ -111,6 +117,11 @@ public class FormPertanyaanModel : PageModel
             ModelState.AddModelError(string.Empty, "Pertanyaan gagal disimpan. Silakan coba lagi.");
             return Page();
         }
+
+        // Dititipkan ke antrean, bukan dikirim di sini: pegawai tidak boleh menunggu
+        // WAHA, dan pemberitahuan yang gagal tidak boleh membatalkan pertanyaan yang
+        // sudah tersimpan.
+        _notifications.Enqueue(NotificationJob.QuestionCreated(question.Id));
 
         return RedirectToPage("/Pertanyaan");
     }

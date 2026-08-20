@@ -23,6 +23,34 @@ saat startup dengan pesan yang jelas kalau nilai berikut belum diisi.
 | `Security__AdminApiKey` | ya di Production | Kunci untuk endpoint API administratif (header `X-Api-Key`). Tanpa ini endpoint tersebut membalas 503. |
 | `App__TimeZone` | tidak (default `Asia/Jayapura`) | Zona waktu untuk tampilan dan filter tanggal. |
 
+## Pemberitahuan WhatsApp (WAHA)
+
+Pegawai yang mengirim pertanyaan memicu pesan ke pengelola, dan jawaban yang
+disimpan memicu pesan balik ke penanya. Pengirimannya lewat
+[WAHA](https://waha.devlike.pro): `POST /api/sendText` dengan header `X-Api-Key`.
+
+Dimatikan secara bawaan. Nyalakan lewat environment variable:
+
+| Environment variable | Wajib | Keterangan |
+| --- | --- | --- |
+| `Notifications__Enabled` | ya, untuk mengaktifkan | `true` untuk menyalakan. Bawaan `false`. |
+| `Notifications__Waha__BaseUrl` | ya bila aktif | Alamat peladen WAHA, mis. `http://waha:3000`. |
+| `Notifications__Waha__ApiKey` | ya bila WAHA memakai kunci | Nilai header `X-Api-Key`. |
+| `Notifications__Waha__Session` | tidak (default `default`) | Nama sesi WhatsApp di WAHA. |
+| `Notifications__Waha__TimeoutSeconds` | tidak (default `20`) | Dijepit ke rentang 5-120 detik. |
+| `Notifications__DefaultCountryCode` | tidak (default `62`) | Untuk nomor bergaya lokal `08xx`. Nomor berawalan `+` dibiarkan apa adanya. |
+| `Notifications__AdminRecipients__0` | tidak | Nomor tambahan, mis. nomor piket. Digabung dengan nomor pengelola, bukan menggantikan. |
+| `Notifications__PortalUrl` | tidak | Tautan yang disisipkan di akhir pesan. |
+
+Penerima pemberitahuan pertanyaan baru dihitung dari data, bukan dari daftar
+tetap: akun admin aktif yang punya izin `questions.answer` lewat peran aktif
+(atau berperan `SUPERADMIN`), yang tertaut ke pegawai aktif **dan nomor telepon
+pegawainya terisi**. Nomor penanya diambil dari `tb_m_employee.phone_number`.
+
+Pengiriman berjalan di antrean latar belakang. WAHA yang lambat atau mati tidak
+menahan request dan tidak membatalkan pertanyaan atau jawaban yang sudah
+tersimpan; kegagalannya tercatat di log.
+
 ## Akun administrator (halaman `/Login`)
 
 Kredensial disimpan di database, bukan di konfigurasi.

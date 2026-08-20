@@ -9,6 +9,7 @@ using Project_Keu.Data;
 using Project_Keu.Infrastructure;
 using Project_Keu.Infrastructure.Admin;
 using Project_Keu.Models;
+using Project_Keu.Services.Notifications;
 
 namespace Project_Keu.Pages.Admin;
 
@@ -27,11 +28,13 @@ public class AnswerModel : PageModel
 
     private readonly AppDbContext _context;
     private readonly AppTimeZone _appTimeZone;
+    private readonly NotificationQueue _notifications;
 
-    public AnswerModel(AppDbContext context, AppTimeZone appTimeZone)
+    public AnswerModel(AppDbContext context, AppTimeZone appTimeZone, NotificationQueue notifications)
     {
         _context = context;
         _appTimeZone = appTimeZone;
+        _notifications = notifications;
     }
 
     /// <summary>Id pertanyaan; selalu dikirim di badan POST.</summary>
@@ -170,6 +173,10 @@ public class AnswerModel : PageModel
         }
 
         await _context.SaveChangesAsync(cancellationToken);
+
+        // Setelah tersimpan, bukan sebelumnya: penanya hanya diberi tahu tentang
+        // jawaban yang benar-benar sudah masuk database.
+        _notifications.Enqueue(NotificationJob.QuestionAnswered(SelectedQuestion.Id));
 
         TempData["AdminSuccess"] = existing is null
             ? $"Jawaban untuk {QuestionNoDisplay} berhasil disimpan."
