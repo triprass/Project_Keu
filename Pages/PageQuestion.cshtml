@@ -427,8 +427,8 @@
                     if (IS_ADMIN) {
                         // cells.push(`<td class="col-question-no">${escapeHtml(q?.questionNo || '-')}</td>`);
                         cells.push(`<td class="col-question-no"> 
-                            <button type="submit" form="answerForm" name="Id" value="${escapeHtml(q?.id ?? '')}" 
-                            title="Jawab"> Jawab </button></td>`);
+                            <button type="submit" class="adm-link-btn" form="answerForm" name="Id" value="${escapeHtml(q?.id ?? '')}"
+                            title="Jawab"><span class="adm-code">Jawab</span></button></td>`);
                     }
 
                     // Data [Tgl Dibuat]
