@@ -2,9 +2,9 @@
 @model Project_Keu.Pages.Admin.AnswerModel
 @{
     ViewData["Title"] = Model.IsEditing ? "Ubah Jawaban" : "Jawab Pertanyaan";
-    ViewData["Lead"] = Model.IsEditing
-        ? "Perbarui jawaban yang sudah tersimpan beserta status penanganannya."
-        : "Tuliskan jawaban untuk pertanyaan pegawai, lalu tentukan status penanganannya.";
+    // ViewData["Lead"] = Model.IsEditing
+    //     ? "Perbarui jawaban yang sudah tersimpan beserta status penanganannya."
+    //     : "Tuliskan jawaban untuk pertanyaan pegawai, lalu tentukan status penanganannya.";
 }
 
 @if (Model.SelectedQuestion is null)
@@ -111,7 +111,7 @@ else
                     </div>
 
                     <div class="adm-field">
-                        <label for="statusId">Status pertanyaan<span class="adm-req">*</span></label>
+                        <label for="statusId">Status Pertanyaan<span class="adm-req">*</span></label>
                         <select id="statusId" name="Input.StatusId" required>
                             <option value="">— pilih status —</option>
                             @foreach (var status in Model.StatusOptions)
