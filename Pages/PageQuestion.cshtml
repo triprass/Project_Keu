@@ -433,6 +433,10 @@
                         `<td class="col-no">${rowNumber}</td>`
                     ];
 
+                     const hasanswer = escapeHtml(q?.hasAnswer ?? '-');
+                     console.log(hasanswer)
+
+
                     // Data [Question No]
                     if (IS_ADMIN) {
                         // cells.push(`<td class="col-question-no">${escapeHtml(q?.questionNo || '-')}</td>`);
