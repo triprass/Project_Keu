@@ -363,6 +363,8 @@
             function renderRows(result) {
                 const questions = result?.questions ?? [];
 
+                console.log(result.questions
+
                 if (!questions.length) {
                     // Bedakan "memang belum ada isinya" dari "filter tidak menemukan apa pun",
                     // supaya pengguna tahu apakah perlu mengubah filter.
@@ -435,7 +437,7 @@
                     if (IS_ADMIN) {
                         // cells.push(`<td class="col-question-no">${escapeHtml(q?.questionNo || '-')}</td>`);
                         cells.push(`<td class="col-question-no"> 
-                            <button type="submit" form="answerForm" name="Id" value="${escapeHtml(q?.id ?? '')}"
+                            <button class="btn-primary" type="submit" form="answerForm" name="Id" value="${escapeHtml(q?.id ?? '')}"
                             title="Jawab">Jawab</button></td>`);
                     }
 
