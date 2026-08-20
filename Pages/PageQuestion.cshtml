@@ -438,17 +438,18 @@
 
                     // Data [Question No]
                     if (IS_ADMIN) {
+                        console.log(hasanswer)
                         // cells.push(`<td class="col-question-no">${escapeHtml(q?.questionNo || '-')}</td>`);
                         if(hasanswer){
                             // jika jawaban ingin diperbarui
                             cells.push(`<td class="col-question-no">
-                            <button class="btn-primary" type="submit" form="answerForm" name="Id" value="${escapeHtml(q?.id ?? '')}"
+                            <button class="btn-secondary" type="submit" form="answerForm" name="Id" value="${escapeHtml(q?.id ?? '')}"
                             title="Perbarui">Perbarui</button></td>`);
                         }
                         else{
                             // jika mau dijawab
                             cells.push(`<td class="col-question-no">
-                            <button class="btn-sucess" type="submit" form="answerForm" name="Id" value="${escapeHtml(q?.id ?? '')}"
+                            <button class="btn-primary" type="submit" form="answerForm" name="Id" value="${escapeHtml(q?.id ?? '')}"
                             title="Jawab">Jawab</button></td>`);
                         }
                     }
