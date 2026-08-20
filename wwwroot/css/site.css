@@ -3596,29 +3596,3 @@ main[role="main"] {
         padding: 30px 26px 40px;
     }
 }
-
-.adm-link-btn {
-    padding: 0;
-    border: 0;
-    background: none;
-    font: inherit;
-    color: inherit;
-    cursor: pointer;
-    text-align: left;
-}
-
-    .adm-link-btn .adm-code {
-        transition: border-color .15s ease, color .15s ease, background .15s ease;
-    }
-
-    .adm-link-btn:hover .adm-code {
-        border-color: var(--adm-navy-400);
-        background: #e4ecf9;
-        color: var(--adm-navy);
-    }
-
-    .adm-link-btn:focus-visible {
-        outline: 2px solid var(--adm-accent-600);
-        outline-offset: 2px;
-        border-radius: 6px;
-    }
