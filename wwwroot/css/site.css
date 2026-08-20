@@ -282,7 +282,7 @@ main[role="main"] {
 /* Halaman Pertanyaan */
 .question-page {
     position: relative;
-    min-height: 100vh;
+    min-height: auto;
     width: 100%;
     background-image: url('/images/background.png');
     background-size: cover;
