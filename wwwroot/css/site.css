@@ -1608,6 +1608,14 @@ main[role="main"] {
     transition: width 260ms ease, filter 260ms ease, transform 260ms ease;
 }
 
+@media (max-width: 767px) {
+    .detail-hero-logo-v2 {
+        width: 60%; /* Diperbesar agar tetap jelas di layar kecil */
+        height: auto; /* Menghindari distorsi tinggi pada mobile */
+        filter: drop-shadow(0 6px 14px rgba(13, 71, 135, 0.18)); /* Bayangan lebih tipis */
+    }
+}
+
 /* Subtle scale on hover/focus to give a tactile feel on pointer devices */
 .detail-hero-logo-v2:hover,
 .detail-hero-logo-v2:focus {
