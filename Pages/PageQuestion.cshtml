@@ -220,6 +220,10 @@
                                         <th class="col-pertanyaan");">Pertanyaan</th>
                                         <th class="col-employee">Pembuat Pertanyaan</th>
                                         <th class="col-status">Status</th>
+                                        @if (Model.IsAdmin)
+                                        {
+                                            <th class="col-question-no" style="text-align:center">Aksi</th>
+                                        }
                                     </tr>
                                     
                                     @* Baris filter per-kolom dihapus; hanya pencarian global tetap aktif *@
@@ -477,6 +481,10 @@
                     cells.push(`<td class="col-status">${statusBadge}</td>`);
                     // Kembali tambahkan kolom aksi (kebab) sehingga jumlah sel sama dengan <thead>.
                     // cells.push('<td class="inv2-kebab">⋮</td>');
+                    
+                    cells.push(`<td class="col-question-no" style="text-align:center">
+                            <button class="btn-danger" type="submit" name="Id" value="${escapeHtml(q?.id ?? '')}"
+                            title="Hapus">Hapus</button></td>`);
 
                     // Garis warna tipis di tepi kiri baris: pembeda status yang masih
                     // terbaca meski kolom Status tergulir keluar layar.
