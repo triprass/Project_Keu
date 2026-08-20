@@ -68,6 +68,7 @@ public sealed class AdminDashboardService
             .ToList();
 
         var recent = await questions
+            .Where(q => q.UpdatedAt == null)
             .OrderByDescending(q => q.CreatedAt)
             .ThenByDescending(q => q.Id)
             .Take(6)
