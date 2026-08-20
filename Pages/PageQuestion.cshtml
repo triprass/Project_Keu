@@ -434,28 +434,22 @@
                     ];
 
                      const hasanswer = escapeHtml(q?.hasAnswer ?? '-');
-                     if(hasanswer){
-                         console.log("perbarui jawaban")
-                     }
-                     else{
-                         console.log("jawab")
-                     }
-
 
                     // Data [Question No]
                     if (IS_ADMIN) {
                         // cells.push(`<td class="col-question-no">${escapeHtml(q?.questionNo || '-')}</td>`);
-                        cells.push(`<td class="col-question-no">
+                        if(hasanswer){
+                            // jika jawaban ingin diperbarui
+                            cells.push(`<td class="col-question-no">
                             <button class="btn-primary" type="submit" form="answerForm" name="Id" value="${escapeHtml(q?.id ?? '')}"
                             title="Perbarui">Perbarui</button></td>`);
-                        // if(HasAnswer){
-                            
-                        // }
-                        // else{
-                        //     cells.push(`<td class="col-question-no">
-                        //     <button class="btn-sucess" type="submit" form="answerForm" name="Id" value="${escapeHtml(q?.id ?? '')}"
-                        //     title="Jawab">Jawab</button></td>`);
-                        // }
+                        }
+                        else{
+                            // jika mau dijawab
+                            cells.push(`<td class="col-question-no">
+                            <button class="btn-sucess" type="submit" form="answerForm" name="Id" value="${escapeHtml(q?.id ?? '')}"
+                            title="Jawab">Jawab</button></td>`);
+                        }
                     }
 
                     // Data [Tgl Dibuat]
