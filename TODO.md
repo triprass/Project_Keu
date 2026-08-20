@@ -87,16 +87,25 @@ sehingga nomor pengirim yang dilihat pegawai selalu sama. Kalau tiap orang
 menjalankan WAHA sendiri, pegawai menerima pesan dari nomor pribadi siapa pun
 yang kebetulan menjalankan aplikasi.
 
-**1. Siapkan rahasianya** di direktori compose pada VPS (`/docker/project_keu`):
+**1. Salin berkasnya ke server.** Direktori compose di VPS bukan salinan
+repositori ini, jadi kedua berkas berikut perlu dikirim ke sana:
 
 ```
+scp docker-compose.waha.prod.yml .env.waha.example pengguna@server:/docker/project_keu/
+```
+
+**2. Siapkan rahasianya** di direktori itu:
+
+```
+cd /docker/project_keu
 cp .env.waha.example .env
 openssl rand -hex 32        # isikan sebagai WAHA_API_KEY
+nano .env
 ```
 
 `.env` tidak boleh ikut ter-commit; `.gitignore` sudah menolaknya.
 
-**2. Hidupkan WAHA** berdampingan dengan aplikasi:
+**3. Hidupkan WAHA** berdampingan dengan aplikasi:
 
 ```
 docker compose -f docker-compose.yml -f docker-compose.waha.prod.yml up -d
@@ -111,7 +120,7 @@ oleh deploy otomatis.
 Port WAHA sengaja hanya terbuka ke `127.0.0.1`. Aplikasi menghubunginya lewat
 jaringan compose, bukan lewat port itu.
 
-**3. Tambahkan environment berikut pada layanan aplikasi** di compose yang sudah
+**4. Tambahkan environment berikut pada layanan aplikasi** di compose yang sudah
 ada di VPS:
 
 ```yaml
@@ -127,7 +136,7 @@ ada di VPS:
 Aplikasi tidak perlu menunggu WAHA siap: pemberitahuan berjalan di antrean, jadi
 WAHA yang mati tidak menghalangi aplikasi hidup.
 
-**4. Pindai QR sekali** dari komputer Anda, lewat terowongan SSH - tidak ada port
+**5. Pindai QR sekali** dari komputer Anda, lewat terowongan SSH - tidak ada port
 yang perlu dibuka ke internet:
 
 ```
@@ -146,7 +155,7 @@ halaman menampilkan panel "Info Tersambung", terowongan SSH boleh ditutup.
 Tautannya tersimpan di volume `waha_sessions`, jadi penarikan image baru maupun
 restart server tidak meminta pemindaian ulang.
 
-**5. Isi nomor telepon pengelola** lewat menu Master -> Pegawai. Tanpa itu,
+**6. Isi nomor telepon pengelola** lewat menu Master -> Pegawai. Tanpa itu,
 pemberitahuan pertanyaan baru tidak punya penerima.
 
 ### Memeriksa keadaan WAHA di server
@@ -158,7 +167,7 @@ curl -H "X-Api-Key: $WAHA_API_KEY" http://127.0.0.1:3000/api/sessions
 ```
 
 Sesi yang sehat berstatus `WORKING`. `SCAN_QR_CODE` berarti tautannya lepas dan
-perlu dipindai ulang lewat langkah 4.
+perlu dipindai ulang lewat langkah 5.
 
 ## Akun administrator (halaman `/Login`)
 
