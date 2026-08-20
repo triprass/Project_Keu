@@ -190,6 +190,7 @@
                            oleh tombol reset. Kosong berarti daftarnya lintas kategori. *@
                         <input type="hidden" name="CategoryId" value="@Model.CategoryId" />
                         <input type="hidden" name="CreatedByEmployee" data-filter="hidden" value="@Model.CreatedByEmployee" />
+                        <form method="post" asp-page="/Admin/Answer" id="answerForm"></form>
 
                         <div class="inv2-table-wrap">
                             @* Kolom pengelola bertambah banyak, jadi lebar minimumnya
