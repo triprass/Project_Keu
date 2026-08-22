@@ -137,7 +137,6 @@ else
                     {
                         <a asp-page="/Admin/Index" class="adm-btn adm-btn-ghost">Batal</a>
                     }
-                @* <a asp-page="/Admin/Index" class="adm-btn adm-btn-ghost">Batal</a> *@
                 <button type="submit" class="adm-btn adm-btn-primary" disabled="@Model.CannotAnswer">
                     @(Model.IsEditing ? "Simpan Perubahan" : "Simpan Jawaban")
                 </button>
