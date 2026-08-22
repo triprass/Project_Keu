@@ -62,6 +62,7 @@ public class QuestionsController : ControllerBase
         return Ok(result.Data);
     }
 
+
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id)
     {
