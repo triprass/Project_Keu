@@ -9,7 +9,7 @@ namespace Project_Keu.Controllers;
 // perubahan/penghapusan data, sehingga seluruhnya butuh kunci API.
 [ApiController]
 [Route("api/questions")]
-[RequireApiKey]
+//[RequireApiKey]
 public class QuestionsController : ControllerBase
 {
     private readonly QuestionService _service;
