@@ -764,7 +764,10 @@
         
                 if (confirm("Apakah Anda yakin ingin menghapus pertanyaan ini?")) {
                     const response = await fetch(`/api/questions/${id}`, {
-                        method: 'DELETE'
+                        method: 'DELETE',
+                        headers: {
+                            'X-Api-Key': 'Security:AdminApiKey'
+                        }
                     });
 
                     if (response.ok) {
