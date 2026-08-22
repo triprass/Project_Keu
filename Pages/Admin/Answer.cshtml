@@ -5,6 +5,8 @@
     // ViewData["Lead"] = Model.IsEditing
     //     ? "Perbarui jawaban yang sudah tersimpan beserta status penanganannya."
     //     : "Tuliskan jawaban untuk pertanyaan pegawai, lalu tentukan status penanganannya.";
+    var referer = Request.Headers["Referer"].ToString();
+    var isFromPageQuestion = !string.IsNullOrEmpty(referer) && referer.Contains("/PageQuestion", StringComparison.OrdinalIgnoreCase);
 }
 
 @if (Model.SelectedQuestion is null)
@@ -127,7 +129,15 @@ else
 
             <div class="adm-modal-foot">
                 @* Tombol kembali memakai tautan biasa: tidak ada yang perlu dikirim. *@
-                <a asp-page="/Admin/Index" class="adm-btn adm-btn-ghost">Batal</a>
+                    @if (isFromPageQuestion)
+                    {
+                        <a asp-page="/PageQuestion" class="adm-btn adm-btn-ghost">Batal</a>
+                    }
+                    else
+                    {
+                        <a asp-page="/Admin/Index" class="adm-btn adm-btn-ghost">Batal</a>
+                    }
+                @* <a asp-page="/Admin/Index" class="adm-btn adm-btn-ghost">Batal</a> *@
                 <button type="submit" class="adm-btn adm-btn-primary" disabled="@Model.CannotAnswer">
                     @(Model.IsEditing ? "Simpan Perubahan" : "Simpan Jawaban")
                 </button>
