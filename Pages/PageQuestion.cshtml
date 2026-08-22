@@ -752,5 +752,27 @@
             updateResetButton();
             loadQuestions();
         })();
+
+        // Contoh event listener untuk tombol hapus
+        document.addEventListener('click', async function (e) {
+            console.log('trigger click')
+            // if (e.target.classList.contains('btn-danger')) {
+            //     e.preventDefault();
+            //     const id = e.target.value;
+        
+            //     if (confirm("Apakah Anda yakin ingin menghapus pertanyaan ini?")) {
+            //         const response = await fetch(`/api/question/${id}`, {
+            //             method: 'DELETE'
+            //         });
+
+            //         if (response.ok) {
+            //             location.reload(); 
+            //         } else {
+            //             alert("Gagal menghapus data.");
+            //         }
+            //     }
+            // }
+        });
+
     </script>
 </div>
