@@ -763,7 +763,7 @@
                 const id = e.target.value;
         
                 if (confirm("Apakah Anda yakin ingin menghapus pertanyaan ini?")) {
-                    const response = await fetch(`/api/question/`+id, {
+                    const response = await fetch(`/api/questions/`+id, {
                         method: 'Delete'
                     });
 
