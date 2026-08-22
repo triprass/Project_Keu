@@ -755,28 +755,27 @@
 
         // Contoh event listener untuk tombol hapus
         document.addEventListener('click', async function (e) {
-            let id = e.target.value;
             // console.log('trigger click')
             // console.log(id)
-            if (e.target.classList.contains('btn-danger')) {
-                e.preventDefault();
-                const id = e.target.value;
+            // if (e.target.classList.contains('btn-danger')) {
+            //     e.preventDefault();
+            //     const id = e.target.value;
         
-                if (confirm("Apakah Anda yakin ingin menghapus pertanyaan ini?")) {
-                    const response = await fetch(`/api/questions/${id}`, {
-                        method: 'DELETE',
-                        headers: {
-                            'X-Api-Key': 'Security:AdminApiKey'
-                        }
-                    });
+            //     if (confirm("Apakah Anda yakin ingin menghapus pertanyaan ini?")) {
+            //         const response = await fetch(`/api/questions/${id}`, {
+            //             method: 'DELETE',
+            //             headers: {
+            //                 'X-Api-Key': 'Security:AdminApiKey'
+            //             }
+            //         });
 
-                    if (response.ok) {
-                        location.reload(); 
-                    } else {
-                        alert("Gagal menghapus data.");
-                    }
-                }
-            }
+            //         if (response.ok) {
+            //             location.reload(); 
+            //         } else {
+            //             alert("Gagal menghapus data.");
+            //         }
+            //     }
+            // }
         });
 
     </script>
