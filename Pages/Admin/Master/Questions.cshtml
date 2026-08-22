@@ -68,36 +68,20 @@
             <table class="adm-table">
                 <thead>
                     <tr>
-                        <th>Feedback</th>
+                        <th class="adm-td-num">No</th>
+                        <th>Question No</th>
                         <th>Dibuat</th>
-                        <th>Kategori</th>
-                        <th>Pegawai</th>
-                        <th>Status</th>
                     </tr>
                 </thead>
                 <tbody>
                     @{ var rowNumber = Model.RowOffset; }
                     @foreach (var item in Model.Items)
                     {
+                        rowNumber++;
                         <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            @* @if (item.HasAnswer)
-                            {
-                                <span class="adm-badge adm-badge-custom" style="border-color: #28A745;">
-                                    <span class="adm-badge-dot" style="background: #28A745;"></span>
-
-                                </span>
-                            }
-                            else
-                            {
-                                <span class="adm-badge adm-badge-custom" style="border-color: #d66a2f; color: #d66a2f;">
-                                    <span class="adm-badge-dot" style="background: #d66a2f;"></span>
-                                    @item.StatusName
-                                </span>
-                            } *@
+                            <td class="adm-td-num">@rowNumber</td>
+                            <td data-label="Kode"><span class="adm-code">@item.Id</span></td>
+                            <td data-label="QuestionNo"><span class="adm-code">@item.QuestionNo</span></td>
                         </tr>
                     }
                 </tbody>

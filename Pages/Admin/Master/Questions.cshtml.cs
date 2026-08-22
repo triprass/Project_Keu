@@ -24,8 +24,7 @@ public class QuestionsModel : AdminPageModelBase
 
     public sealed record Row(
         Guid Id,
-        string QuestionNo,
-        string Title);
+        string QuestionNo);
 
     public IReadOnlyList<Row> Items { get; private set; } = [];
 
@@ -36,14 +35,6 @@ public class QuestionsModel : AdminPageModelBase
     {
         public Guid Id { get; set; }
         public string? QuestionNo { get; set; }
-        public Guid CategoryId { get; set; }
-        public string Title { get; set; } = string.Empty;
-        public string QuestionText { get; set; } = string.Empty;
-        public Guid CreatedByEmployee { get; set; }
-        public Guid StatusId { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime? UpdatedAt { get; set; }
-        public bool IsActive { get; set; }
     }
 
     public async Task OnGetAsync(CancellationToken cancellationToken) => await LoadAsync(cancellationToken);
@@ -102,8 +93,7 @@ public class QuestionsModel : AdminPageModelBase
             .Take(PageSize)
             .Select(x => new Row(
                 x.Id,
-                x.QuestionNo,
-                x.Title))
+                x.QuestionNo))
             .ToListAsync(cancellationToken);
     }
 
