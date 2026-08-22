@@ -485,8 +485,13 @@
                     if (IS_ADMIN)
                     {
                         cells.push(`<td class="col-question-no" style="text-align:center">
-                            <button class="btn-danger" type="submit" name="Id" value="${escapeHtml(q?.id ?? '')}"
-                            title="Hapus">Hapus</button></td>`);
+                            <form method="post" asp-page-handler="Delete" class="adm-inline-form"
+                            data-confirm="Hapus pertanyaan ini?">
+                            <input type="hidden" name="id" value="value="${escapeHtml(q?.id ?? '')}" />
+                            <button class="btn-danger" type="submit" "title="Hapus">Hapus</button></form></td>`);
+
+                            // <button class="btn-danger" type="submit" name="Id" value="${escapeHtml(q?.id ?? '')}"
+                            // title="Hapus">Hapus</button></td></form>`);
                     }
                     
                     // Garis warna tipis di tepi kiri baris: pembeda status yang masih
@@ -753,28 +758,7 @@
             loadQuestions();
         })();
 
-        // Contoh event listener untuk tombol hapus
-        document.addEventListener('click', async function (e) {
-            let id = e.target.value;
-            // console.log('trigger click')
-            // console.log(id)
-            if (e.target.classList.contains('btn-danger')) {
-                e.preventDefault();
-                const id = e.target.value;
-        
-                if (confirm("Apakah Anda yakin ingin menghapus pertanyaan ini?")) {
-                    const response = await fetch(`/api/questions/${id}`, {
-                        method: 'Delete'
-                    });
 
-                    if (response.ok) {
-                        location.reload(); 
-                    } else {
-                        alert("Gagal menghapus data!");
-                    }
-                }
-            }
-        });
 
     </script>
 </div>
