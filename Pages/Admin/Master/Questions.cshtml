@@ -1,10 +1,14 @@
 ﻿@page
+@using Microsoft.AspNetCore.Authorization
+@using Project_Keu.Infrastructure.Admin
 @model Project_Keu.Pages.Admin.Master.QuestionsModel
+@inject IAuthorizationService Authorization
 @{
     ViewData["Title"] = "Jawab Pertanyaan";
     ViewData["Lead"] = "Pilihan kategori yang muncul pada formulir saat pegawai mengajukan pertanyaan.";
 
-    var isEdit = Model.Input.Id is not null && Model.Input.Id != Guid.Empty;
+    var canAnswer = (await Authorization.AuthorizeAsync(User, AdminMenu.PolicyAnswer)).Succeeded;
+
 }
 
 <section class="adm-card">
@@ -58,73 +62,42 @@
     }
     else
     {
+        <form method="post" asp-page="/Admin/Answer" id="answerForm"></form>
+
         <div class="adm-table-wrap">
             <table class="adm-table">
                 <thead>
                     <tr>
-                        <th class="adm-td-num">No</th>
-                        <th>Kode</th>
-                        <th>Nama</th>
-                        <th>Keterangan</th>
-                        <th>Dipakai</th>
+                        <th>Feedback</th>
+                        <th>Dibuat</th>
+                        <th>Kategori</th>
+                        <th>Pegawai</th>
                         <th>Status</th>
-                        <th class="adm-td-actions">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @{
-                        var rowNumber = Model.RowOffset;
-                    }
+                    @{ var rowNumber = Model.RowOffset; }
                     @foreach (var item in Model.Items)
                     {
-                        rowNumber++;
-
                         <tr>
-                            <td class="adm-td-num">@rowNumber</td>
-                            <td data-label="Kode"><span class="adm-code">@item.Code</span></td>
-                            <td data-label="Nama"><span class="adm-strong">@item.Name</span></td>
-                            <td data-label="Keterangan">
-                                <span class="adm-clamp adm-muted">@(string.IsNullOrWhiteSpace(item.Description) ? "—" : item.Description)</span>
-                            </td>
-                            <td data-label="Dipakai">
-                                <span class="adm-badge adm-badge-info">@item.QuestionCount pertanyaan</span>
-                            </td>
-                            <td data-label="Status">
-                                <span class="adm-badge @(item.IsActive ? "adm-badge-on" : "adm-badge-off")">
-                                    <span class="adm-badge-dot"></span>@(item.IsActive ? "Aktif" : "Nonaktif")
-                                </span>
-                            </td>
-                            <td class="adm-td-actions" data-label="Aksi">
-                                <span class="adm-row-actions">
-                                    <button type="button" class="adm-btn adm-btn-icon" title="Ubah"
-                                            data-modal-open="questionCategoryDialog" data-mode="edit" data-title="Ubah Kategori Pertanyaan"
-                                            data-field-id="@item.Id"
-                                            data-field-code="@item.Code"
-                                            data-field-name="@item.Name"
-                                            data-field-description="@item.Description"
-                                            data-field-isactive="@item.IsActive.ToString().ToLowerInvariant()">
-                                        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor"
-                                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                            <path d="M12 20h9" />
-                                            <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7.5 18.5 3 20l1.5-4.5z" />
-                                        </svg>
-                                    </button>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            @* @if (item.HasAnswer)
+                            {
+                                <span class="adm-badge adm-badge-custom" style="border-color: #28A745;">
+                                    <span class="adm-badge-dot" style="background: #28A745;"></span>
 
-                                    <form method="post" asp-page-handler="Delete" class="adm-inline-form"
-                                          data-confirm="Hapus kategori &quot;@item.Name&quot;?">
-                                        <input type="hidden" name="id" value="@item.Id" />
-                                        <button type="submit" class="adm-btn adm-btn-icon is-danger" title="Hapus"
-                                                disabled="@(item.QuestionCount > 0)">
-                                            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor"
-                                                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                                <polyline points="3 6 21 6" />
-                                                <path d="M8 6V4.5A1.5 1.5 0 0 1 9.5 3h5A1.5 1.5 0 0 1 16 4.5V6" />
-                                                <path d="M6 6v13.5A1.5 1.5 0 0 0 7.5 21h9a1.5 1.5 0 0 0 1.5-1.5V6" />
-                                            </svg>
-                                        </button>
-                                    </form>
                                 </span>
-                            </td>
+                            }
+                            else
+                            {
+                                <span class="adm-badge adm-badge-custom" style="border-color: #d66a2f; color: #d66a2f;">
+                                    <span class="adm-badge-dot" style="background: #d66a2f;"></span>
+                                    @item.StatusName
+                                </span>
+                            } *@
                         </tr>
                     }
                 </tbody>
@@ -134,70 +107,3 @@
 
     <partial name="_AdminPager" model="Model" />
 </section>
-
-<div class="adm-modal" id="questionCategoryDialog" role="dialog" aria-modal="true"
-     aria-labelledby="questionCategoryDialogTitle" hidden
-     data-open-on-load="@(Model.ReopenDialog ? "true" : "false")">
-    <div class="adm-modal-box">
-        <form method="post" asp-page-handler="Save">
-            <input type="hidden" name="Input.Id" data-name="id" value="@Model.Input.Id" />
-
-            <div class="adm-modal-head">
-                <div>
-                    <h3 id="questionCategoryDialogTitle" data-modal-title>@(isEdit ? "Ubah Kategori Pertanyaan" : "Tambah Kategori Pertanyaan")</h3>
-                    <p>Kategori yang dinonaktifkan tidak lagi muncul sebagai pilihan, tetapi pertanyaan lama tetap utuh.</p>
-                </div>
-                <button type="button" class="adm-modal-close" data-modal-close aria-label="Tutup">
-                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
-                         stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
-                        <line x1="6" y1="6" x2="18" y2="18" />
-                        <line x1="18" y1="6" x2="6" y2="18" />
-                    </svg>
-                </button>
-            </div>
-
-            <div class="adm-modal-body">
-                <div asp-validation-summary="All" class="adm-alert adm-alert-error adm-validation-summary"></div>
-
-                <div class="adm-form-grid">
-                    <div class="adm-field">
-                        <label for="qcCode">Kode<span class="adm-req">*</span></label>
-                        <input id="qcCode" type="text" name="Input.Code" data-name="code" data-autofocus
-                               value="@Model.Input.Code" maxlength="20" required
-                               placeholder="mis. GAJI" autocomplete="off" />
-                        <span asp-validation-for="Input.Code" class="adm-validation"></span>
-                    </div>
-
-                    <div class="adm-field">
-                        <label for="qcName">Nama<span class="adm-req">*</span></label>
-                        <input id="qcName" type="text" name="Input.Name" data-name="name"
-                               value="@Model.Input.Name" maxlength="200" required
-                               placeholder="mis. Gaji dan Tunjangan" autocomplete="off" />
-                        <span asp-validation-for="Input.Name" class="adm-validation"></span>
-                    </div>
-
-                    <div class="adm-field adm-field-full">
-                        <label for="qcDescription">Keterangan</label>
-                        <textarea id="qcDescription" name="Input.Description" data-name="description"
-                                  maxlength="1000" placeholder="Contoh pertanyaan yang cocok untuk kategori ini">@Model.Input.Description</textarea>
-                        <span asp-validation-for="Input.Description" class="adm-validation"></span>
-                    </div>
-
-                    <div class="adm-field adm-field-full">
-                        <label class="adm-check">
-                            <input type="checkbox" name="Input.IsActive" data-name="isactive" value="true"
-                                   checked="@Model.Input.IsActive" />
-                            <span>Aktif &mdash; bisa dipilih pada formulir pertanyaan</span>
-                        </label>
-                        <input type="hidden" name="Input.IsActive" value="false" />
-                    </div>
-                </div>
-            </div>
-
-            <div class="adm-modal-foot">
-                <button type="button" class="adm-btn adm-btn-ghost" data-modal-close>Batal</button>
-                <button type="submit" class="adm-btn adm-btn-primary">Simpan</button>
-            </div>
-        </form>
-    </div>
-</div>
