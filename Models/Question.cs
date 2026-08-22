@@ -42,6 +42,9 @@ public class Question
     [Column("updated_at")]
     public DateTime? UpdatedAt { get; set; }
 
+    [Column("is_active")]
+    public bool IsActive { get; set; }
+
     [ForeignKey(nameof(CategoryId))]
     public QuestionCategory? Category { get; set; }
 
