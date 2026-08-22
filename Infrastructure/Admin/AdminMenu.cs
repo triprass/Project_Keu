@@ -68,8 +68,8 @@ public static class AdminMenu
         [
             new AdminMenuItem("Beranda", "/Admin/Index", IconHome,
                 Description: "Ringkasan layanan konsultasi keuangan."),
-            //new AdminMenuItem("Jawab Pertanyaan", "/Admin/Master/QuestionCategories", IconCalendarSync, PolicyQuestionsView,
-            //    Description: "Data seluruh pertanyaan dan jawab pertanyaan."),
+            new AdminMenuItem("Jawab Pertanyaan", "/Admin/Master/Questions", IconCalendarSync, PolicyQuestionsView,
+                Description: "Data seluruh pertanyaan dan jawab pertanyaan."),
         ]),
 
         new("Master Data",
