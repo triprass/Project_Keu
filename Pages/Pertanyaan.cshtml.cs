@@ -104,6 +104,3 @@ public class PertanyaanModel : PageModel
         return new JsonResult(new { count = ActiveUsers.Count });
     }
 }
-
-
-}
