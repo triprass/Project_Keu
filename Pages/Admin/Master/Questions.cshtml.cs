@@ -24,7 +24,19 @@ public class QuestionsModel : AdminPageModelBase
 
     public sealed record Row(
         Guid Id,
-        string QuestionNo);
+        string QuestionNo,
+        string Title,
+        string QuestionText,
+        string EmployeeName,
+        string StatusName,
+        string StatusCode,
+        string? StatusColor,
+        bool HasAnswer,
+        DateTime CreatedAtUtc)
+    {
+        /// <summary>Golongan status untuk pewarnaan lencana, dengan aturan yang sama seperti daftar pertanyaan.</summary>
+        public QuestionStatusKind StatusKind => QuestionStatusStyle.Classify(StatusCode, StatusName);
+    }
 
     public IReadOnlyList<Row> Items { get; private set; } = [];
 
@@ -93,7 +105,15 @@ public class QuestionsModel : AdminPageModelBase
             .Take(PageSize)
             .Select(x => new Row(
                 x.Id,
-                x.QuestionNo))
+                x.QuestionNo ?? "-",
+                x.Title,
+                x.QuestionText,
+                x.CreatedByEmployeeNavigation != null ? x.CreatedByEmployeeNavigation.FullName : "-",
+                x.Status != null ? x.Status.Name : "-",
+                x.Status != null ? (x.Status.Code ?? string.Empty) : string.Empty,
+                x.Status != null ? x.Status.Color : null,
+                x.Answers.Any(),
+                x.CreatedAt))
             .ToListAsync(cancellationToken);
     }
 

@@ -1,5 +1,6 @@
 ﻿@page
 @using Microsoft.AspNetCore.Authorization
+@using Project_Keu.Infrastructure
 @using Project_Keu.Infrastructure.Admin
 @model Project_Keu.Pages.Admin.Master.QuestionsModel
 @inject IAuthorizationService Authorization
@@ -68,20 +69,88 @@
             <table class="adm-table">
                 <thead>
                     <tr>
-                        <th class="adm-td-num">No</th>
-                        <th>ID</th>
-                        <th>Question No</th>
+                        <th>Feedback</th>
+                        <th>Dibuat</th>
+                        <th>Kategori</th>
+                        <th>Pegawai</th>
+                        <th>Status</th>
                     </tr>
                 </thead>
                 <tbody>
                     @{ var rowNumber = Model.RowOffset; }
                     @foreach (var item in Model.Items)
                     {
-                        rowNumber++;
                         <tr>
-                            <td class="adm-td-num">@rowNumber</td>
-                            <td data-label="Kode"><span class="adm-code">@item.Id</span></td>
-                            <td data-label="QuestionNo"><span class="adm-code">@item.QuestionNo</span></td>
+                            <td data-label="Nomor">
+                                @if (canAnswer)
+                                {
+                                    <button type="submit" form="answerForm" name="Id" value="@item.Id"
+                                            class="adm-link-btn"
+                                            title="@(item.HasAnswer ? "Ubah jawaban" : "Jawab Pertanyaan")">
+                                        @* title="@(item.HasAnswer ? "Ubah jawaban" : "Jawab pertanyaan") @item.QuestionNo"> *@
+                                        @* <span class="adm-code">@item.QuestionNo</span> *@
+                                        <span class="adm-code">Jawab</span>
+                                    </button>
+                                }
+                                else
+                                {
+                                    @* <span class="adm-code">@item.QuestionNo</span> *@
+                                    <span class="adm-code">Jawab</span>
+                                }
+                            </td>
+                            <td data-label="Dibuat" class="adm-muted">@Model.FormatDate(item.CreatedAtUtc)</td>
+                            <td data-label="Judul"><span class="adm-clamp adm-strong">@item.Title</span></td>
+                            <td data-label="Pegawai">@item.EmployeeName</td>
+                            <td data-label="Status">
+                                @{
+                                    // Warna mengikuti golongan yang ditentukan server, bukan
+                                    // pencocokan kata "jawab" yang dulu benar untuk "Telah
+                                    // Dijawab" maupun "Belum Dijawab" sekaligus.
+                                    var statusClass = item.StatusKind switch
+                                    {
+                                        QuestionStatusKind.Answered => "adm-badge-on",
+                                        QuestionStatusKind.Pending => "adm-badge-warn",
+                                        _ => "adm-badge-off"
+                                    };
+
+                                    var hasColor = QuestionStatusStyle.HasUsableColor(item.StatusColor);
+                                    var statusColor = QuestionStatusStyle.SafeColor(item.StatusColor);
+                                }
+
+                                @* Warna dari master dipakai pada titik dan garis tepi saja.
+                                           Dipakai sebagai warna teks, nilai semuda #BDBDBD akan
+                                           nyaris tak terbaca di atas latar putih. *@
+                                @* @if (hasColor)
+                                        {
+
+                                            <span class="adm-badge adm-badge-custom" style="border-color:@statusColor;">
+                                                <span class="adm-badge-dot" style="background:@statusColor;"></span>@item.StatusName
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="adm-badge @statusClass">
+                                                <span class="adm-badge-dot"></span>@item.StatusName
+                                            </span>
+                                        } *@
+
+                                @if (item.HasAnswer)
+                                {
+                                    <span class="adm-badge adm-badge-custom" style="border-color: #28A745;">
+                                        <span class="adm-badge-dot" style="background: #28A745;"></span>
+
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="adm-badge adm-badge-custom" style="border-color: #d66a2f; color: #d66a2f;">
+                                        <span class="adm-badge-dot" style="background: #d66a2f;"></span>
+                                        @item.StatusName
+                                    </span>
+                                }
+
+                            </td>
+
                         </tr>
                     }
                 </tbody>
