@@ -94,7 +94,13 @@ public sealed class QuestionService
 
         _context.Questions.Remove(item);
         await _context.SaveChangesAsync();
-        await _fonnteService.SendMessageAsync("082298157376", "Halo Test Fonnte DELETE");
+
+        bool isSent = await _fonnteService.SendMessageAsync("082298157376", "Halo Test Fonnte DELETE");
+
+        if(!isSent)
+        {
+            return false;
+        }   
         return true;
     }
 }
