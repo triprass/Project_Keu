@@ -84,23 +84,23 @@ public class PertanyaanModel : PageModel
             .ToListAsync(cancellationToken);
     }
 
-    //public IActionResult OnGetHeartbeat()
-    //{
-    //    string userIp = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+    public IActionResult OnGetHeartbeat()
+    {
+        string userIp = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
 
-    //    // Catat/Update waktu aktif user ini
-    //    ActiveUsers[userIp] = DateTime.UtcNow;
+        // Catat/Update waktu aktif user ini
+        ActiveUsers[userIp] = DateTime.UtcNow;
 
-    //    // Hapus IP yang tidak aktif selama lebih dari 30 detik
-    //    var threshold = DateTime.UtcNow.AddSeconds(-30);
-    //    foreach (var key in ActiveUsers.Keys)
-    //    {
-    //        if (ActiveUsers[key] < threshold)
-    //        {
-    //            ActiveUsers.TryRemove(key, out _);
-    //        }
-    //    }
+        // Hapus IP yang tidak aktif selama lebih dari 30 detik
+        var threshold = DateTime.UtcNow.AddSeconds(-30);
+        foreach (var key in ActiveUsers.Keys)
+        {
+            if (ActiveUsers[key] < threshold)
+            {
+                ActiveUsers.TryRemove(key, out _);
+            }
+        }
 
-    //    return new JsonResult(new { count = ActiveUsers.Count });
-    //}
+        return new JsonResult(new { count = ActiveUsers.Count });
+    }
 }
