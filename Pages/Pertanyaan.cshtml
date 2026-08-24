@@ -118,11 +118,11 @@
 <script>
     function updateOnlineUsers() {
       // Ambil angka sebelumnya atau gunakan default 18
-      let currentCount = parseInt(localStorage.getItem('sim_online')) || 18;
+      let currentCount = parseInt(localStorage.getItem('sim_online'));
 
       // Perubahan acak (-1, 0, atau +1)
-      const change = Math.floor(Math.random() * 3) - 1;
-      currentCount = Math.max(10, currentCount + change); // Batas minimal 10 user
+      const change = 0;
+      currentCount = currentCount + change; // Batas minimal 10 user
 
       localStorage.setItem('sim_online', currentCount);
 
