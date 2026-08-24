@@ -70,9 +70,8 @@
                 <thead>
                     <tr>
                         <th>Feedback</th>
+                        <th>Pertanyaan</th>
                         <th>Dibuat</th>
-                        <th>Kategori</th>
-                        <th>Pegawai</th>
                         <th>Status</th>
                         <th>Aksi</th>
                     </tr>
@@ -99,8 +98,9 @@
                                     <span class="adm-code">Jawab</span>
                                 }
                             </td>
-                            <td data-label="Dibuat" class="adm-muted">@Model.FormatDate(item.CreatedAtUtc)</td>
-                            <td data-label="Judul"><span class="adm-clamp adm-strong">@item.Title</span></td>
+                            @* <td data-label="Dibuat" class="adm-muted">@Model.FormatDate(item.CreatedAtUtc)</td>
+                            <td data-label="Judul"><span class="adm-clamp adm-strong">@item.Title</span></td> *@
+                            <td data-label="Pertanyaan">@item.QuestionText</td>
                             <td data-label="Pegawai">@item.EmployeeName</td>
                             <td data-label="Status">
                                 @{
