@@ -9,7 +9,6 @@ namespace Project_Keu.Pages;
 public class PertanyaanModel : PageModel
 {
     private readonly AppDbContext _context;
-    private static readonly ConcurrentDictionary<string, DateTime> ActiveUsers = new();
 
     public PertanyaanModel(AppDbContext context)
     {
@@ -85,24 +84,5 @@ public class PertanyaanModel : PageModel
             .ToListAsync(cancellationToken);
     }
 
-    public IActionResult OnGetHeartbeat(string id)
-    {
-        // Jika tidak ada ID, fallback pakai IP address
-        string identifier = !string.IsNullOrEmpty(id) ? id : (HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown");
-
-        // Update waktu aktif berdasarkan ID unik browser
-        ActiveUsers[identifier] = DateTime.UtcNow;
-
-        // Hapus session yang tidak mengirim heartbeat lebih dari 30 detik (stale connection)
-        var expirationTime = DateTime.UtcNow.AddSeconds(-30);
-        foreach (var key in ActiveUsers.Keys)
-        {
-            if (ActiveUsers.TryGetValue(key, out var lastSeen) && lastSeen < expirationTime)
-            {
-                ActiveUsers.TryRemove(key, out _);
-            }
-        }
-
-        return new JsonResult(new { count = ActiveUsers.Count });
-    }
+    
 }

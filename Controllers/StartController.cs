@@ -21,4 +21,6 @@ public sealed class StartController : Controller
         await _landingService.PrepareQuestionGroupsAsync();
         return RedirectToPage("/Pertanyaan");
     }
+
+
 }
