@@ -160,20 +160,21 @@
                             {
                                 <tr>
                                     <td data-label="Nomor">
-                                        @if (canAnswer)
+                                        @if (item.HasAnswer)
                                         {
                                             <button type="submit" form="answerForm" name="Id" value="@item.Id"
                                                     class="adm-link-btn"
-                                                    title="@(item.HasAnswer ? "Ubah jawaban" : "Jawab Pertanyaan")">
-                                                    @* title="@(item.HasAnswer ? "Ubah jawaban" : "Jawab pertanyaan") @item.QuestionNo"> *@
-                                                @* <span class="adm-code">@item.QuestionNo</span> *@
+                                                    title="Jawab Pertanyaan")">
                                                 <span class="adm-code">Jawab</span>
                                             </button>
                                         }
                                         else
                                         {
-                                            @* <span class="adm-code">@item.QuestionNo</span> *@
-                                            <span class="adm-code">Perbarui</span>
+                                            <button type="submit" form="answerForm" name="Id" value="@item.Id"
+                                                    class="adm-link-btn"
+                                                    title="Perbarui Jawaban" )">
+                                                <span class="adm-code">Perbarui</span>
+                                            </button>
                                         }
                                     </td>
                                     <td data-label="Dibuat" class="adm-muted">@Model.FormatDate(item.CreatedAtUtc)</td>
