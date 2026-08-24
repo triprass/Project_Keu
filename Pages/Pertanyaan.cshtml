@@ -11,6 +11,32 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
 }
 
+@section Scripts {
+    <script>
+        async function updateOnlineStatus() {
+            try {
+                // Panggil handler OnGetHeartbeat dari C# Razor Page
+                const response = await fetch('?handler=Heartbeat');
+                if (response.ok) {
+                    const data = await response.json();
+                    const countElement = document.getElementById('online-count');
+                    if (countElement && data.count !== undefined) {
+                        countElement.innerText = data.count;
+                    }
+                }
+            } catch (err) {
+                console.error('Gagal mengambil data user online:', err);
+            }
+        }
+
+        // 1. Panggil langsung saat halaman selesai di-load
+        updateOnlineStatus();
+
+        // 2. Perbarui secara berkala setiap 10 detik
+        setInterval(updateOnlineStatus, 10000);
+    </script>
+}
+
 <div class="question-page">
     <div class="question-overlay" style="margin-bottom: 40px;">
         <div style="position: absolute; top: 20px; right: 30px; display: flex; align-items: center; gap: 8px;">
@@ -115,17 +141,3 @@
 
     @*     <a asp-page="/Index" class="badge-hexagon">Main Page</a> *@
 </div>
-
-<script>
-        async function updateOnlineStatus() {
-        try {
-            // Panggil handler OnGetHeartbeat dari C# Razor Page
-            const response = await fetch('?handler=Heartbeat');
-            const data = await response.json();
-            document.getElementById('online-count').innerText = data.count;
-        } catch (err) {
-            console.error('Gagal mengambil data user online:', err);
-        }
-    }
-
-</script>
