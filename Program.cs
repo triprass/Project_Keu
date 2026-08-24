@@ -1,5 +1,3 @@
-using System.Text.Json.Serialization;
-using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -10,6 +8,7 @@ using Project_Keu.Data;
 using Project_Keu.Infrastructure;
 using Project_Keu.Infrastructure.Authorization;
 using Project_Keu.Infrastructure.Notifications;
+using Project_Keu.Services;
 using Project_Keu.Services.Admin;
 using Project_Keu.Services.Answers;
 using Project_Keu.Services.Categories;
@@ -19,6 +18,8 @@ using Project_Keu.Services.PageQuestion;
 using Project_Keu.Services.QuestionCategories;
 using Project_Keu.Services.Questions;
 using Project_Keu.Services.QuestionStatuses;
+using System.Text.Json.Serialization;
+using System.Threading.RateLimiting;
 
 // Utilitas baris perintah untuk menyiapkan kredensial administrator:
 //   dotnet Project_Keu.dll --hash-password "kata-sandi"
@@ -273,6 +274,14 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+// 2. Minimal API Endpoint Global untuk Heartbeat
+app.MapGet("/api/online-tracker", (string? id, OnlineTrackerService tracker) =>
+{
+    int totalOnline = tracker.TrackUser(id ?? "unknown");
+    return Results.Json(new { count = totalOnline });
+});
+
 app.MapRazorPages();
 
 app.MapHealthChecks("/health", new HealthCheckOptions

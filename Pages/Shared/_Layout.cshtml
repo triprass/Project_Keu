@@ -11,36 +11,6 @@
 </head>
 <body>
     <main role="main">
-        @section Scripts {
-            <script>
-                // 1. Buat atau ambil UUID unik untuk browser ini
-                let visitorId = localStorage.getItem('visitor_uuid');
-                if (!visitorId) {
-                    visitorId = 'user_' + Math.random().toString(36).substring(2) + Date.now().toString(36);
-                    localStorage.setItem('visitor_uuid', visitorId);
-                }
-
-                async function updateOnlineStatus() {
-                    try {
-                        // 2. Kirim visitorId ke backend melalui Query String
-                        const response = await fetch(`?handler=Heartbeat&id=${visitorId}`);
-                        if (response.ok) {
-                            const data = await response.json();
-                            const countElement = document.getElementById('online-count');
-                            if (countElement && data.count !== undefined) {
-                                countElement.innerText = data.count;
-                            }
-                        }
-                    } catch (err) {
-                        console.error('Gagal mengambil data user online: ', err);
-                    }
-                }
-
-                // Jalankan saat halaman dibuka dan perbarui tiap 5 detik
-                updateOnlineStatus();
-                setInterval(updateOnlineStatus, 5000);
-            </script>
-        }
         @RenderBody()
     </main>
 
@@ -100,6 +70,34 @@
         </div>
     </footer>
     }
+
+    <script>
+        (function () {
+            let visitorId = localStorage.getItem('visitor_uuid');
+            if (!visitorId) {
+                visitorId = 'user_' + Math.random().toString(36).substring(2) + Date.now().toString(36);
+                localStorage.setItem('visitor_uuid', visitorId);
+            }
+
+            async function updateOnlineStatus() {
+                try {
+                    const response = await fetch(`/api/online-tracker?id=${visitorId}`);
+                    if (response.ok) {
+                        const data = await response.json();
+                        const countElement = document.getElementById('online-count');
+                        if (countElement && data.count !== undefined) {
+                            countElement.innerText = data.count;
+                        }
+                    }
+                } catch (err) {
+                    console.error('Gagal mengambil data user online:', err);
+                }
+            }
+
+            updateOnlineStatus();
+            setInterval(updateOnlineStatus, 10000);
+        })();
+    </script>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
