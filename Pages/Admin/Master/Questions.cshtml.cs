@@ -10,7 +10,7 @@ using Project_Keu.Models;
 
 namespace Project_Keu.Pages.Admin.Master;
 
-[Authorize(Policy = AdminMenu.PolicyCategories)]
+[Authorize(Policy = AdminMenu.PolicyAnswer)]
 public class QuestionsModel : AdminPageModelBase
 {
     private readonly AppDbContext _context;
@@ -90,7 +90,7 @@ public class QuestionsModel : AdminPageModelBase
             .OrderBy(x => x.QuestionNo)
             .ThenBy(x => x.Id)
             .Skip(RowOffset)
-            .Take(PageSize)
+            .Take(10)
             .Select(x => new Row(
                 x.Id,
                 x.QuestionNo))
