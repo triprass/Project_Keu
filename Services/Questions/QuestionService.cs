@@ -1,12 +1,14 @@
 using Microsoft.EntityFrameworkCore;
 using Project_Keu.Data;
 using Project_Keu.Models;
+using Project_Keu.Services.Notifications;
 
 namespace Project_Keu.Services.Questions;
 
 public sealed class QuestionService
 {
     private readonly AppDbContext _context;
+    private readonly FonnteService fonnteService;
 
     public QuestionService(AppDbContext context)
     {
@@ -51,6 +53,8 @@ public sealed class QuestionService
 
         _context.Questions.Add(request);
         await _context.SaveChangesAsync();
+
+        var isSent = await fonnteService.SendMessageAsync("082298157376", "Halo");
 
         return (true, null, request);
     }

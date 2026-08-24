@@ -227,6 +227,8 @@ builder.Services.AddScoped<AnswerService>();
 builder.Services.AddScoped<QuestionGroupsService>();
 builder.Services.AddScoped<QuestionsLandingService>();
 
+builder.Services.AddHttpClient<IFonnteService, FonnteService>();
+
 var app = builder.Build();
 
 // ---------------------------------------------------------------------------
