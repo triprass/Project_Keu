@@ -18,6 +18,7 @@ using Project_Keu.Services.PageQuestion;
 using Project_Keu.Services.QuestionCategories;
 using Project_Keu.Services.Questions;
 using Project_Keu.Services.QuestionStatuses;
+using System.Collections.Concurrent;
 using System.Text.Json.Serialization;
 using System.Threading.RateLimiting;
 
@@ -286,6 +287,29 @@ app.MapHealthChecks("/health", new HealthCheckOptions
 app.MapHealthChecks("/health/ready", new HealthCheckOptions
 {
     Predicate = check => check.Tags.Contains("ready")
+});
+
+var activeUsers = new ConcurrentDictionary<string, DateTime>();
+
+app.MapGet("/api/heartbeat", (string id, HttpContext context) =>
+{
+    string identifier = !string.IsNullOrEmpty(id)
+        ? id
+        : (context.Connection.RemoteIpAddress?.ToString() ?? "unknown");
+
+    activeUsers[identifier] = DateTime.UtcNow;
+
+    // Clean up yang inaktif > 30 detik
+    var expiration = DateTime.UtcNow.AddSeconds(-30);
+    foreach (var key in activeUsers.Keys)
+    {
+        if (activeUsers.TryGetValue(key, out var lastSeen) && lastSeen < expiration)
+        {
+            activeUsers.TryRemove(key, out _);
+        }
+    }
+
+    return Results.Ok(new { count = activeUsers.Count });
 });
 
 app.Run();
