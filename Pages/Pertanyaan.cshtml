@@ -13,10 +13,17 @@
 
 @section Scripts {
     <script>
+        // 1. Buat atau ambil UUID unik untuk browser ini
+        let visitorId = localStorage.getItem('visitor_uuid');
+        if (!visitorId) {
+            visitorId = 'user_' + Math.random().toString(36).substring(2) + Date.now().toString(36);
+            localStorage.setItem('visitor_uuid', visitorId);
+        }
+
         async function updateOnlineStatus() {
             try {
-                // Panggil handler OnGetHeartbeat dari C# Razor Page
-                const response = await fetch('?handler=Heartbeat');
+                // 2. Kirim visitorId ke backend melalui Query String
+                const response = await fetch(`?handler=Heartbeat&id=${visitorId}`);
                 if (response.ok) {
                     const data = await response.json();
                     const countElement = document.getElementById('online-count');
@@ -29,10 +36,8 @@
             }
         }
 
-        // 1. Panggil langsung saat halaman selesai di-load
+        // Jalankan saat halaman dibuka dan perbarui tiap 10 detik
         updateOnlineStatus();
-
-        // 2. Perbarui secara berkala setiap 10 detik
         setInterval(updateOnlineStatus, 10000);
     </script>
 }

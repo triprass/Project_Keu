@@ -10,6 +10,7 @@ public class PertanyaanModel : PageModel
 {
     private readonly AppDbContext _context;
     private static readonly ConcurrentDictionary<string, DateTime> ActiveUsers = new();
+
     public PertanyaanModel(AppDbContext context)
     {
         _context = context;
@@ -84,23 +85,25 @@ public class PertanyaanModel : PageModel
             .ToListAsync(cancellationToken);
     }
 
-    public IActionResult OnGetHeartbeat()
+    public IActionResult OnGetHeartbeat(string id)
     {
-        string userIp = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+        // Jika tidak ada ID, fallback pakai IP address
+        string identifier = !string.IsNullOrEmpty(id) ? id : (HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown");
 
-        // Catat/Update waktu aktif user ini
-        ActiveUsers[userIp] = DateTime.UtcNow;
+        // Update waktu aktif berdasarkan ID unik browser
+        ActiveUsers[identifier] = DateTime.UtcNow;
 
-        // Hapus IP yang tidak aktif selama lebih dari 30 detik
-        var threshold = DateTime.UtcNow.AddSeconds(-30);
+        // Hapus session yang tidak mengirim heartbeat lebih dari 30 detik (stale connection)
+        var expirationTime = DateTime.UtcNow.AddSeconds(-30);
         foreach (var key in ActiveUsers.Keys)
         {
-            if (ActiveUsers[key] < threshold)
+            if (ActiveUsers.TryGetValue(key, out var lastSeen) && lastSeen < expirationTime)
             {
                 ActiveUsers.TryRemove(key, out _);
             }
         }
 
+        // Kembalikan jumlah total perangkat aktif yang unik
         return new JsonResult(new { count = ActiveUsers.Count });
     }
 }
