@@ -1,13 +1,15 @@
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Project_Keu.Data;
+using System.Collections.Concurrent;
 
 namespace Project_Keu.Pages;
 
 public class PertanyaanModel : PageModel
 {
     private readonly AppDbContext _context;
-
+    private static readonly ConcurrentDictionary<string, DateTime> ActiveUsers = new();
     public PertanyaanModel(AppDbContext context)
     {
         _context = context;
@@ -81,4 +83,27 @@ public class PertanyaanModel : PageModel
             })
             .ToListAsync(cancellationToken);
     }
+
+    public IActionResult OnGetHeartbeat()
+    {
+        string userIp = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+
+        // Catat/Update waktu aktif user ini
+        ActiveUsers[userIp] = DateTime.UtcNow;
+
+        // Hapus IP yang tidak aktif selama lebih dari 30 detik
+        var threshold = DateTime.UtcNow.AddSeconds(-30);
+        foreach (var key in ActiveUsers.Keys)
+        {
+            if (ActiveUsers[key] < threshold)
+            {
+                ActiveUsers.TryRemove(key, out _);
+            }
+        }
+
+        return new JsonResult(new { count = ActiveUsers.Count });
+    }
+}
+
+
 }

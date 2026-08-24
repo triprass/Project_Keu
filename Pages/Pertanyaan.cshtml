@@ -27,113 +27,105 @@
         </a>
         </div>
     </header> *@
-    
+
 
     <div class="page-container">
 
-    <section class="question-search-wrap" aria-label="Pencarian pertanyaan">
-        <div class="search-replacement">
+        <section class="question-search-wrap" aria-label="Pencarian pertanyaan">
+            <div class="search-replacement">
                 <a asp-page="/FormPertanyaan" class="btn-mulai">Buat Pertanyaan Baru</a>
-        </div>
-    </section>
+            </div>
+        </section>
     </div>
 
     <div class="page-container">
-    <section aria-label="Daftar kategori akun">
-        <h2 class="kategori-judul">Jelajahi Semua Kategori</h2>
+        <section aria-label="Daftar kategori akun">
+            <h2 class="kategori-judul">Jelajahi Semua Kategori</h2>
 
-        <div class="category-grid">
-            @if (Model.QuestionGroups.Any())
-            {
-                foreach (var group in Model.QuestionGroups)
+            <div class="category-grid">
+                @if (Model.QuestionGroups.Any())
                 {
-                    <article class="category-card">
-                        <a asp-page="/PageQuestion" asp-route-CategoryId="@group.CategoryId" asp-route-PageSize="10" asp-route-Page="1" class="category-card-link">
-                            <div class="card-inner">
-                            <div class="card-icon" aria-hidden="true">
-                                @* Per-kategori: tampilkan gambar sesuai nama kategori. Pastikan file gambar ada di wwwroot/images/ *@
-                                @if (string.Equals(group.CategoryName, "Akun Belanja Modal", System.StringComparison.OrdinalIgnoreCase))
-                                {
-                                    <img src="~/images/icon/kategori_bm.png" alt="@group.CategoryName" class="card-icon-img" />
-                                }
-                                else if (string.Equals(group.CategoryName, "Akun Belanja Barang dan Jasa", System.StringComparison.OrdinalIgnoreCase))
-                                {
-                                    <img src="~/images/icon/kategori_barjas.png" alt="@group.CategoryName" class="card-icon-img" />
-                                }
-                                else if (string.Equals(group.CategoryName, "Akun Belanja Perjalanan Dinas", System.StringComparison.OrdinalIgnoreCase))
-                                {
-                                    <img src="~/images/icon/kategori_perjadin.png" alt="@group.CategoryName" class="card-icon-img" />
-                                }
-                                else if (string.Equals(group.CategoryName, "Akun Belanja Pegawai", System.StringComparison.OrdinalIgnoreCase))
-                                {
-                                    <img src="~/images/icon/kategori_pegawai.png" alt="@group.CategoryName" class="card-icon-img" />
-                                }
-                                else if (string.Equals(group.CategoryName, "Pertanyaan Lainnya", System.StringComparison.OrdinalIgnoreCase))
-                                {
-                                    <img src="~/images/icon/kategori_lainnya.png" alt="@group.CategoryName" class="card-icon-img" />
-                                }
-                                else
-                                {
-                                    @* Fallback: original SVG placeholder *@
-                                    <svg width="84" height="84" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <rect x="2" y="10" width="60" height="44" rx="6" stroke="#1AA76E" stroke-width="2" fill="rgba(26,167,110,0.06)" />
-                                        <path d="M18 24h28" stroke="#1AA76E" stroke-width="2" stroke-linecap="round" />
-                                        <path d="M18 32h18" stroke="#1AA76E" stroke-width="2" stroke-linecap="round" />
-                                    </svg>
-                                }
-                            </div>
+                    foreach (var group in Model.QuestionGroups)
+                    {
+                        <article class="category-card">
+                            <a asp-page="/PageQuestion" asp-route-CategoryId="@group.CategoryId" asp-route-PageSize="10" asp-route-Page="1" class="category-card-link">
+                                <div class="card-inner">
+                                    <div class="card-icon" aria-hidden="true">
+                                        @* Per-kategori: tampilkan gambar sesuai nama kategori. Pastikan file gambar ada di wwwroot/images/ *@
+                                        @if (string.Equals(group.CategoryName, "Akun Belanja Modal", System.StringComparison.OrdinalIgnoreCase))
+                                        {
+                                            <img src="~/images/icon/kategori_bm.png" alt="@group.CategoryName" class="card-icon-img" />
+                                        }
+                                        else if (string.Equals(group.CategoryName, "Akun Belanja Barang dan Jasa", System.StringComparison.OrdinalIgnoreCase))
+                                        {
+                                            <img src="~/images/icon/kategori_barjas.png" alt="@group.CategoryName" class="card-icon-img" />
+                                        }
+                                        else if (string.Equals(group.CategoryName, "Akun Belanja Perjalanan Dinas", System.StringComparison.OrdinalIgnoreCase))
+                                        {
+                                            <img src="~/images/icon/kategori_perjadin.png" alt="@group.CategoryName" class="card-icon-img" />
+                                        }
+                                        else if (string.Equals(group.CategoryName, "Akun Belanja Pegawai", System.StringComparison.OrdinalIgnoreCase))
+                                        {
+                                            <img src="~/images/icon/kategori_pegawai.png" alt="@group.CategoryName" class="card-icon-img" />
+                                        }
+                                        else if (string.Equals(group.CategoryName, "Pertanyaan Lainnya", System.StringComparison.OrdinalIgnoreCase))
+                                        {
+                                            <img src="~/images/icon/kategori_lainnya.png" alt="@group.CategoryName" class="card-icon-img" />
+                                        }
+                                        else
+                                        {
+                                            @* Fallback: original SVG placeholder *@
+                                            <svg width="84" height="84" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <rect x="2" y="10" width="60" height="44" rx="6" stroke="#1AA76E" stroke-width="2" fill="rgba(26,167,110,0.06)" />
+                                                <path d="M18 24h28" stroke="#1AA76E" stroke-width="2" stroke-linecap="round" />
+                                                <path d="M18 32h18" stroke="#1AA76E" stroke-width="2" stroke-linecap="round" />
+                                            </svg>
+                                        }
+                                    </div>
 
+                                    <div class="card-body">
+                                        <div class="title-pill">@group.CategoryName</div>
+                                        <p class="card-desc">Informasi umum seputar @group.CategoryName</p>
+                                    </div>
+                                </div>
+                            </a>
+                        </article>
+                    }
+                }
+                else
+                {
+                    <article class="category-card empty">
+                        <div class="card-inner">
+                            <div class="card-icon" aria-hidden="true">
+                                <svg width="84" height="84" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="32" cy="32" r="28" stroke="#d1d5db" stroke-width="2" fill="#f8fafc" />
+                                </svg>
+                            </div>
                             <div class="card-body">
-                                <div class="title-pill">@group.CategoryName</div>
-                                <p class="card-desc">Informasi umum seputar @group.CategoryName</p>
+                                <div class="title-pill">Belum ada kategori</div>
+                                <p class="card-desc">Belum ada pertanyaan yang tersedia.</p>
                             </div>
                         </div>
-                        </a>
                     </article>
                 }
-            }
-            else
-            {
-                <article class="category-card empty">
-                    <div class="card-inner">
-                        <div class="card-icon" aria-hidden="true">
-                            <svg width="84" height="84" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <circle cx="32" cy="32" r="28" stroke="#d1d5db" stroke-width="2" fill="#f8fafc" />
-                            </svg>
-                        </div>
-                        <div class="card-body">
-                            <div class="title-pill">Belum ada kategori</div>
-                            <p class="card-desc">Belum ada pertanyaan yang tersedia.</p>
-                        </div>
-                    </div>
-                </article>
-            }
-        </div>
-    </section>
+            </div>
+        </section>
     </div>
- 
-@*     <a asp-page="/Index" class="badge-hexagon">Main Page</a> *@
+
+
+    @*     <a asp-page="/Index" class="badge-hexagon">Main Page</a> *@
 </div>
 
 <script>
-    async function initOnlineTracker() {
-      try {
-        // 1. Dapatkan IP pengguna via API publik gratis
-        const ipResponse = await fetch('https://api.ipify.org?format=json');
-        const { ip } = await ipResponse.json();
-
-        // 2. Kirim IP ke layanan penyimpan data publik (Contoh: CountAPI)
-        // Setiap kali halaman dibuka oleh IP unik/baru, counter bertambah
-        const countResponse = await fetch(`https://api.countapi.xyz/hit/website-anda-123/${ip}`);
-        const data = await countResponse.json();
-
-        // 3. Tampilkan total pengguna unik yang pernah berkunjung / aktif
-        document.getElementById('online-count').innerText = data.value;
-      } catch (err) {
-        // Jika API gagal, gunakan fallback angka acak dinamis
-        document.getElementById('online-count').innerText = Math.floor(Math.random() * 10) + 15;
-      }
+        async function updateOnlineStatus() {
+        try {
+            // Panggil handler OnGetHeartbeat dari C# Razor Page
+            const response = await fetch('?handler=Heartbeat');
+            const data = await response.json();
+            document.getElementById('online-count').innerText = data.count;
+        } catch (err) {
+            console.error('Gagal mengambil data user online:', err);
+        }
     }
 
-    initOnlineTracker();
 </script>
