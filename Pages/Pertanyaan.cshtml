@@ -116,16 +116,3 @@
     @*     <a asp-page="/Index" class="badge-hexagon">Main Page</a> *@
 </div>
 
-<script>
-        async function updateOnlineStatus() {
-        try {
-            // Panggil handler OnGetHeartbeat dari C# Razor Page
-            const response = await fetch('?handler=Heartbeat');
-            const data = await response.json();
-            document.getElementById('online-count').innerText = data.count;
-        } catch (err) {
-            console.error('Gagal mengambil data user online:', err);
-        }
-    }
-
-</script>
