@@ -92,7 +92,7 @@ public class QuestionsModel : AdminPageModelBase
             var pattern = ContainsPattern(keyword);
 
             query = query.Where(x =>
-                EF.Functions.ILike(x.QuestionNo, pattern, LikeEscape));
+                EF.Functions.ILike(x.QuestionText, pattern, LikeEscape));
         }
 
         TotalItems = await query.CountAsync(cancellationToken);
