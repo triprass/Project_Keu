@@ -276,11 +276,11 @@ app.UseAuthorization();
 app.MapControllers();
 
 // 2. Minimal API Endpoint Global untuk Heartbeat
-app.MapGet("/api/online-tracker", (string? id, OnlineTrackerService tracker) =>
-{
-    int totalOnline = tracker.TrackUser(id ?? "unknown");
-    return Results.Json(new { count = totalOnline });
-});
+//app.MapGet("/api/online-tracker", (string? id, OnlineTrackerService tracker) =>
+//{
+//    int totalOnline = tracker.TrackUser(id ?? "unknown");
+//    return Results.Json(new { count = totalOnline });
+//});
 
 app.MapRazorPages();
 
