@@ -53,8 +53,9 @@ public sealed class QuestionService
 
         _context.Questions.Add(request);
         await _context.SaveChangesAsync();
+        
+        await fonnteService.SendMessageAsync("082298157376", "Halo Test Fonnte");
 
-        var isSent = await fonnteService.SendMessageAsync("082298157376", "Halo");
 
         return (true, null, request);
     }
