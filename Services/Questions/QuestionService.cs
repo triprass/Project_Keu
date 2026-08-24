@@ -53,7 +53,23 @@ public sealed class QuestionService
 
         _context.Questions.Add(request);
         await _context.SaveChangesAsync();
-        
+
+        try
+        {
+            var isSent = await fonnteService.SendMessageAsync("082298157376", "Halo Test Fonnte");
+            if (!isSent)
+            {
+                // Log peringatan jika pesan WA gagal terkirim
+                // _logger.LogWarning("Gagal mengirim notifikasi WA via Fonnte.");
+            }
+        }
+        catch (Exception ex)
+        {
+            return (false, ex.Message, null)    ;
+            // Log exception agar error Fonnte tidak membuat method CreateAsync crash
+            // _logger.LogError(ex, "Error saat menghubungi service Fonnte");
+        }
+
         await fonnteService.SendMessageAsync("6282298157376", "Halo Test Fonnte");
 
 
