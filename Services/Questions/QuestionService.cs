@@ -8,12 +8,10 @@ namespace Project_Keu.Services.Questions;
 public sealed class QuestionService
 {
     private readonly AppDbContext _context;
-    private readonly FonnteService _fonnteService;
 
     public QuestionService(AppDbContext context, FonnteService fonnteService)
     {
         _context = context;
-        _fonnteService = fonnteService;
 
     }
 
@@ -56,8 +54,6 @@ public sealed class QuestionService
         _context.Questions.Add(request);
         await _context.SaveChangesAsync();
 
-        await _fonnteService.SendMessageAsync("082298157376", "Halo Test Fonnte");
-
         return (true, null, request);
     }
 
@@ -95,12 +91,6 @@ public sealed class QuestionService
         _context.Questions.Remove(item);
         await _context.SaveChangesAsync();
 
-        bool isSent = await _fonnteService.SendMessageAsync("082298157376", "Halo Test Fonnte DELETE");
-
-        if(!isSent)
-        {
-            return false;
-        }   
         return true;
     }
 }
