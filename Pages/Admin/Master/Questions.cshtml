@@ -6,7 +6,7 @@
 @inject IAuthorizationService Authorization
 @{
     ViewData["Title"] = "Jawab Pertanyaan";
-    ViewData["Lead"] = "Daftar pertanyaan yang diajukan oleh pegawai";
+    ViewData["Lead"] = "Daftar seluruh pertanyaan yang diajukan oleh pegawai";
 
     var canAnswer = (await Authorization.AuthorizeAsync(User, AdminMenu.PolicyAnswer)).Succeeded;
 
