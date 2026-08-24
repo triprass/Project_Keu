@@ -103,7 +103,6 @@ public class PertanyaanModel : PageModel
             }
         }
 
-        // Kembalikan jumlah total perangkat aktif yang unik
         return new JsonResult(new { count = ActiveUsers.Count });
     }
 }
