@@ -67,6 +67,7 @@ public class AnswerModel : PageModel
     public string QuestionNoDisplay { get; private set; } = "-";
     public string CategoryNameDisplay { get; private set; } = "-";
     public string EmployeeNameDisplay { get; private set; } = "-";
+    public string BranchDisplay { get; private set; } = "-";
     public string CreatedAtDisplay { get; private set; } = string.Empty;
     public string AnsweredByDisplay { get; private set; } = string.Empty;
     public string AnsweredAtDisplay { get; private set; } = string.Empty;
@@ -209,6 +210,7 @@ public class AnswerModel : PageModel
         QuestionNoDisplay = string.IsNullOrWhiteSpace(SelectedQuestion.QuestionNo) ? "-" : SelectedQuestion.QuestionNo;
         CategoryNameDisplay = SelectedQuestion.Category?.Name ?? "-";
         EmployeeNameDisplay = SelectedQuestion.CreatedByEmployeeNavigation?.FullName ?? "-";
+        BranchDisplay = SelectedQuestion.CreatedByEmployeeNavigation?.Branch ?? "-";
         CreatedAtDisplay = FormatDate(SelectedQuestion.CreatedAt);
 
         StatusOptions = await _context.QuestionStatuses
