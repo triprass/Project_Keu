@@ -9,6 +9,7 @@ namespace Project_Keu.Pages;
 public class PertanyaanModel : PageModel
 {
     private readonly AppDbContext _context;
+    private static readonly ConcurrentDictionary<string, DateTime> ActiveUsers = new();
 
     public PertanyaanModel(AppDbContext context)
     {
@@ -84,5 +85,28 @@ public class PertanyaanModel : PageModel
             .ToListAsync(cancellationToken);
     }
 
-    
+    public IActionResult OnGetHeartbeat(string id)
+    {
+        // Gunakan ID unik dari frontend (fallback ke IP jika kosong)
+        string identifier = !string.IsNullOrEmpty(id)
+            ? id
+            : (HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown");
+
+        // Update timestamp aktif perangkat
+        ActiveUsers[identifier] = DateTime.UtcNow;
+
+        // Pembersihan otomatis: Hapus perangkat yang tidak responsif > 30 detik
+        var expirationTime = DateTime.UtcNow.AddSeconds(-30);
+        foreach (var key in ActiveUsers.Keys)
+        {
+            if (ActiveUsers.TryGetValue(key, out var lastSeen) && lastSeen < expirationTime)
+            {
+                ActiveUsers.TryRemove(key, out _);
+            }
+        }
+
+        // Kembalikan total perangkat unik yang aktif
+        return new JsonResult(new { count = ActiveUsers.Count });
+    }
+
 }

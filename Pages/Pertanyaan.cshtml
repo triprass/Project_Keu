@@ -11,6 +11,37 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
 }
 
+@section Scripts {
+    <script>
+        // 1. Buat atau ambil UUID unik untuk browser ini
+        let visitorId = localStorage.getItem('visitor_uuid');
+        if (!visitorId) {
+            visitorId = 'user_' + Math.random().toString(36).substring(2) + Date.now().toString(36);
+            localStorage.setItem('visitor_uuid', visitorId);
+        }
+
+        async function updateOnlineStatus() {
+            try {
+                // 2. Kirim visitorId ke backend melalui Query String
+                const response = await fetch(`?handler=Heartbeat&id=${visitorId}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    const countElement = document.getElementById('online-count');
+                    if (countElement && data.count !== undefined) {
+                        countElement.innerText = data.count;
+                    }
+                }
+            } catch (err) {
+                console.error('Gagal mengambil data user online: ', err);
+            }
+        }
+
+        // Jalankan saat halaman dibuka dan perbarui tiap 5 detik
+        updateOnlineStatus();
+        setInterval(updateOnlineStatus, 5000);
+    </script>
+}
+
 <div class="question-page">
     <div class="question-overlay" style="margin-bottom: 40px;">
         <div style="position: absolute; top: 20px; right: 30px; display: flex; align-items: center; gap: 8px;">
