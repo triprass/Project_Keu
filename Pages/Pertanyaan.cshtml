@@ -116,24 +116,23 @@
 </div>
 
 <script>
-    async function initOnlineTracker() {
-      try {
-        // 1. Dapatkan IP pengguna via API publik gratis
-        const ipResponse = await fetch('https://api.ipify.org?format=json');
-        const { ip } = await ipResponse.json();
+    function updateOnlineUsers() {
+      // Ambil angka sebelumnya atau gunakan default 18
+      let currentCount = parseInt(localStorage.getItem('sim_online')) || 18;
 
-        // 2. Kirim IP ke layanan penyimpan data publik (Contoh: CountAPI)
-        // Setiap kali halaman dibuka oleh IP unik/baru, counter bertambah
-        const countResponse = await fetch(`https://api.countapi.xyz/hit/website-anda-123/${ip}`);
-        const data = await countResponse.json();
+      // Perubahan acak (-1, 0, atau +1)
+      const change = Math.floor(Math.random() * 3) - 1;
+      currentCount = Math.max(10, currentCount + change); // Batas minimal 10 user
 
-        // 3. Tampilkan total pengguna unik yang pernah berkunjung / aktif
-        document.getElementById('online-count').innerText = data.value;
-      } catch (err) {
-        // Jika API gagal, gunakan fallback angka acak dinamis
-        document.getElementById('online-count').innerText = Math.floor(Math.random() * 10) + 15;
+      localStorage.setItem('sim_online', currentCount);
+
+      const countElement = document.getElementById('online-count');
+      if (countElement) {
+        countElement.innerText = currentCount;
       }
     }
 
-    initOnlineTracker();
+    // Jalankan saat dimuat dan perbarui setiap 8 detik
+    updateOnlineUsers();
+    setInterval(updateOnlineUsers, 8000);
 </script>
