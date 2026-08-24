@@ -14,7 +14,7 @@ namespace Project_Keu.Pages.Admin;
 /// </summary>
 public abstract class AdminPageModelBase : PageModel
 {
-    public const int PageSize = 15;
+    public const int PageSize = 10;
 
     /// <summary>Batas panjang kata kunci, sekaligus membatasi biaya kueri LIKE.</summary>
     protected const int MaxSearchLength = 100;

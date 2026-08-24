@@ -90,7 +90,7 @@ public class QuestionsModel : AdminPageModelBase
             .OrderBy(x => x.QuestionNo)
             .ThenBy(x => x.Id)
             .Skip(RowOffset)
-            .Take(10)
+            .Take(PageSize)
             .Select(x => new Row(
                 x.Id,
                 x.QuestionNo))
