@@ -8,11 +8,13 @@ namespace Project_Keu.Services.Questions;
 public sealed class QuestionService
 {
     private readonly AppDbContext _context;
-    private readonly FonnteService fonnteService;
+    private readonly FonnteService _fonnteService;
 
-    public QuestionService(AppDbContext context)
+    public QuestionService(AppDbContext context, FonnteService fonnteService)
     {
         _context = context;
+        _fonnteService = fonnteService;
+
     }
 
     public async Task<List<Question>> GetAllAsync()
@@ -54,24 +56,7 @@ public sealed class QuestionService
         _context.Questions.Add(request);
         await _context.SaveChangesAsync();
 
-        try
-        {
-            var isSent = await fonnteService.SendMessageAsync("082298157376", "Halo Test Fonnte");
-            if (!isSent)
-            {
-                // Log peringatan jika pesan WA gagal terkirim
-                // _logger.LogWarning("Gagal mengirim notifikasi WA via Fonnte.");
-            }
-        }
-        catch (Exception ex)
-        {
-            return (false, ex.Message, null)    ;
-            // Log exception agar error Fonnte tidak membuat method CreateAsync crash
-            // _logger.LogError(ex, "Error saat menghubungi service Fonnte");
-        }
-
-        await fonnteService.SendMessageAsync("6282298157376", "Halo Test Fonnte");
-
+        await _fonnteService.SendMessageAsync("082298157376", "Halo Test Fonnte");
 
         return (true, null, request);
     }
