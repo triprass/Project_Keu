@@ -69,6 +69,7 @@
             <table class="adm-table">
                 <thead>
                     <tr>
+                        <th class="adm-td-num">No</th>
                         <th>Feedback</th>
                         <th style="width:17%;">Dibuat</th>
                         <th>Pertanyaan</th>
@@ -80,8 +81,10 @@
                     @{ var rowNumber = Model.RowOffset; }
                     @foreach (var item in Model.Items)
                     {
+                        rowNumber++;
                         <tr>
-                            <td data-label="Nomor">
+                            <td class="adm-td-num">@rowNumber</td>
+                            <td data-label="Feedback">
                                 @if (item.HasAnswer)
                                 {
                                     <button type="submit" form="answerForm" name="Id" value="@item.Id"
