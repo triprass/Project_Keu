@@ -74,7 +74,7 @@ public class QuestionsModel : AdminPageModelBase
 
         _context.Questions.Remove(entity);
         await _context.SaveChangesAsync(cancellationToken);
-        Notify($"Pertanyaan \"{entity.CreatedByEmployeeNavigation  }\" berhasil dihapus.");
+        Notify($"Pertanyaan \"{entity.CreatedByEmployee}\" berhasil dihapus.");
 
         return RedirectToList();
     }
