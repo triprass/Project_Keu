@@ -2,7 +2,7 @@
 @model Project_Keu.Pages.Admin.Master.EmployeesModel
 @{
     ViewData["Title"] = "Pegawai";
-    ViewData["Lead"] = "Data pegawai yang berhak mengajukan pertanyaan. NIP dipakai halaman publik untuk mengenali pengaju.";
+    ViewData["Lead"] = "Data pegawai yang berhak mengajukan pertanyaan";
 
     var isEdit = Model.Input.Id is not null && Model.Input.Id != Guid.Empty;
 

@@ -4,7 +4,7 @@
 @inject AppTimeZone Tz
 @{
     ViewData["Title"] = "Akun Admin";
-    ViewData["Lead"] = "Akun pengelola aplikasi. Hak aksesnya ditentukan oleh peran yang diberikan, bukan oleh akun itu sendiri.";
+    ViewData["Lead"] = "Akun pengelola aplikasi. Hak aksesnya ditentukan oleh peran yang diberikan.";
 
     var isEdit = Model.Input.Id is not null && Model.Input.Id != Guid.Empty;
     var nowUtc = DateTime.UtcNow;
