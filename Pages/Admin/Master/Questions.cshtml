@@ -132,7 +132,23 @@
                                         @item.StatusName
                                     </span>
                                 }
+                            </td>
+                            <td class="adm-td-actions" data-label="Aksi">
+                                <span class="adm-row-actions">
 
+                                    <form method="post" asp-page-handler="Delete" class="adm-inline-form"
+                                          data-confirm="Hapus data pertanyaan dari &quot;@item.EmployeeName&quot;? ">
+                                        <input type="hidden" name="id" value="@item.Id" />
+                                        <button type="submit" class="adm-btn adm-btn-icon is-danger" title="Hapus">
+                                            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor"
+                                                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:red">
+                                                <polyline points="3 6 21 6" />
+                                                <path d="M8 6V4.5A1.5 1.5 0 0 1 9.5 3h5A1.5 1.5 0 0 1 16 4.5V6" />
+                                                <path d="M6 6v13.5A1.5 1.5 0 0 0 7.5 21h9a1.5 1.5 0 0 0 1.5-1.5V6" />
+                                            </svg>
+                                        </button>
+                                    </form>
+                                </span>
                             </td>
 
                         </tr>
