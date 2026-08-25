@@ -9,12 +9,6 @@ public sealed class QuestionService
 {
     private readonly AppDbContext _context;
 
-    public QuestionService(AppDbContext context, FonnteService fonnteService)
-    {
-        _context = context;
-
-    }
-
     public async Task<List<Question>> GetAllAsync()
     {
         return await _context.Questions
