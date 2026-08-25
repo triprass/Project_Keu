@@ -11,7 +11,6 @@ namespace PilarKeuangan.Services.Notifications
 
         public AzureAcsService()
         {
-            // Inisialisasi client tanpa membutuhkan IConfiguration
             _messagesClient = new NotificationMessagesClient(ConnectionString);
         }
 
