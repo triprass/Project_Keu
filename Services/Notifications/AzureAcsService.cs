@@ -1,25 +1,21 @@
 ﻿using Azure.Communication.Messages;
 
-namespace Project_Keu.Services.Notifications
+namespace Project_Keu.Services.Notifications    
 {
     public class AzureAcsService : IAzureAcsService
     {
         private readonly NotificationMessagesClient _messagesClient;
-        private readonly string _connectionString;
-        private readonly Guid _channelRegistrationId;
-
-        // Default Nilai jika tidak terisi di appsettings.json
-        private const string DefaultConnectionString = "Endpoint=https://acs-pilar-notification-service.indonesia.communication.azure.com/;Key=YOUR_AZURE_KEY";
-        private const string DefaultChannelId = "8d5b2ee9-1581-4917-b73f-22bf44abb2af";
+        private readonly IConfiguration _config;
 
         public AzureAcsService(IConfiguration config)
         {
-            _connectionString = config["AzureCommunicationServices:ConnectionString"] ?? DefaultConnectionString;
+            _config = config;
 
-            var channelIdStr = config["AzureCommunicationServices:ChannelRegistrationId"] ?? DefaultChannelId;
-            _channelRegistrationId = Guid.Parse(channelIdStr);
+            // Membaca Connection String langsung dari appsettings.json
+            var connectionString = _config["AzureCommunicationServices:ConnectionString"]
+                ?? throw new InvalidOperationException("ACS ConnectionString tidak ditemukan pada appsettings.json.");
 
-            _messagesClient = new NotificationMessagesClient(_connectionString);
+            _messagesClient = new NotificationMessagesClient(connectionString);
         }
 
         // 1. Send Notification: jawab_pertanyaan
@@ -56,7 +52,7 @@ namespace Project_Keu.Services.Notifications
             return await ExecuteSendTemplateAsync(recipientPhone, "pertanyaan_berhasil_dibuat", "id", parameters);
         }
 
-        // Helper utama untuk mengirimkan payload via Azure SDK
+        // Helper utama pengiriman payload via Azure ACS SDK
         private async Task<bool> ExecuteSendTemplateAsync(
             string recipientPhone,
             string templateName,
@@ -65,6 +61,12 @@ namespace Project_Keu.Services.Notifications
         {
             try
             {
+                // Membaca Channel ID dari appsettings.json
+                var channelIdStr = _config["AzureCommunicationServices:ChannelRegistrationId"]
+                    ?? throw new InvalidOperationException("ACS ChannelRegistrationId tidak ditemukan pada appsettings.json.");
+
+                var channelRegistrationId = Guid.Parse(channelIdStr);
+
                 // Standardisasi nomor HP ke format E.164 (+62...)
                 var formattedNumber = recipientPhone.StartsWith("0")
                     ? "+62" + recipientPhone[1..]
@@ -80,7 +82,7 @@ namespace Project_Keu.Services.Notifications
                 }
 
                 var content = new TemplateNotificationContent(
-                    channelRegistrationId: _channelRegistrationId,
+                    channelRegistrationId: channelRegistrationId,
                     to: new List<string> { formattedNumber },
                     template: messageTemplate
                 );
