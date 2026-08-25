@@ -6,7 +6,6 @@ namespace PilarKeuangan.Services.Notifications
     {
         private readonly NotificationMessagesClient _messagesClient;
 
-        // Hardcode Connection String & Channel ID langsung di script
         private const string ConnectionString = "endpoint=https://acs-pilar-notification-service.indonesia.communication.azure.com/;accesskey=KODE_ACCESS_KEY_AZURE_ANDA";
         private static readonly Guid ChannelRegistrationId = Guid.Parse("8d5b2ee9-1581-4917-b73f-22bf44abb2af");
 
