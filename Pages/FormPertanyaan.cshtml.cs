@@ -155,6 +155,7 @@ public class FormPertanyaanModel : PageModel
 
             //string messageBody2 = _fonnteService.BuildTicketTemplate2(senderName, ticketNo, unitKerja);
             string messageBody2 = _fonnteService.BuildTicketTemplate2(ticketNo, senderName, unitKerja);
+            // Parameter 1 diisi dengan Nomor PIC Keuangan (Hardcode)
             await _fonnteService.SendWhatsAppMessageAsync("082298157376", messageBody2);
 
 
