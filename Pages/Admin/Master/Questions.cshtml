@@ -23,7 +23,7 @@
             </svg>
             <input type="search" name="q" value="@Model.Search" data-auto="text"
                    placeholder="Cari pertanyaan" maxlength="100"
-                   autocomplete="off" aria-label="Cari pertanyaan" /> 
+                   autocomplete="off" aria-label="Cari pertanyaan" />
         </form>
 
         @* <div class="adm-toolbar-actions">
@@ -78,7 +78,9 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @{ var rowNumber = Model.RowOffset; }
+                    @{
+                        var rowNumber = Model.RowOffset;
+                    }
                     @foreach (var item in Model.Items)
                     {
                         rowNumber++;
@@ -102,7 +104,7 @@
                                     </button>
                                 }
                             </td>
-                             <td data-label="Dibuat" class="adm-muted">@Model.FormatDate(item.CreatedAtUtc)</td>
+                            <td data-label="Dibuat" class="adm-muted">@Model.FormatDate(item.CreatedAtUtc)</td>
                             @* <td data-label="Judul"><span class="adm-clamp adm-strong">@item.Title</span></td>  *@
                             <td data-label="Pertanyaan">@item.QuestionText</td>
                             @* <td data-label="Pegawai">@item.EmployeeName</td> *@

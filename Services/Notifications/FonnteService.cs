@@ -73,26 +73,12 @@ namespace Project_Keu.Services.Notifications
                    $"Terima kasih😇";
         }
 
-        // Template notifikasi pesan untuk pembuat pertanyaan jika pertanyaannya telah dijawab
-        // Parameter Pembuat Pertanyaan dan Nomor Tiket akan diisi secara dinamis
-        //public string BuildTicketTemplate2(string senderName, string ticketNo)
-        //{
-        //    return $"*[Pertanyaan Telah Dijawab]*\n\n" +
-        //           $"Halo *{senderName}* 🙌,\n\n" +
-        //           $"Pertanyaan Anda dengan *Nomor {ticketNo}* telah selesai ditindaklanjuti oleh:\n\n" +
-        //           $"Terima kasih telah menggunakan layanan kami😇";
-        //}
-
-        // Template notifikasi pesan untuk pembuat pertanyaan jika pertanyaannya telah dijawab
-        // Parameter Pembuat Pertanyaan dan Nomor Tiket akan diisi secara dinamis
-        //public string BuildTicketTemplate3(string senderName, string ticketNo)
-        //{
-        //    return $"*[Pertanyaan Berhasil Dibuat]*\n\n" +
-        //           $"Halo *{senderName}*🙌,\n\n" +
-        //           $"Pertanyaan Anda telah berhasil dibuat dengan *Nomor {ticketNo}*.\n\n" +
-        //           $"PIC Keuangan akan segera menindaklanjuti pertanyaan Anda.\n\n" +
-        //           $"Terima kasih😇";
-        //}
-
+        public string BuildTicketTemplate3(string senderName, string ticketNo)
+        {
+            return $"*[Pertanyaan Telah Dijawab]*\n\n" +
+                   $"Halo *{senderName}*🙌,\n\n" +
+                   $"Pertanyaan Anda dengan *Nomor {ticketNo}* telah selesai ditindaklanjuti oleh PIC Keuangan \n\n" +
+                   $"Terima kasih telah menggunakan layanan kami😇";
+        }
     }
 }

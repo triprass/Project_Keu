@@ -175,6 +175,8 @@ public class AnswerModel : PageModel
 
         await _context.SaveChangesAsync(cancellationToken);
 
+
+
         // Setelah tersimpan, bukan sebelumnya: penanya hanya diberi tahu tentang
         // jawaban yang benar-benar sudah masuk database.
         _notifications.Enqueue(NotificationJob.QuestionAnswered(SelectedQuestion.Id));
@@ -183,7 +185,7 @@ public class AnswerModel : PageModel
             ? $"Jawaban untuk {QuestionNoDisplay} berhasil disimpan."
             : $"Jawaban untuk {QuestionNoDisplay} berhasil diperbarui.";
 
-        return RedirectToPage("/Admin/Index");
+        return RedirectToPage("/Admin/Master/Questions");
     }
 
     /// <summary>Memuat pertanyaan beserta pilihan status. False bila pertanyaannya tidak ada.</summary>
