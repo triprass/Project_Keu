@@ -79,19 +79,6 @@ public class QuestionsModel : AdminPageModelBase
         _context.Questions.Remove(entity);
         await _context.SaveChangesAsync(cancellationToken);
 
-        // Data dinamis (bisa dari request body / database)
-        string picName = "PIC Keuangan";
-        string ticketNo = "Q12345";
-        string senderName = "Waluyo";
-        string unitKerja = "Subbagian Umum dan TI";
-        string targetPhone = "082298157376";
-
-        // Format string sesuai template gambar
-        string messageBody = _fonnteService.BuildTicketTemplate(picName, ticketNo, senderName, unitKerja);
-
-        // Kirim via Fonnte Service
-        await _fonnteService.SendWhatsAppMessageAsync(targetPhone, messageBody);
-
         //Notify($"Pertanyaan \"{entity.CreatedByEmployeeNavigation}\" berhasil dihapus.");
         Notify($"Pertanyaan berhasil dihapus.");
 
