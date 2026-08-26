@@ -145,13 +145,18 @@ public class FormPertanyaanModel : PageModel
             _context.Questions.Add(question);
 
             var employee = await _context.Employees.FirstOrDefaultAsync(x => x.Id == question.CreatedByEmployee);
-
             string ticketNo = question.QuestionNo;
             string senderName = employee.FullName;
             string targetPhone = employee.PhoneNumber;
+            string unitKerja = employee.Branch;
 
             //string messageBody = _fonnteService.BuildTicketTemplate1(senderName, ticketNo);
             //await _fonnteService.SendWhatsAppMessageAsync(targetPhone, messageBody);
+
+            //string messageBody2 = _fonnteService.BuildTicketTemplate2(senderName, ticketNo, unitKerja);
+            string messageBody2 = _fonnteService.BuildTicketTemplate2(senderName, ticketNo, unitKerja);
+            await _fonnteService.SendWhatsAppMessageAsync("082298157376", messageBody2);
+
 
             try
             {

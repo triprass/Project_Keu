@@ -62,6 +62,17 @@ namespace Project_Keu.Services.Notifications
                    $"Terima kasih😇";
         }
 
+        public string BuildTicketTemplate2(string ticketNo, string senderName, string unitKerja)
+        {
+            return $"*[Tindaklanjut Pertanyaan]*\n\n" +
+                   $"Halo *PIC Keuangan*🙌,\n\n" +
+                   $"Pertanyaan baru dengan *Nomor {ticketNo}* telah diajukan oleh:\n" +
+                   $"*Nama: {senderName}*\n" +
+                   $"*Unit Kerja: {unitKerja}*\n\n" +
+                   $"Mohon untuk dapat segera menjawab pertanyaan tersebut.\n\n" +
+                   $"Terima kasih😇";
+        }
+
         // Template notifikasi pesan untuk pembuat pertanyaan jika pertanyaannya telah dijawab
         // Parameter Pembuat Pertanyaan dan Nomor Tiket akan diisi secara dinamis
         //public string BuildTicketTemplate2(string senderName, string ticketNo)
@@ -83,15 +94,5 @@ namespace Project_Keu.Services.Notifications
         //           $"Terima kasih😇";
         //}
 
-        //public string BuildTicketTemplate1(string ticketNo, string senderName, string unitKerja)
-        //{
-        //    return $"*[Tindaklanjut Pertanyaan]*\n\n" +
-        //           $"Halo *PIC Keuangan*🙌,\n\n" +
-        //           $"Pertanyaan baru dengan *Nomor {ticketNo}* telah diajukan oleh:\n" +
-        //           $"*Nama: {senderName}*\n" +
-        //           $"*Unit Kerja: {unitKerja}*\n\n" +
-        //           $"Mohon untuk dapat segera menjawab pertanyaan tersebut.\n\n" +
-        //           $"Terima kasih😇";
-        //}
     }
 }
