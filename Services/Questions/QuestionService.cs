@@ -52,9 +52,13 @@ public sealed class QuestionService
         var employee = await _context.Employees.FirstOrDefaultAsync(x => x.Id == request.CreatedByEmployee);
 
         // Data dinamis (bisa dari request body / database)
-        string ticketNo = request.QuestionNo ?? "Q-...";
-        string senderName = employee.FullName;
-        string targetPhone = employee.PhoneNumber;
+        //string ticketNo = request.QuestionNo ?? "Q-...";
+        //string senderName = employee.FullName;
+        //string targetPhone = employee.PhoneNumber;
+
+        string ticketNo = request.QuestionNo ?? "Q-XXX";
+        string senderName = "Ridho";
+        string targetPhone = "082298157376";
 
         // Format string sesuai template gambar
         string messageBody = _fonnteService.BuildTicketTemplate1(senderName, ticketNo);
