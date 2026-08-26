@@ -70,9 +70,9 @@ public class QuestionsController : ControllerBase
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id)
     {
-        var deleted = await _service.DeleteAsync(id);
-        if (!deleted)
-            return NotFound(new { message = "Question not found" });
+        //var deleted = await _service.DeleteAsync(id);
+        //if (!deleted)
+        //    return NotFound(new { message = "Question not found" });
 
         // --- Panggilan Notifikasi Fonnte ---
         string targetPhone = "082298157376"; // Ganti dengan nomor tujuan (bisa ambil dari DB/User)

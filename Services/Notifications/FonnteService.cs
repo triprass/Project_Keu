@@ -29,14 +29,14 @@ namespace Project_Keu.Services.Notifications
 
             // Menambahkan Token di Header Authorization tanpa skema (sesuai spesifikasi Fonnte)
             request.Headers.TryAddWithoutValidation("Authorization", _token);
-
+            
             var formData = new List<KeyValuePair<string, string>>
-        {
-            new KeyValuePair<string, string>("target", target),
-            new KeyValuePair<string, string>("message", message),
-            new KeyValuePair<string, string>("countryCode", countryCode)
-        };
-
+            {
+                new KeyValuePair<string, string>("target", target),
+                new KeyValuePair<string, string>("message", message),
+                new KeyValuePair<string, string>("countryCode", countryCode) // Opsional: "62"
+            };
+            
             request.Content = new FormUrlEncodedContent(formData);
 
             try
