@@ -228,6 +228,7 @@ builder.Services.AddScoped<QuestionGroupsService>();
 builder.Services.AddScoped<QuestionsLandingService>();
 
 builder.Services.AddScoped<IAzureAcsService, AzureAcsService>();
+builder.Services.AddHttpClient<IFonnteService, FonnteService>();
 
 var app = builder.Build();
 
