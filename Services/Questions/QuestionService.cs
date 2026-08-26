@@ -1,14 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 using Project_Keu.Data;
 using Project_Keu.Models;
-using Project_Keu.Services.Notifications;
 
 namespace Project_Keu.Services.Questions;
 
 public sealed class QuestionService
 {
     private readonly AppDbContext _context;
-    private readonly IFonnteService _fonnteService; // Inject FonnteService
 
     public async Task<List<Question>> GetAllAsync()
     {
@@ -48,24 +46,6 @@ public sealed class QuestionService
 
         _context.Questions.Add(request);
         await _context.SaveChangesAsync();
-
-        var employee = await _context.Employees.FirstOrDefaultAsync(x => x.Id == request.CreatedByEmployee);
-
-        // Data dinamis (bisa dari request body / database)
-        //string ticketNo = request.QuestionNo ?? "Q-...";
-        //string senderName = employee.FullName;
-        //string targetPhone = employee.PhoneNumber;
-
-        string ticketNo = "Q-XXX";
-        string senderName = "Ridho";
-        string targetPhone = "082298157376";
-
-        // Format string sesuai template gambar
-        string messageBody = _fonnteService.BuildTicketTemplate1(senderName, ticketNo);
-
-        // Kirim via Fonnte Service
-        await _fonnteService.SendWhatsAppMessageAsync(targetPhone, messageBody);
-
 
         return (true, null, request);
     }

@@ -1,3 +1,4 @@
+using Azure.Core;
 using DocumentFormat.OpenXml.Office2016.Excel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -143,16 +144,18 @@ public class FormPertanyaanModel : PageModel
             question.QuestionNo = await GenerateQuestionNoAsync(cancellationToken);
             _context.Questions.Add(question);
 
+            var employee = await _context.Employees.FirstOrDefaultAsync(x => x.Id == question.CreatedByEmployee);
+
+            string ticketNo = question.QuestionNo;
+            string senderName = employee.FullName;
+            string targetPhone = employee.PhoneNumber;
+
+            string messageBody = _fonnteService.BuildTicketTemplate1(senderName, ticketNo);
+            await _fonnteService.SendWhatsAppMessageAsync(targetPhone, messageBody);
+
             try
             {
                 await _context.SaveChangesAsync(cancellationToken);
-
-                string ticketNo = "Q-XXX";
-                string senderName = "Ridho";
-                string targetPhone = "082298157376";
-
-                string messageBody = _fonnteService.BuildTicketTemplate1(senderName, ticketNo);
-                await _fonnteService.SendWhatsAppMessageAsync(targetPhone, messageBody);
 
                 return true;
             }
