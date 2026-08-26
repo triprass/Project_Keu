@@ -7,6 +7,7 @@ using Project_Keu.Data;
 using Project_Keu.Infrastructure;
 using Project_Keu.Infrastructure.Admin;
 using Project_Keu.Models;
+using Project_Keu.Services.Notifications;
 
 namespace Project_Keu.Pages.Admin.Master;
 
@@ -15,11 +16,14 @@ public class QuestionsModel : AdminPageModelBase
 {
     private readonly AppDbContext _context;
     private readonly AppTimeZone _timeZone;
+    private readonly IFonnteService _fonnteService; // Inject FonnteService
 
-    public QuestionsModel(AppDbContext context, AppTimeZone timeZone)
+
+    public QuestionsModel(AppDbContext context, AppTimeZone timeZone, IFonnteService fonnteService)
     {
         _context = context;
         _timeZone = timeZone;  
+        _fonnteService = fonnteService; // Assign injected service
     }
 
     public sealed record Row(
@@ -74,6 +78,13 @@ public class QuestionsModel : AdminPageModelBase
 
         _context.Questions.Remove(entity);
         await _context.SaveChangesAsync(cancellationToken);
+        // --- Panggilan Notifikasi Fonnte ---
+        string targetPhone = "082298157376"; // Ganti dengan nomor tujuan (bisa ambil dari DB/User)
+        string message = $"Halo pesan ini dari Fonnte";
+
+        // Jalankan pengiriman WA
+        await _fonnteService.SendWhatsAppMessageAsync(targetPhone, message);
+
         //Notify($"Pertanyaan \"{entity.CreatedByEmployeeNavigation}\" berhasil dihapus.");
         Notify($"Pertanyaan berhasil dihapus.");
 

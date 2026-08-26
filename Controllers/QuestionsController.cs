@@ -15,12 +15,11 @@ namespace Project_Keu.Controllers;
 public class QuestionsController : ControllerBase
 {
     private readonly QuestionService _service;
-    private readonly IFonnteService _fonnteService; // Inject FonnteService
+    
 
-    public QuestionsController(QuestionService service, IFonnteService fonnteService)
+    public QuestionsController(QuestionService service)
     {
         _service = service;
-        _fonnteService = fonnteService;
     }
 
     [HttpGet]
@@ -70,16 +69,9 @@ public class QuestionsController : ControllerBase
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id)
     {
-        //var deleted = await _service.DeleteAsync(id);
-        //if (!deleted)
-        //    return NotFound(new { message = "Question not found" });
-
-        // --- Panggilan Notifikasi Fonnte ---
-        string targetPhone = "082298157376"; // Ganti dengan nomor tujuan (bisa ambil dari DB/User)
-        string message = $"Halo pesan ini dari Fonnte";
-
-        // Jalankan pengiriman WA
-        await _fonnteService.SendWhatsAppMessageAsync(targetPhone, message);
+        var deleted = await _service.DeleteAsync(id);
+        if (!deleted)
+            return NotFound(new { message = "Question not found" });
 
         return NoContent();
     }
