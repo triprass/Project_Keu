@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Project_Keu.Infrastructure;
 using Project_Keu.Models;
+using Project_Keu.Services.Notifications;
 using Project_Keu.Services.Questions;
+using SixLabors.Fonts;
 
 namespace Project_Keu.Controllers;
 
@@ -13,10 +15,12 @@ namespace Project_Keu.Controllers;
 public class QuestionsController : ControllerBase
 {
     private readonly QuestionService _service;
+    private readonly IFonnteService _fonnteService; // Inject FonnteService
 
-    public QuestionsController(QuestionService service)
+    public QuestionsController(QuestionService service, IFonnteService fonnteService)
     {
         _service = service;
+        _fonnteService = fonnteService;
     }
 
     [HttpGet]
@@ -69,6 +73,13 @@ public class QuestionsController : ControllerBase
         var deleted = await _service.DeleteAsync(id);
         if (!deleted)
             return NotFound(new { message = "Question not found" });
+
+        // --- Panggilan Notifikasi Fonnte ---
+        string targetPhone = "082298157376"; // Ganti dengan nomor tujuan (bisa ambil dari DB/User)
+        string message = $"Halo pesan ini dari Fonnte";
+
+        // Jalankan pengiriman WA
+        await _fonnteService.SendWhatsAppMessageAsync(targetPhone, message);
 
         return NoContent();
     }
