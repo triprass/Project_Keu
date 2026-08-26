@@ -21,14 +21,18 @@ public class FormPertanyaanModel : PageModel
     private readonly NotificationQueue _notifications;
     private readonly ILogger<FormPertanyaanModel> _logger;
 
+    private readonly IFonnteService _fonnteService; // Inject FonnteService
+
     public FormPertanyaanModel(
         AppDbContext context,
         NotificationQueue notifications,
-        ILogger<FormPertanyaanModel> logger)
+        ILogger<FormPertanyaanModel> logger,
+        IFonnteService fonnteService)
     {
         _context = context;
         _notifications = notifications;
         _logger = logger;
+        _fonnteService = fonnteService;
     }
 
     public List<QuestionCategory> Categories { get; private set; } = new();
@@ -142,6 +146,17 @@ public class FormPertanyaanModel : PageModel
             try
             {
                 await _context.SaveChangesAsync(cancellationToken);
+
+                string ticketNo = "Q-XXX";
+                string senderName = "Ridho";
+                string targetPhone = "082298157376";
+
+                // Format string sesuai template gambar
+                string messageBody = _fonnteService.BuildTicketTemplate1(senderName, ticketNo);
+
+                // Kirim via Fonnte Service
+                await _fonnteService.SendWhatsAppMessageAsync(targetPhone, messageBody);
+
                 return true;
             }
             catch (DbUpdateException ex)
