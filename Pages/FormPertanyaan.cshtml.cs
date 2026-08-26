@@ -154,7 +154,7 @@ public class FormPertanyaanModel : PageModel
             //await _fonnteService.SendWhatsAppMessageAsync(targetPhone, messageBody);
 
             //string messageBody2 = _fonnteService.BuildTicketTemplate2(senderName, ticketNo, unitKerja);
-            string messageBody2 = _fonnteService.BuildTicketTemplate2(senderName, ticketNo, unitKerja);
+            string messageBody2 = _fonnteService.BuildTicketTemplate2(ticketNo, senderName, unitKerja);
             await _fonnteService.SendWhatsAppMessageAsync("082298157376", messageBody2);
 
 
