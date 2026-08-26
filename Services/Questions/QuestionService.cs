@@ -56,7 +56,7 @@ public sealed class QuestionService
         //string senderName = employee.FullName;
         //string targetPhone = employee.PhoneNumber;
 
-        string ticketNo = request.QuestionNo ?? "Q-XXX";
+        string ticketNo = "Q-XXX";
         string senderName = "Ridho";
         string targetPhone = "082298157376";
 
