@@ -150,8 +150,8 @@ public class FormPertanyaanModel : PageModel
             string senderName = employee.FullName;
             string targetPhone = employee.PhoneNumber;
 
-            string messageBody = _fonnteService.BuildTicketTemplate1(senderName, ticketNo);
-            await _fonnteService.SendWhatsAppMessageAsync(targetPhone, messageBody);
+            //string messageBody = _fonnteService.BuildTicketTemplate1(senderName, ticketNo);
+            //await _fonnteService.SendWhatsAppMessageAsync(targetPhone, messageBody);
 
             try
             {
