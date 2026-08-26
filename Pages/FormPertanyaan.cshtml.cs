@@ -151,10 +151,7 @@ public class FormPertanyaanModel : PageModel
                 string senderName = "Ridho";
                 string targetPhone = "082298157376";
 
-                // Format string sesuai template gambar
                 string messageBody = _fonnteService.BuildTicketTemplate1(senderName, ticketNo);
-
-                // Kirim via Fonnte Service
                 await _fonnteService.SendWhatsAppMessageAsync(targetPhone, messageBody);
 
                 return true;
