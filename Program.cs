@@ -293,6 +293,25 @@ app.MapHealthChecks("/health/ready", new HealthCheckOptions
 
 var activeUsers = new ConcurrentDictionary<string, DateTime>();
 
+app.MapGet("/api/heartbeat", (string id, HttpContext context) =>
+{
+    string identifier = !string.IsNullOrEmpty(id)
+        ? id
+        : (context.Connection.RemoteIpAddress?.ToString() ?? "unknown");
 
+    activeUsers[identifier] = DateTime.UtcNow;
+
+    // Clean up yang inaktif > 30 detik
+    var expiration = DateTime.UtcNow.AddSeconds(-30);
+    foreach (var key in activeUsers.Keys)
+    {
+        if (activeUsers.TryGetValue(key, out var lastSeen) && lastSeen < expiration)
+        {
+            activeUsers.TryRemove(key, out _);
+        }
+    }
+
+    return Results.Ok(new { count = activeUsers.Count });
+});
 
 app.Run();
