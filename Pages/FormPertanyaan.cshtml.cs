@@ -151,13 +151,13 @@ public class FormPertanyaanModel : PageModel
             string unitKerja = employee.Branch;
 
             // Kirim Pesan Notifikasi ke Pembuat Pertanyaan  [Pertanyaan Berhasil Dibuat]
-            //string messageBody = _fonnteService.BuildTicketTemplate1(senderName, ticketNo);
-            //await _fonnteService.SendWhatsAppMessageAsync(targetPhone, messageBody);
+            string messageBody = _fonnteService.BuildTicketTemplate1(senderName, ticketNo);
+            await _fonnteService.SendWhatsAppMessageAsync(targetPhone, messageBody);
 
             // Kirim Pesan Notifikasi ke PIC Keuangan  [Pertanyaan Berhasil Dibuat]
-            //string messageBody2 = _fonnteService.BuildTicketTemplate2(ticketNo, senderName, unitKerja);
+            string messageBody2 = _fonnteService.BuildTicketTemplate2(ticketNo, senderName, unitKerja);
             // Parameter 1 diisi dengan Nomor PIC Keuangan (Hardcode)
-            //await _fonnteService.SendWhatsAppMessageAsync("082298157376", messageBody2);
+            await _fonnteService.SendWhatsAppMessageAsync("082298157376", messageBody2);
 
 
             try
