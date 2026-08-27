@@ -27,6 +27,7 @@ public class DetailPertanyaanModel : PageModel
     //[BindProperty]
     //public Guid? Id { get; set; }
 
+    // Ubah di sini: Tambahkan SupportsGet = true agar membaca parameter dari GET URL
     [BindProperty(SupportsGet = true)]
     public Guid? Id { get; set; }
 
@@ -46,12 +47,12 @@ public class DetailPertanyaanModel : PageModel
     /// <summary>Kategori pertanyaan, dipakai tombol "Kembali" agar mendarat di daftar yang sama.</summary>
     public Guid? CategoryId => SelectedQuestion?.CategoryId;
 
-    public IActionResult OnGet()
-    {
+    //public IActionResult OnGet()
+    //{
         // Halaman ini hanya bisa dibuka lewat POST dari daftar pertanyaan.
         // Akses langsung tanpa id ditampilkan sebagai halaman kosong.
-        return Page();
-    }
+    //    return Page();
+    //}
 
     public async Task<IActionResult> OnPostAsync(CancellationToken cancellationToken)
     {
