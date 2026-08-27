@@ -194,7 +194,7 @@
 
                 @* Form terpisah untuk navigasi ke detail. Tombol pada setiap baris
                    memakai atribut form="detailForm" karena form tidak boleh bersarang. *@
-                <form method="post" asp-page="/DetailPertanyaan" id="detailForm"></form>
+                @* <form method="post" asp-page="/DetailPertanyaan" id="detailForm"></form> *@
                 <form method="post" asp-page="/Admin/Answer" id="answerForm"></form>
 
                 <div class="inv2-table-card">
@@ -435,7 +435,7 @@
                     // bukan sebagai query string.
                     const detailLink =
                         // `<button type="submit" form="detailForm" name="Id" value="${escapeHtml(q?.id ?? '')}" class="inv2-question-link" title="${pertanyaan}">${pertanyaan}</button>`;
-                        `<a href="/DetailPertanyaan?Id=${escapeHtml(q?.id ?? '')}" class="inv2-question-link" title="${pertanyaan}">${pertanyaan}</a>`
+                        `<form method="post" action="/DetailPertanyaan" id="detailForm_${q?.id}"><a href="/DetailPertanyaan?Id=${encodeURIComponent(q?.id ?? '')}" class="inv2-question-link" title="${pertanyaan}">${pertanyaan}</a></form>`
 
                     // Sel disusun sebagai daftar supaya urutannya tidak bisa melenceng
                     // dari <thead>; jumlahnya selalu sama dengan COLUMN_COUNT.
