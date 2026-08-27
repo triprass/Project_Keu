@@ -184,7 +184,8 @@ public class AnswerModel : PageModel
             var employee = await _context.Employees.FirstOrDefaultAsync(x => x.Id == question.CreatedByEmployee);
             string ticketNo = question.QuestionNo;
             string senderName = employee.FullName;
-            string targetPhone = employee.PhoneNumber;
+            //string targetPhone = employee.PhoneNumber;
+            string targetPhone = "082294496742";
 
             string messageBody3 = _fonnteService.BuildTicketTemplate3(senderName, ticketNo);
             await _fonnteService.SendWhatsAppMessageAsync(targetPhone, messageBody3);
