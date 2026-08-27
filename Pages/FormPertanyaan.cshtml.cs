@@ -144,20 +144,25 @@ public class FormPertanyaanModel : PageModel
             question.QuestionNo = await GenerateQuestionNoAsync(cancellationToken);
             _context.Questions.Add(question);
 
+            // Ambil Data Pegawai
             var employee = await _context.Employees.FirstOrDefaultAsync(x => x.Id == question.CreatedByEmployee);
             string ticketNo = question.QuestionNo;
             string senderName = employee.FullName;
-            string targetPhone = employee.PhoneNumber;
+            string nip = employee.Nip;
             string unitKerja = employee.Branch;
+            string kategoriPertanyaan = question.Title;
+            string targetPhone = employee.PhoneNumber;
 
-            // Kirim Pesan Notifikasi ke Pembuat Pertanyaan  [Pertanyaan Berhasil Dibuat]
-            string messageBody = _fonnteService.BuildTicketTemplate1(senderName, ticketNo);
+            // Kirim Pesan Notifikasi ke Pembuat Pertanyaan  [Open] Parameter = ticketNo, senderName, nip, unitKerja, kategoriPertanyaan
+            string messageBody = _fonnteService.BuildTicketTemplate1(ticketNo, senderName, nip, unitKerja, kategoriPertanyaan);
             await _fonnteService.SendWhatsAppMessageAsync(targetPhone, messageBody);
 
+            // Kirim Pesan Notifikasi ke PIC Keuangan  [Open] Parameter = ticketNo, senderName, nip, unitKerja, kategoriPertanyaan
+
             // Kirim Pesan Notifikasi ke PIC Keuangan  [Pertanyaan Berhasil Dibuat]
-            string messageBody2 = _fonnteService.BuildTicketTemplate2(ticketNo, senderName, unitKerja);
+            //string messageBody2 = _fonnteService.BuildTicketTemplate2(ticketNo, senderName, unitKerja);
             // Parameter 1 diisi dengan Nomor PIC Keuangan (Hardcode)
-            await _fonnteService.SendWhatsAppMessageAsync("082298157376", messageBody2);
+            //await _fonnteService.SendWhatsAppMessageAsync("082298157376", messageBody2);
 
 
             try

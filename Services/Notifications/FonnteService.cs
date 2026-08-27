@@ -53,32 +53,44 @@ namespace Project_Keu.Services.Notifications
 
         // Template notifikasi pesan untuk pembuat pertanyaan jika pertanyaannya telah dijawab
         // Parameter Pembuat Pertanyaan dan Nomor Tiket akan diisi secara dinamis
-        public string BuildTicketTemplate1(string senderName, string ticketNo)
+        public string BuildTicketTemplate1(string ticketNo, string senderName, string nip, string unitKerja, string kategoriPertanyaan)
         {
-            return $"*[Pertanyaan Berhasil Dibuat]*\n\n" +
-                   $"Halo *{senderName}*🙌,\n\n" +
-                   $"Pertanyaan Anda telah berhasil dibuat dengan *Nomor {ticketNo}*.\n\n" +
-                   $"PIC Keuangan akan segera menindaklanjuti pertanyaan Anda.\n\n" +
+            return $"Halo\n" +
+                   $"*{senderName}* \n\n" +
+                   $"[Open]\n" +
+                   $"Pengajuan Layanan dengan Nomor Tiket {ticketNo}\n" +
+                   $"Nama : {senderName} / {nip} \n" +
+                   $"Unit Kerja : {unitKerja} \n" +
+                   $"Kategori Pertanyaan : {kategoriPertanyaan} \n\n" +
+                   $"Telah kami terima dan akan segera kami proses. \n" +
                    $"Terima kasih😇";
         }
 
-        public string BuildTicketTemplate2(string ticketNo, string senderName, string unitKerja)
+        public string BuildTicketTemplate2(string ticketNo, string senderName, string nip, string unitKerja, string kategoriPertanyaan)
         {
-            return $"*[Tindaklanjut Pertanyaan]*\n\n" +
-                   $"Halo *PIC Keuangan*🙌,\n\n" +
-                   $"Pertanyaan baru dengan *Nomor {ticketNo}* telah diajukan oleh:\n" +
-                   $"*Nama: {senderName}*\n" +
-                   $"*Unit Kerja: {unitKerja}*\n\n" +
-                   $"Mohon untuk dapat segera menjawab pertanyaan tersebut.\n\n" +
+            return $"Halo\n" +
+                   $"*PIC Keuangan* \n\n" +
+                   $"[Open]\n" +
+                   $"Pengajuan Layanan dengan Nomor Tiket {ticketNo}\n" +
+                   $"Nama : {senderName} / {nip} \n" +
+                   $"Unit Kerja : {unitKerja} \n" +
+                   $"Kategori Pertanyaan : {kategoriPertanyaan} \n\n" +
+                   $"Mohon untuk ditindaklanjuti. \n" +
                    $"Terima kasih😇";
         }
 
-        public string BuildTicketTemplate3(string senderName, string ticketNo)
+        public string BuildTicketTemplate3(string ticketNo, string senderName, string nip, string unitKerja, string kategoriPertanyaan)
         {
-            return $"*[Pertanyaan Telah Dijawab]*\n\n" +
-                   $"Halo *{senderName}*🙌,\n\n" +
-                   $"Pertanyaan Anda dengan *Nomor {ticketNo}* telah selesai ditindaklanjuti oleh PIC Keuangan \n\n" +
-                   $"Terima kasih telah menggunakan layanan kami😇";
+            return $"Halo\n" +
+                   $"*{senderName}* \n\n" +
+                   $"[Close]\n" +
+                   $"Pengajuan Layanan dengan Nomor Tiket {ticketNo}\n" +
+                   $"Nama : {senderName} / {nip} \n" +
+                   $"Unit Kerja : {unitKerja} \n" +
+                   $"Kategori Pertanyaan : {kategoriPertanyaan} \n\n" +
+                   $"Silahkan klik link dibawah ini untuk melihat detail jawaban \n" +
+                   $"<link> \n" +
+                   $"Terima kasih😇";
         }
     }
 }
