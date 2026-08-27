@@ -434,7 +434,8 @@
                     // Id dikirim sebagai value tombol submit ke #detailForm (POST),
                     // bukan sebagai query string.
                     const detailLink =
-                        `<button type="submit" form="detailForm" name="Id" value="${escapeHtml(q?.id ?? '')}" class="inv2-question-link" title="${pertanyaan}">${pertanyaan}</button>`;
+                        //`<button type="submit" form="detailForm" name="Id" value="${escapeHtml(q?.id ?? '')}" class="inv2-question-link" title="${pertanyaan}">${pertanyaan}</button>`;
+                        `<a href="/DetailPertanyaan?id=${encodeURIComponent(q?.id ?? '')}" class="inv2-question-link" title="${pertanyaan}">${pertanyaan}</a>`
 
                     // Sel disusun sebagai daftar supaya urutannya tidak bisa melenceng
                     // dari <thead>; jumlahnya selalu sama dengan COLUMN_COUNT.

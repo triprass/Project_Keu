@@ -24,7 +24,10 @@ public class DetailPertanyaanModel : PageModel
     }
 
     // Dikirim lewat form body (POST) supaya id pertanyaan tidak tampil di URL.
-    [BindProperty]
+    //[BindProperty]
+    //public Guid? Id { get; set; }
+
+    [BindProperty(SupportsGet = true)]
     public Guid? Id { get; set; }
 
     public Question? SelectedQuestion { get; private set; }
