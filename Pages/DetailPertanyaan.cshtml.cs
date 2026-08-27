@@ -54,7 +54,7 @@ public class DetailPertanyaanModel : PageModel
     //    return Page();
     //}
 
-    public async Task<IActionResult> OnPostAsync(CancellationToken cancellationToken)
+    public async Task<IActionResult> OnGetAsync(CancellationToken cancellationToken)
     {
         if (!Id.HasValue || Id.Value == Guid.Empty)
         {
