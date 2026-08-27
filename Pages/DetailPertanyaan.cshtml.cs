@@ -43,7 +43,7 @@ public class DetailPertanyaanModel : PageModel
     /// <summary>Kategori pertanyaan, dipakai tombol "Kembali" agar mendarat di daftar yang sama.</summary>
     public Guid? CategoryId => SelectedQuestion?.CategoryId;
 
-    public IActionResult OnGet()
+    public IActionResult OnPost()
     {
         // Halaman ini hanya bisa dibuka lewat POST dari daftar pertanyaan.
         // Akses langsung tanpa id ditampilkan sebagai halaman kosong.
