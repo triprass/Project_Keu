@@ -25,16 +25,18 @@ namespace Project_Keu.Pages.Admin;
 public class AnswerModel : PageModel
 {
     private static readonly CultureInfo DisplayCulture = CreateDisplayCulture();
+    private readonly IFonnteService _fonnteService; // Inject FonnteService
 
     private readonly AppDbContext _context;
     private readonly AppTimeZone _appTimeZone;
     private readonly NotificationQueue _notifications;
 
-    public AnswerModel(AppDbContext context, AppTimeZone appTimeZone, NotificationQueue notifications)
+    public AnswerModel(AppDbContext context, AppTimeZone appTimeZone, NotificationQueue notifications, IFonnteService fonnteService)
     {
         _context = context;
         _appTimeZone = appTimeZone;
         _notifications = notifications;
+        _fonnteService = fonnteService;
     }
 
     /// <summary>Id pertanyaan; selalu dikirim di badan POST.</summary>
@@ -137,6 +139,7 @@ public class AnswerModel : PageModel
             return Page();
         }
 
+        bool isAnswered = false;
         var now = DateTime.UtcNow;
         var existing = await LatestAnswerQuery(SelectedQuestion!.Id).FirstOrDefaultAsync(cancellationToken);
 
@@ -153,6 +156,7 @@ public class AnswerModel : PageModel
         }
         else
         {
+            isAnswered = true;
             existing.AnswerText = Input.AnswerText;
 
             // Yang mengubah jawaban menjadi penanggung jawab isinya yang sekarang.
@@ -175,7 +179,16 @@ public class AnswerModel : PageModel
 
         await _context.SaveChangesAsync(cancellationToken);
 
+        if (!isAnswered)
+        {
+            var employee = await _context.Employees.FirstOrDefaultAsync(x => x.Id == question.CreatedByEmployee);
+            string ticketNo = question.QuestionNo;
+            string senderName = employee.FullName;
+            string targetPhone = employee.PhoneNumber;
 
+            string messageBody3 = _fonnteService.BuildTicketTemplate3(senderName, ticketNo);
+            await _fonnteService.SendWhatsAppMessageAsync(targetPhone, messageBody3);
+        }
 
         // Setelah tersimpan, bukan sebelumnya: penanya hanya diberi tahu tentang
         // jawaban yang benar-benar sudah masuk database.
