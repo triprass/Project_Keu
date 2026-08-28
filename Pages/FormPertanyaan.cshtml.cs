@@ -153,6 +153,7 @@ public class FormPertanyaanModel : PageModel
             string kategoriPertanyaan = question.Title;
             string targetPhone = employee.PhoneNumber;
 
+            // [SCRIPT PUSH NOTIFICATION FONNTE]
             // Kirim Pesan Notifikasi ke Pembuat Pertanyaan [Open]
             string messageBody = _fonnteService.BuildTicketTemplate1(ticketNo, senderName, nip, unitKerja, kategoriPertanyaan);
             await _fonnteService.SendWhatsAppMessageAsync(targetPhone, messageBody);
@@ -163,10 +164,10 @@ public class FormPertanyaanModel : PageModel
             // 083145710015     Aji
             // 081337645975     Dinu
             string targetPhonePIC = "082111191354,083145710015,081337645975";
-            //string targetPhonePIC = "082111191354";
 
             messageBody = _fonnteService.BuildTicketTemplate2(ticketNo, senderName, nip, unitKerja, kategoriPertanyaan);
             await _fonnteService.SendWhatsAppMessageAsync(targetPhonePIC, messageBody);
+            // [END OF SCRIPT PUSH NOTIFICATION FONNTE]
 
             try
             {

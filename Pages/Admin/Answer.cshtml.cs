@@ -181,6 +181,8 @@ public class AnswerModel : PageModel
 
         if (!isAnswered)
         {
+            
+
             // Ambil Data Pegawai
             var employee = await _context.Employees.FirstOrDefaultAsync(x => x.Id == question.CreatedByEmployee);
             string ticketNo = question.QuestionNo;
@@ -190,9 +192,11 @@ public class AnswerModel : PageModel
             string kategoriPertanyaan = question.Title;
             string targetPhone = employee.PhoneNumber;
 
+            // [SCRIPT PUSH NOTIFICATION FONNTE]
             // Kirim Pesan Notifikasi ke Pembuat Pertanyaan [Open] Parameter = ticketNo, senderName, nip, unitKerja, kategoriPertanyaan
-            string messageBody = _fonnteService.BuildTicketTemplate3(ticketNo, senderName, nip, unitKerja, kategoriPertanyaan, SelectedQuestion.Id);
-            await _fonnteService.SendWhatsAppMessageAsync(targetPhone, messageBody);
+            //string messageBody = _fonnteService.BuildTicketTemplate3(ticketNo, senderName, nip, unitKerja, kategoriPertanyaan, SelectedQuestion.Id);
+            //await _fonnteService.SendWhatsAppMessageAsync(targetPhone, messageBody);
+            // [END OF SCRIPT PUSH NOTIFICATION FONNTE]
         }
 
         // Setelah tersimpan, bukan sebelumnya: penanya hanya diberi tahu tentang
