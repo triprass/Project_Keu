@@ -179,12 +179,12 @@ public class FormPertanyaanModel : PageModel
 
             // [SCRIPT PUSH NOTIFICATION WABLAS]
             // Kirim Pesan Notifikasi ke Pembuat Pertanyaan [Open]
-            string messageBody = _wablasService.BuildTicketTemplate1(ticketNo, senderName, nip, unitKerja, kategoriPertanyaan);
-            await _wablasService.SendWhatsAppMessageAsync(targetPhone, messageBody);
+            //string messageBody = _wablasService.BuildTicketTemplate1(ticketNo, senderName, nip, unitKerja, kategoriPertanyaan);
+            //await _wablasService.SendWhatsAppMessageAsync(targetPhone, messageBody);
 
             // Kirim Pesan Notifikasi ke PIC Keuangan [Open]
-            messageBody = _wablasService.BuildTicketTemplate2(ticketNo, senderName, nip, unitKerja, kategoriPertanyaan);
-            await _wablasService.SendWhatsAppMessageAsync(targetPhonePIC, messageBody);
+            //messageBody = _wablasService.BuildTicketTemplate2(ticketNo, senderName, nip, unitKerja, kategoriPertanyaan);
+            //await _wablasService.SendWhatsAppMessageAsync(targetPhonePIC, messageBody);
             // [END OF SCRIPT PUSH NOTIFICATION WABLAS]
 
             try
