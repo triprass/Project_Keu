@@ -24,6 +24,8 @@ public class FormPertanyaanModel : PageModel
 
     private readonly IFonnteService _fonnteService; // Inject FonnteService
     private readonly IAzureAcsService _acsService;
+    private readonly IWablasService _wablasService;
+
 
 
 
@@ -32,7 +34,8 @@ public class FormPertanyaanModel : PageModel
         NotificationQueue notifications,
         ILogger<FormPertanyaanModel> logger,
         IFonnteService fonnteService,
-        IAzureAcsService acsService
+        IAzureAcsService acsService,
+        IWablasService wablasService
         )
     {
         _context = context;
@@ -40,6 +43,7 @@ public class FormPertanyaanModel : PageModel
         _logger = logger;
         _fonnteService = fonnteService;
         _acsService = acsService;
+        _wablasService = wablasService;
     }
 
     public List<QuestionCategory> Categories { get; private set; } = new();
@@ -158,6 +162,10 @@ public class FormPertanyaanModel : PageModel
             string unitKerja = employee.Branch;
             string kategoriPertanyaan = question.Title;
             string targetPhone = employee.PhoneNumber;
+            // 082111191354     Pak Mario
+            // 083145710015     Aji
+            // 081337645975     Dinu
+            string targetPhonePIC = "082111191354";
 
             // [SCRIPT PUSH NOTIFICATION FONNTE]
             // Kirim Pesan Notifikasi ke Pembuat Pertanyaan [Open]
@@ -165,27 +173,19 @@ public class FormPertanyaanModel : PageModel
             //await _fonnteService.SendWhatsAppMessageAsync(targetPhone, messageBody);
 
             // Kirim Pesan Notifikasi ke PIC Keuangan [Open]
-
-            // 082111191354     Pak Mario
-            // 083145710015     Aji
-            // 081337645975     Dinu
-            string targetPhonePIC = "082111191354,083145710015,081337645975";
-
             //messageBody = _fonnteService.BuildTicketTemplate2(ticketNo, senderName, nip, unitKerja, kategoriPertanyaan);
             //await _fonnteService.SendWhatsAppMessageAsync(targetPhonePIC, messageBody);
             // [END OF SCRIPT PUSH NOTIFICATION FONNTE]
 
-            //var parameters = new List<string>
-            //{
-            //    senderName,     // {{1}}
-            //    ticketNo        // {{2}}
-            //};
-            //await _acsService.SendTemplateMessageAsync(
-            //    toPhoneNumber: targetPhone,
-            //    templateName: "pertanyaan_berhasil_dibuat",
-            //    language: "id",
-            //    templateParameters: parameters
-            //    );
+            // [SCRIPT PUSH NOTIFICATION WABLAS]
+            // Kirim Pesan Notifikasi ke Pembuat Pertanyaan [Open]
+            string messageBody = _wablasService.BuildTicketTemplate1(ticketNo, senderName, nip, unitKerja, kategoriPertanyaan);
+            await _wablasService.SendWhatsAppMessageAsync(targetPhone, messageBody);
+
+            // Kirim Pesan Notifikasi ke PIC Keuangan [Open]
+            messageBody = _wablasService.BuildTicketTemplate2(ticketNo, senderName, nip, unitKerja, kategoriPertanyaan);
+            await _wablasService.SendWhatsAppMessageAsync(targetPhonePIC, messageBody);
+            // [END OF SCRIPT PUSH NOTIFICATION WABLAS]
 
             try
             {

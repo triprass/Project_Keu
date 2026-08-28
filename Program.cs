@@ -229,6 +229,7 @@ builder.Services.AddScoped<QuestionsLandingService>();
 
 builder.Services.AddScoped<IAzureAcsService, AzureAcsService>();
 builder.Services.AddHttpClient<IFonnteService, FonnteService>();
+builder.Services.AddHttpClient<IWablasService, WablasService>();
 
 var app = builder.Build();
 
