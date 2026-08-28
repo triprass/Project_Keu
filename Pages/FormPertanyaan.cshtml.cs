@@ -23,17 +23,23 @@ public class FormPertanyaanModel : PageModel
     private readonly ILogger<FormPertanyaanModel> _logger;
 
     private readonly IFonnteService _fonnteService; // Inject FonnteService
+    private readonly IAzureAcsService _acsService;
+
+
 
     public FormPertanyaanModel(
         AppDbContext context,
         NotificationQueue notifications,
         ILogger<FormPertanyaanModel> logger,
-        IFonnteService fonnteService)
+        IFonnteService fonnteService,
+        IAzureAcsService acsService
+        )
     {
         _context = context;
         _notifications = notifications;
         _logger = logger;
         _fonnteService = fonnteService;
+        _acsService = acsService;
     }
 
     public List<QuestionCategory> Categories { get; private set; } = new();
@@ -169,7 +175,18 @@ public class FormPertanyaanModel : PageModel
             //await _fonnteService.SendWhatsAppMessageAsync(targetPhonePIC, messageBody);
             // [END OF SCRIPT PUSH NOTIFICATION FONNTE]
 
+            var parameters = new List<string>
+            {
+                senderName,     // {{1}}
+                ticketNo        // {{2}}
+            };
 
+            var messageId = await _acsService.SendTemplateMessageAsync(
+                toPhoneNumber: targetPhone,
+                templateName: "pertanyaan_berhasil_dibuat",
+                language: "id",
+                templateParameters: parameters
+            );
 
             try
             {
