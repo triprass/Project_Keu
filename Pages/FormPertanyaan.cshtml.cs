@@ -181,16 +181,16 @@ public class FormPertanyaanModel : PageModel
                 ticketNo        // {{2}}
             };
 
-            var messageId = await _acsService.SendTemplateMessageAsync(
+            try
+            {
+                await _context.SaveChangesAsync(cancellationToken);
+                await _acsService.SendTemplateMessageAsync(
                 toPhoneNumber: targetPhone,
                 templateName: "pertanyaan_berhasil_dibuat",
                 language: "id",
                 templateParameters: parameters
-            );
+                );
 
-            try
-            {
-                await _context.SaveChangesAsync(cancellationToken);
 
                 return true;
             }
