@@ -175,22 +175,21 @@ public class FormPertanyaanModel : PageModel
             //await _fonnteService.SendWhatsAppMessageAsync(targetPhonePIC, messageBody);
             // [END OF SCRIPT PUSH NOTIFICATION FONNTE]
 
-            var parameters = new List<string>
-            {
-                senderName,     // {{1}}
-                ticketNo        // {{2}}
-            };
+            //var parameters = new List<string>
+            //{
+            //    senderName,     // {{1}}
+            //    ticketNo        // {{2}}
+            //};
+            //await _acsService.SendTemplateMessageAsync(
+            //    toPhoneNumber: targetPhone,
+            //    templateName: "pertanyaan_berhasil_dibuat",
+            //    language: "id",
+            //    templateParameters: parameters
+            //    );
 
             try
             {
                 await _context.SaveChangesAsync(cancellationToken);
-                await _acsService.SendTemplateMessageAsync(
-                toPhoneNumber: targetPhone,
-                templateName: "pertanyaan_berhasil_dibuat",
-                language: "id",
-                templateParameters: parameters
-                );
-
 
                 return true;
             }
