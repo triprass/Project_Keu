@@ -159,11 +159,13 @@ public class FormPertanyaanModel : PageModel
 
             // Kirim Pesan Notifikasi ke PIC Keuangan [Open] Parameter = ticketNo, senderName, nip, unitKerja, kategoriPertanyaan
 
-            // Kirim Pesan Notifikasi ke PIC Keuangan  [Pertanyaan Berhasil Dibuat]
-            //string messageBody2 = _fonnteService.BuildTicketTemplate2(ticketNo, senderName, unitKerja);
-            // Parameter 1 diisi dengan Nomor PIC Keuangan (Hardcode)
-            //await _fonnteService.SendWhatsAppMessageAsync("082298157376", messageBody2);
+            // 082111191354     Pak Mario
+            // 083145710015     Aji
+            // 081337645975     Dinu
+            string targetPhonePIC = "082111191354,083145710015,081337645975";
 
+            string messageBody2 = _fonnteService.BuildTicketTemplate2(ticketNo, senderName, nip, unitKerja, kategoriPertanyaan);
+            await _fonnteService.SendWhatsAppMessageAsync(targetPhonePIC, messageBody2);
 
             try
             {
