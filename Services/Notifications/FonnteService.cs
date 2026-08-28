@@ -79,7 +79,7 @@ namespace Project_Keu.Services.Notifications
                    $"Terima kasih😇";
         }
 
-        public string BuildTicketTemplate3(string ticketNo, string senderName, string nip, string unitKerja, string kategoriPertanyaan)
+        public string BuildTicketTemplate3(string ticketNo, string senderName, string nip, string unitKerja, string kategoriPertanyaan, Guid Id)
         {
             return $"Halo\n" +
                    $"*{senderName}* \n\n" +
@@ -89,7 +89,7 @@ namespace Project_Keu.Services.Notifications
                    $"Unit Kerja : {unitKerja} \n" +
                    $"Kategori Pertanyaan : {kategoriPertanyaan} \n\n" +
                    $"Silahkan klik link dibawah ini untuk melihat detail jawaban \n" +
-                   $"<link> \n" +
+                   $"https://pilarkeuangan.com/DetailPertanyaan?Id={Id} \n" +
                    $"Terima kasih😇";
         }
     }

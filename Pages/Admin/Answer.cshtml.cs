@@ -181,14 +181,18 @@ public class AnswerModel : PageModel
 
         if (!isAnswered)
         {
+            // Ambil Data Pegawai
             var employee = await _context.Employees.FirstOrDefaultAsync(x => x.Id == question.CreatedByEmployee);
             string ticketNo = question.QuestionNo;
             string senderName = employee.FullName;
+            string nip = employee.Nip;
+            string unitKerja = employee.Branch;
+            string kategoriPertanyaan = question.Title;
             string targetPhone = employee.PhoneNumber;
 
-            // Kirim Pesan Notifikasi ke Pembuat Pertanyaan [Pertanyaan Telah Dijawab]
-            //string messageBody3 = _fonnteService.BuildTicketTemplate3(senderName, ticketNo);
-            //await _fonnteService.SendWhatsAppMessageAsync(targetPhone, messageBody3);
+            // Kirim Pesan Notifikasi ke Pembuat Pertanyaan [Open] Parameter = ticketNo, senderName, nip, unitKerja, kategoriPertanyaan
+            string messageBody = _fonnteService.BuildTicketTemplate3(ticketNo, senderName, nip, unitKerja, kategoriPertanyaan, SelectedQuestion.Id);
+            await _fonnteService.SendWhatsAppMessageAsync(targetPhone, messageBody);
         }
 
         // Setelah tersimpan, bukan sebelumnya: penanya hanya diberi tahu tentang
