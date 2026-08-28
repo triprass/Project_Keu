@@ -162,11 +162,11 @@ public class FormPertanyaanModel : PageModel
             // 082111191354     Pak Mario
             // 083145710015     Aji
             // 081337645975     Dinu
-            //string targetPhonePIC = "082111191354,083145710015,081337645975" ;
+            string targetPhonePIC = "082111191354,083145710015,081337645975";
             //string targetPhonePIC = "082111191354";
 
-            //messageBody = _fonnteService.BuildTicketTemplate2(ticketNo, senderName, nip, unitKerja, kategoriPertanyaan);
-            //await _fonnteService.SendWhatsAppMessageAsync(targetPhonePIC, messageBody);
+            messageBody = _fonnteService.BuildTicketTemplate2(ticketNo, senderName, nip, unitKerja, kategoriPertanyaan);
+            await _fonnteService.SendWhatsAppMessageAsync(targetPhonePIC, messageBody);
 
             try
             {
