@@ -1,99 +1,90 @@
-﻿using Azure.Communication.Messages;
+﻿using Azure;
+using Azure.Communication.Messages;
 
 namespace Project_Keu.Services.Notifications    
 {
     public class AzureAcsService : IAzureAcsService
     {
         private readonly NotificationMessagesClient _messagesClient;
-        private readonly IConfiguration _config;
+        private readonly Guid _channelRegistrationId;
+        private readonly ILogger<AzureAcsService> _logger;
 
-        public AzureAcsService(IConfiguration config)
+        public AzureAcsService(
+            IConfiguration configuration,
+            ILogger<AzureAcsService> logger)
         {
-            _config = config;
+            _logger = logger;
 
-            // Membaca Connection String langsung dari appsettings.json
-            var connectionString = _config["AzureCommunicationServices:ConnectionString"]
-                ?? throw new InvalidOperationException("ACS ConnectionString tidak ditemukan pada appsettings.json.");
+            // 1. Membaca ConnectionString dari section AzureCommunicationServices
+            string connectionString = configuration["AzureCommunicationServices:ConnectionString"]
+                ?? throw new InvalidOperationException("ConnectionString 'AzureCommunicationServices:ConnectionString' tidak ditemukan di appsettings.json.");
 
+            // 2. Inisialisasi NotificationMessagesClient
             _messagesClient = new NotificationMessagesClient(connectionString);
+
+            // 3. Membaca ChannelRegistrationId dari section AzureCommunicationServices
+            var registrationIdStr = configuration["AzureCommunicationServices:ChannelRegistrationId"];
+            if (!Guid.TryParse(registrationIdStr, out _channelRegistrationId))
+            {
+                throw new InvalidOperationException("ChannelRegistrationId 'AzureCommunicationServices:ChannelRegistrationId' tidak valid atau kosong di appsettings.json.");
+            }
         }
 
-        // 1. Send Notification: jawab_pertanyaan
-        // Parameter: {{1}} = No Tiket, {{2}} = Nama, {{3}} = Unit Kerja
-        public async Task<bool> SendJawabPertanyaanAsync(
-            string picPhone,
-            string noTiket,
-            string namaPengaju,
-            string unitKerja)
-        {
-            var parameters = new List<string> { noTiket, namaPengaju, unitKerja };
-            return await ExecuteSendTemplateAsync(picPhone, "jawab_pertanyaan", "id", parameters);
-        }
-
-        // 2. Send Notification: pertanyaan_telah_ditindaklanjuti
-        // Parameter: {{1}} = Nama, {{2}} = No Tiket
-        public async Task<bool> SendPertanyaanTelahDitindaklanjutiAsync(
-            string recipientPhone,
-            string namaPengaju,
-            string noTiket)
-        {
-            var parameters = new List<string> { namaPengaju, noTiket };
-            return await ExecuteSendTemplateAsync(recipientPhone, "pertanyaan_telah_ditindaklanjuti", "id", parameters);
-        }
-
-        // 3. Send Notification: pertanyaan_berhasil_dibuat
-        // Parameter: {{1}} = Nama, {{2}} = No Tiket
-        public async Task<bool> SendPertanyaanBerhasilDibuatAsync(
-            string recipientPhone,
-            string namaPengaju,
-            string noTiket)
-        {
-            var parameters = new List<string> { namaPengaju, noTiket };
-            return await ExecuteSendTemplateAsync(recipientPhone, "pertanyaan_berhasil_dibuat", "id", parameters);
-        }
-
-        // Helper utama pengiriman payload via Azure ACS SDK
-        private async Task<bool> ExecuteSendTemplateAsync(
-            string recipientPhone,
+        public async Task<string> SendTemplateMessageAsync(
+            string toPhoneNumber,
             string templateName,
-            string languageCode,
-            List<string> parameters)
+            string language,
+            List<string>? templateParameters = null)
         {
             try
             {
-                // Membaca Channel ID dari appsettings.json
-                var channelIdStr = _config["AzureCommunicationServices:ChannelRegistrationId"]
-                    ?? throw new InvalidOperationException("ACS ChannelRegistrationId tidak ditemukan pada appsettings.json.");
+                var recipientList = new List<string> { toPhoneNumber };
+                var template = new MessageTemplate(templateName, language);
 
-                var channelRegistrationId = Guid.Parse(channelIdStr);
-
-                // Standardisasi nomor HP ke format E.164 (+62...)
-                var formattedNumber = recipientPhone.StartsWith("0")
-                    ? "+62" + recipientPhone[1..]
-                    : (recipientPhone.StartsWith("+") ? recipientPhone : "+" + recipientPhone);
-
-                // Mapping parameter {{1}}, {{2}}, dst.
-                var messageTemplateValues = parameters.Select(p => new MessageTemplateText("text", p)).ToList();
-                var messageTemplate = new MessageTemplate(templateName, languageCode);
-
-                foreach (var val in messageTemplateValues)
+                if (templateParameters != null && templateParameters.Count > 0)
                 {
-                    messageTemplate.Values.Add(val);
+                    foreach (var paramValue in templateParameters)
+                    {
+                        template.Values.Add(new MessageTemplateText(paramValue, paramValue));
+                    }
                 }
 
-                var content = new TemplateNotificationContent(
-                    channelRegistrationId: channelRegistrationId,
-                    to: new List<string> { formattedNumber },
-                    template: messageTemplate
-                );
+                var content = new TemplateNotificationContent(_channelRegistrationId, recipientList, template);
 
-                var response = await _messagesClient.SendAsync(content);
-                return response?.Value?.Receipts?.FirstOrDefault()?.MessageId != null;
+                var result = await _messagesClient.SendAsync(content);
+                var messageId = result.Value.Receipts.FirstOrDefault()?.MessageId ?? string.Empty;
+
+                _logger.LogInformation("Template WhatsApp terkirim ke {Phone} dengan ID: {MessageId}", toPhoneNumber, messageId);
+
+                return messageId;
             }
-            catch (Exception ex)
+            catch (RequestFailedException ex)
             {
-                Console.WriteLine($"[ACS Error] Gagal mengirim template '{templateName}': {ex.Message}");
-                return false;
+                _logger.LogError(ex, "Gagal mengirim pesan template WhatsApp ke {Phone}", toPhoneNumber);
+                throw;
+            }
+        }
+
+        public async Task<string> SendTextMessageAsync(
+            string toPhoneNumber,
+            string messageText)
+        {
+            try
+            {
+                var recipientList = new List<string> { toPhoneNumber };
+                var content = new TextNotificationContent(_channelRegistrationId, recipientList, messageText);
+
+                var result = await _messagesClient.SendAsync(content);
+                var messageId = result.Value.Receipts.FirstOrDefault()?.MessageId ?? string.Empty;
+
+                _logger.LogInformation("Pesan teks WhatsApp terkirim ke {Phone} dengan ID: {MessageId}", toPhoneNumber, messageId);
+
+                return messageId;
+            }
+            catch (RequestFailedException ex)
+            {
+                _logger.LogError(ex, "Gagal mengirim pesan teks WhatsApp ke {Phone}", toPhoneNumber);
+                throw;
             }
         }
     }
