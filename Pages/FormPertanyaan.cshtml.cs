@@ -153,11 +153,11 @@ public class FormPertanyaanModel : PageModel
             string kategoriPertanyaan = question.Title;
             string targetPhone = employee.PhoneNumber;
 
-            // Kirim Pesan Notifikasi ke Pembuat Pertanyaan  [Open] Parameter = ticketNo, senderName, nip, unitKerja, kategoriPertanyaan
+            // Kirim Pesan Notifikasi ke Pembuat Pertanyaan [Open] Parameter = ticketNo, senderName, nip, unitKerja, kategoriPertanyaan
             string messageBody = _fonnteService.BuildTicketTemplate1(ticketNo, senderName, nip, unitKerja, kategoriPertanyaan);
             await _fonnteService.SendWhatsAppMessageAsync(targetPhone, messageBody);
 
-            // Kirim Pesan Notifikasi ke PIC Keuangan  [Open] Parameter = ticketNo, senderName, nip, unitKerja, kategoriPertanyaan
+            // Kirim Pesan Notifikasi ke PIC Keuangan [Open] Parameter = ticketNo, senderName, nip, unitKerja, kategoriPertanyaan
 
             // Kirim Pesan Notifikasi ke PIC Keuangan  [Pertanyaan Berhasil Dibuat]
             //string messageBody2 = _fonnteService.BuildTicketTemplate2(ticketNo, senderName, unitKerja);
