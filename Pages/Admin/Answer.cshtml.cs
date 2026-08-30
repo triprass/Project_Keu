@@ -184,6 +184,7 @@ public class AnswerModel : PageModel
 
         if (!isAnswered)
         {
+
             // Ambil Data Pegawai
             var employee = await _context.Employees.FirstOrDefaultAsync(x => x.Id == question.CreatedByEmployee);
             string ticketNo = question.QuestionNo;
