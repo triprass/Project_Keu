@@ -26,17 +26,20 @@ public class AnswerModel : PageModel
 {
     private static readonly CultureInfo DisplayCulture = CreateDisplayCulture();
     private readonly IFonnteService _fonnteService; // Inject FonnteService
+    private readonly IWablasService _wablasService;
 
     private readonly AppDbContext _context;
     private readonly AppTimeZone _appTimeZone;
     private readonly NotificationQueue _notifications;
 
-    public AnswerModel(AppDbContext context, AppTimeZone appTimeZone, NotificationQueue notifications, IFonnteService fonnteService)
+
+    public AnswerModel(AppDbContext context, AppTimeZone appTimeZone, NotificationQueue notifications, IFonnteService fonnteService, IWablasService wablasService)
     {
         _context = context;
         _appTimeZone = appTimeZone;
         _notifications = notifications;
         _fonnteService = fonnteService;
+        _wablasService = wablasService;
     }
 
     /// <summary>Id pertanyaan; selalu dikirim di badan POST.</summary>
@@ -193,10 +196,21 @@ public class AnswerModel : PageModel
             string targetPhone = employee.PhoneNumber;
 
             // [SCRIPT PUSH NOTIFICATION FONNTE]
-            // Kirim Pesan Notifikasi ke Pembuat Pertanyaan [Open] Parameter = ticketNo, senderName, nip, unitKerja, kategoriPertanyaan
+
+            // Kirim Pesan Notifikasi ke Pembuat Pertanyaan [Close] Parameter = ticketNo, senderName, nip, unitKerja, kategoriPertanyaan
             //string messageBody = _fonnteService.BuildTicketTemplate3(ticketNo, senderName, nip, unitKerja, kategoriPertanyaan, SelectedQuestion.Id);
             //await _fonnteService.SendWhatsAppMessageAsync(targetPhone, messageBody);
+
             // [END OF SCRIPT PUSH NOTIFICATION FONNTE]
+
+
+            // [SCRIPT PUSH NOTIFICATION WABLAS]
+
+            // Kirim Pesan Notifikasi ke Pembuat Pertanyaan [Close]
+            //string messageBody = _wablasService.BuildTicketTemplate3(ticketNo, senderName, nip, unitKerja, kategoriPertanyaan, SelectedQuestion.Id);
+            //await _wablasService.SendWhatsAppMessageAsync(targetPhone, messageBody);
+
+            // [END OF SCRIPT PUSH NOTIFICATION WABLAS]
         }
 
         // Setelah tersimpan, bukan sebelumnya: penanya hanya diberi tahu tentang
