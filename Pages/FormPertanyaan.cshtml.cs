@@ -168,16 +168,22 @@ public class FormPertanyaanModel : PageModel
             string targetPhonePIC = "082111191354";
 
             // [SCRIPT PUSH NOTIFICATION FONNTE]
+
             // Kirim Pesan Notifikasi ke Pembuat Pertanyaan [Open]
             string messageBody = _fonnteService.BuildTicketTemplate1(ticketNo, senderName, nip, unitKerja, kategoriPertanyaan);
-            //await _fonnteService.SendWhatsAppMessageAsync(targetPhone, messageBody);
+            await _fonnteService.SendWhatsAppMessageAsync(targetPhone, messageBody);
 
             // Kirim Pesan Notifikasi ke PIC Keuangan [Open]
             //messageBody = _fonnteService.BuildTicketTemplate2(ticketNo, senderName, nip, unitKerja, kategoriPertanyaan);
             //await _fonnteService.SendWhatsAppMessageAsync(targetPhonePIC, messageBody);
+
             // [END OF SCRIPT PUSH NOTIFICATION FONNTE]
 
+
+
+
             // [SCRIPT PUSH NOTIFICATION WABLAS]
+
             // Kirim Pesan Notifikasi ke Pembuat Pertanyaan [Open]
             //string messageBody = _wablasService.BuildTicketTemplate1(ticketNo, senderName, nip, unitKerja, kategoriPertanyaan);
             //await _wablasService.SendWhatsAppMessageAsync(targetPhone, messageBody);
@@ -185,6 +191,7 @@ public class FormPertanyaanModel : PageModel
             // Kirim Pesan Notifikasi ke PIC Keuangan [Open]
             //messageBody = _wablasService.BuildTicketTemplate2(ticketNo, senderName, nip, unitKerja, kategoriPertanyaan);
             //await _wablasService.SendWhatsAppMessageAsync(targetPhonePIC, messageBody);
+
             // [END OF SCRIPT PUSH NOTIFICATION WABLAS]
 
             try

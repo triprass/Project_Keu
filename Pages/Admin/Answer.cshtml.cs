@@ -184,6 +184,7 @@ public class AnswerModel : PageModel
 
         if (!isAnswered)
         {
+
             // Ambil Data Pegawai
             var employee = await _context.Employees.FirstOrDefaultAsync(x => x.Id == question.CreatedByEmployee);
             string ticketNo = question.QuestionNo;
@@ -197,15 +198,18 @@ public class AnswerModel : PageModel
 
             // Kirim Pesan Notifikasi ke Pembuat Pertanyaan [Close] Parameter = ticketNo, senderName, nip, unitKerja, kategoriPertanyaan
             string messageBody = _fonnteService.BuildTicketTemplate3(ticketNo, senderName, nip, unitKerja, kategoriPertanyaan, SelectedQuestion.Id);
-            //await _fonnteService.SendWhatsAppMessageAsync(targetPhone, messageBody);
+            await _fonnteService.SendWhatsAppMessageAsync(targetPhone, messageBody);
 
             // [END OF SCRIPT PUSH NOTIFICATION FONNTE]
 
 
+
             // [SCRIPT PUSH NOTIFICATION WABLAS]
+
             // Kirim Pesan Notifikasi ke Pembuat Pertanyaan [Close]
             //string messageBody = _wablasService.BuildTicketTemplate3(ticketNo, senderName, nip, unitKerja, kategoriPertanyaan, SelectedQuestion.Id);
             //await _wablasService.SendWhatsAppMessageAsync(targetPhone, messageBody);
+
             // [END OF SCRIPT PUSH NOTIFICATION WABLAS]
         }
 
