@@ -206,8 +206,8 @@ public class AnswerModel : PageModel
 
             // [SCRIPT PUSH NOTIFICATION WABLAS]
             // Kirim Pesan Notifikasi ke Pembuat Pertanyaan [Close]
-            //string messageBody = _wablasService.BuildTicketTemplate3(ticketNo, senderName, nip, unitKerja, kategoriPertanyaan, SelectedQuestion.Id);
-            //await _wablasService.SendWhatsAppMessageAsync(targetPhone, messageBody);
+            string messageBody = _wablasService.BuildTicketTemplate3(ticketNo, senderName, nip, unitKerja, kategoriPertanyaan, SelectedQuestion.Id);
+            await _wablasService.SendWhatsAppMessageAsync(targetPhone, messageBody);
             // [END OF SCRIPT PUSH NOTIFICATION WABLAS]
         }
 
