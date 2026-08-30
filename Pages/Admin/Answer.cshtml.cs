@@ -196,8 +196,8 @@ public class AnswerModel : PageModel
             // [SCRIPT PUSH NOTIFICATION FONNTE]
 
             // Kirim Pesan Notifikasi ke Pembuat Pertanyaan [Close] Parameter = ticketNo, senderName, nip, unitKerja, kategoriPertanyaan
-            string messageBody = _fonnteService.BuildTicketTemplate3(ticketNo, senderName, nip, unitKerja, kategoriPertanyaan, SelectedQuestion.Id);
-            await _fonnteService.SendWhatsAppMessageAsync(targetPhone, messageBody);
+            //string messageBody = _fonnteService.BuildTicketTemplate3(ticketNo, senderName, nip, unitKerja, kategoriPertanyaan, SelectedQuestion.Id);
+            //await _fonnteService.SendWhatsAppMessageAsync(targetPhone, messageBody);
 
             // [END OF SCRIPT PUSH NOTIFICATION FONNTE]
 

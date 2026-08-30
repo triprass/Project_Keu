@@ -169,8 +169,8 @@ public class FormPertanyaanModel : PageModel
 
             // [SCRIPT PUSH NOTIFICATION FONNTE]
             // Kirim Pesan Notifikasi ke Pembuat Pertanyaan [Open]
-            string messageBody = _fonnteService.BuildTicketTemplate1(ticketNo, senderName, nip, unitKerja, kategoriPertanyaan);
-            await _fonnteService.SendWhatsAppMessageAsync(targetPhone, messageBody);
+            //string messageBody = _fonnteService.BuildTicketTemplate1(ticketNo, senderName, nip, unitKerja, kategoriPertanyaan);
+            //await _fonnteService.SendWhatsAppMessageAsync(targetPhone, messageBody);
 
             // Kirim Pesan Notifikasi ke PIC Keuangan [Open]
             //messageBody = _fonnteService.BuildTicketTemplate2(ticketNo, senderName, nip, unitKerja, kategoriPertanyaan);
