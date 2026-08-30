@@ -150,7 +150,6 @@
 
     function kembaliSaja(event, fallbackUrl) {
         const fallbackUrl = 'https://pilarkeuangan.com/Pertanyaan';
-        // Periksa apakah ada riwayat halaman sebelumnya di tab ini
         if (window.history.length > 1 && document.referrer !== '') {
           window.history.back();
         } else {
