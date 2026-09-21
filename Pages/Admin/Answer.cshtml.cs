@@ -197,7 +197,7 @@ public class AnswerModel : PageModel
             // [SCRIPT PUSH NOTIFICATION FONNTE]
 
             // Kirim Pesan Notifikasi ke Pembuat Pertanyaan [Close] Parameter = ticketNo, senderName, nip, unitKerja, kategoriPertanyaan
-            string messageBody = _fonnteService.BuildTicketTemplate3(ticketNo, senderName, nip, unitKerja, kategoriPertanyaan, SelectedQuestion.Id);
+            // string messageBody = _fonnteService.BuildTicketTemplate3(ticketNo, senderName, nip, unitKerja, kategoriPertanyaan, SelectedQuestion.Id);
             //await _fonnteService.SendWhatsAppMessageAsync(targetPhone, messageBody);
 
             // [END OF SCRIPT PUSH NOTIFICATION FONNTE]
@@ -215,7 +215,7 @@ public class AnswerModel : PageModel
 
         // Setelah tersimpan, bukan sebelumnya: penanya hanya diberi tahu tentang
         // jawaban yang benar-benar sudah masuk database.
-        _notifications.Enqueue(NotificationJob.QuestionAnswered(SelectedQuestion.Id));
+        //_notifications.Enqueue(NotificationJob.QuestionAnswered(SelectedQuestion.Id));
 
         TempData["AdminSuccess"] = existing is null
             ? $"Jawaban untuk {QuestionNoDisplay} berhasil disimpan."
