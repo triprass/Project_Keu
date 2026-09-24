@@ -155,23 +155,23 @@ public class FormPertanyaanModel : PageModel
             _context.Questions.Add(question);
 
             // Ambil Data Pegawai
-            var employee = await _context.Employees.FirstOrDefaultAsync(x => x.Id == question.CreatedByEmployee);
-            string ticketNo = question.QuestionNo;
-            string senderName = employee.FullName;
-            string nip = employee.Nip;
-            string unitKerja = employee.Branch;
-            string kategoriPertanyaan = question.Title;
-            string targetPhone = employee.PhoneNumber;
+            //var employee = await _context.Employees.FirstOrDefaultAsync(x => x.Id == question.CreatedByEmployee);
+            //string ticketNo = question.QuestionNo;
+            //string senderName = employee.FullName;
+            //string nip = employee.Nip;
+            //string unitKerja = employee.Branch;
+            //string kategoriPertanyaan = question.Title;
+            //string targetPhone = employee.PhoneNumber;
             // 082111191354     Pak Mario
             // 083145710015     Aji
             // 081337645975     Dinu
-            string targetPhonePIC = "082111191354";
+            //string targetPhonePIC = "082111191354";
 
             // [SCRIPT PUSH NOTIFICATION FONNTE]
 
             // Kirim Pesan Notifikasi ke Pembuat Pertanyaan [Open]
-            string messageBody = _fonnteService.BuildTicketTemplate1(ticketNo, senderName, nip, unitKerja, kategoriPertanyaan);
-            await _fonnteService.SendWhatsAppMessageAsync(targetPhone, messageBody);
+            //string messageBody = _fonnteService.BuildTicketTemplate1(ticketNo, senderName, nip, unitKerja, kategoriPertanyaan);
+            //await _fonnteService.SendWhatsAppMessageAsync(targetPhone, messageBody);
 
             // Kirim Pesan Notifikasi ke PIC Keuangan [Open]
             //messageBody = _fonnteService.BuildTicketTemplate2(ticketNo, senderName, nip, unitKerja, kategoriPertanyaan);
@@ -187,8 +187,8 @@ public class FormPertanyaanModel : PageModel
             //await _wablasService.SendWhatsAppMessageAsync(targetPhone, messageBody);
 
             // Kirim Pesan Notifikasi ke PIC Keuangan [Open]
-            messageBody = _wablasService.BuildTicketTemplate2(ticketNo, senderName, nip, unitKerja, kategoriPertanyaan);
-            await _wablasService.SendWhatsAppMessageAsync(targetPhonePIC, messageBody);
+            //messageBody = _wablasService.BuildTicketTemplate2(ticketNo, senderName, nip, unitKerja, kategoriPertanyaan);
+            //await _wablasService.SendWhatsAppMessageAsync(targetPhonePIC, messageBody);
 
             // [END OF SCRIPT PUSH NOTIFICATION WABLAS]
 
